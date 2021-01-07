@@ -18,6 +18,8 @@ import string
 import random
 import json
 import logging
+import os
+from zipfile import ZipFile
 
 # This retrieves a Python logging instance (or creates it)
 infoLogger = logging.getLogger("info_logger")
@@ -35,6 +37,40 @@ headers = {
 def check_internet(request):
     return render(request, 'core/NoInternetFound.html')
 
+# TO extract knowledge portal zip
+def get_the_zip():
+    #upgrade_dns()
+    try:
+        os.system('sudo chmod 777 -R /var/www/')
+
+        zip_file_url = "http://rpi.prathamskills.org/apps/index.zip"
+        path_to_put = "/var/www/html/index.zip"
+
+        if os.path.exists(path_to_put):
+            os.system('sudo rm -rf /var/www/html/index.zip')
+        else:
+            pass
+
+        file_to_get = requests.get(zip_file_url)
+
+        with open(path_to_put, "wb") as new_file:
+            for chunk in file_to_get.iter_content(chunk_size=1024):
+                new_file.write(chunk)
+
+    except Exception as d:
+        print(d)
+        errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + d)
+
+    try:
+        file_name = "/var/www/html/index.zip"
+        with ZipFile(file_name, 'r') as zip:
+            zip.extractall('/var/www/html/')
+    except Exception as e:
+        print(e)
+        errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + e)
+
+    print("Done >>")
+    infoLogger.info("Extracting knowledge portal Done >>")
 
 def home(request):
     try:
@@ -62,6 +98,8 @@ def home(request):
             else:
                 request.session['session_id'] = request.session.get('session_id')
                 # print("ell ", request.session.get('session_id', randstr_session))
+
+            get_the_zip() # extracting knowledge portal zip     
             return render(request, 'setup_index.html', context)
         else:
             if not request.session.has_key('session_id'):
