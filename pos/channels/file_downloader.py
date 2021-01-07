@@ -2,11 +2,15 @@ import os
 import json
 import requests
 import platform
+import logging
 from zipfile import ZipFile
 from io import BytesIO, StringIO
 from clint.textui import progress
 from urllib.request import urlopen
 
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
 
 # os.system('cd static/')
 
@@ -44,6 +48,7 @@ class Downloader(object):
 
     def createdir(self, AppName):
         # time.sleep(15)
+        #infoLogger.info(" In createdir")
         self.store_files = os.path.join(self.new_current_dir, 'storage')
         # print('sf', store_files)
         if not os.path.exists(self.store_files):
@@ -140,7 +145,7 @@ class Downloader(object):
 
     def download_files_with_qs(self, download_url, querystring, AppName):
         # print("url is ", download_url)
-    
+        #infoLogger.info(" In download_files_with_qs")
         self.createdir(AppName)
         response = requests.get(download_url, params=querystring, headers=self.headers)
         # print(response)
@@ -179,8 +184,13 @@ class Downloader(object):
                     path_to_put = os.path.join(
                         self.wav_files, str(os.path.basename(file_url)))
                 elif data["FileType"] == "Content" and file_url.endswith('.zip'):
-                    path_to_put = os.path.join(
-                        self.zip_files, str(os.path.basename(file_url)))
+                     if "prodigi.openiscool.org/Repository" in file_url:
+                        file_url1 = file_url.replace("prodigi.openiscool.org/Repository","prathamopenschool.org/CourseContent")
+                        path_to_put = os.path.join(
+                          self.zip_files, str(os.path.basename(file_url1)))
+                     else :
+                         path_to_put = os.path.join(
+                          self.zip_files, str(os.path.basename(file_url)))     
                 elif data["FileType"] == "Content" and file_url.endswith('.pdf' or '.doc'):
                     path_to_put = os.path.join(
                         self.pdf_files, str(os.path.basename(file_url)))
@@ -204,12 +214,14 @@ class Downloader(object):
                                     target.write(chunk)
                                     target.flush()
 
-                except requests.exceptions.ConnectionError as ierror:
-                    print(" no internet ", ierror)
+                except requests.exceptions.ConnectionError as dwnld_files_with_qs_error1:
+                    print(" no internet in download_files_with_qs ", dwnld_files_with_qs_error1)
+                    errorLogger.error(" no internet in download_files_with_qs "+ dwnld_files_with_qs_error1)
                     return False
 
-        except requests.exceptions.ConnectionError as e_error:
-            print("e_error ", e_error)
+        except requests.exceptions.ConnectionError as dwnld_files_with_qs_error2:
+            print("in download_files_with_qs  ", dwnld_files_with_qs_error2)
+            errorLogger("e_error in download_files_with_qs " + dwnld_files_with_qs_error2)
             return False
 
         # print("with qs local ", self.localUrl)
@@ -220,6 +232,7 @@ class Downloader(object):
 
 
     def download_files_without_qs(self, download_url, AppName):
+        #infoLogger.info(" In download_files_without_qs")
         self.createdir(AppName)
         response = requests.get(download_url, headers=self.headers)
         print(response)
@@ -246,7 +259,9 @@ class Downloader(object):
                                 target.flush()
                         self.localUrl = path_to_put
             # return True
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as dwnld_files_without_qs_error:
+            print("in download_files_without_qs  ", dwnld_files_without_qs_error)
+            errorLogger("e_error in download_files_without_qs " + dwnld_files_without_qs_error)
             return False
         
         # print("this is ", self.localUrl)
