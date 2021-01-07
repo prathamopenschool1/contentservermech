@@ -2,6 +2,7 @@ import os
 import json
 import time
 import requests
+import logging
 from pathlib import Path
 # from pprint import pprint
 from django.shortcuts import render
@@ -22,12 +23,17 @@ from rest_framework.decorators import api_view
 # command line progress bar import
 from clint.textui import progress
 
+from datetime import datetime
+
 #custom imports
 from channels.file_downloader import Downloader
 
 # creating object of Downloader class
 downloading = Downloader()
 
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
 
 # home directory check for every os
 homeDir = str(Path.home())
@@ -84,10 +90,12 @@ class ShowDetailsOfChannelView(LoginRequiredMixin, View):
         try:
             context = {}
             print('AppId ', AppId, AppName)
+            infoLogger.info("AppId,AppName in ShowDetailsOfChannelView - AppId: " + AppId + "AppName: " + AppName )
             context['AppId'] = AppId
             context['AppName'] = AppName
             return render(self.request, self.template_name, context=context)
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as  sdlcvConnectionError :
+            errorLogger.error("error-ShowDetailsOfChannelView:" + sdlcvConnectionError)
             return HttpResponseRedirect('/channel/no_internet/')
 
 
@@ -106,8 +114,12 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
         """ downloading and saving the content from here
             looping through node_values list"""
         # applist_server_data = None
+        startTime = datetime.now()
+        print("starting DownloadAndSaveView at " , startTime);
+        infoLogger.info("starting DownloadAndSaveView at " + str(startTime))
         if not AppListFromServerData.objects.filter(AppId=AppId).exists():
             print(AppId, "server data not in db")
+            infoLogger.info(AppId + "server data not in db")
             for apps in channels_result:
                 if apps["AppId"] == AppId:
                     applist_local_url = downloading.localUrl
@@ -170,6 +182,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                                                             JsonData=JsonData, ParentId=ParentId,  AppId=AppId,
                                                                             DateUpdated=DateUpdated)
                                 app_in_db.save()
+                                start = time.time()
                                 for file in detail["LstFileList"]:
                                     print("file data is ", file)
                                     FileId = file['FileId']
@@ -179,6 +192,8 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                     DateUpdated = file['DateUpdated']
                                     fileName = os.path.basename(FileUrl)
                                     localUrl = local_url
+                                    infoLogger.info("file data is " + str(file))
+                                    #infoLogger.info("file data is : FileId :" + FileId + " ,NodeId :" + NodeId + " ,FileType :" + FileType +" ,fileName, :" + fileName + " ,localUrl, :" + localUrl)
                                     if not FileDataToBeStored.objects.filter(NodeId=NodeId, FileId=FileId).exists():
                                         file_in_db = FileDataToBeStored.objects.create(appavailableindb=app_in_db,
                                                                                         FileId=FileId, NodeId=NodeId,
@@ -187,19 +202,40 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                                                                         fileName=fileName,
                                                                                         localUrl=local_url)
                                         file_in_db.save()
-
-                        except requests.exceptions.ConnectionError:
+                                    
+                        except requests.exceptions.ConnectionError as connecton_err1:
                             print("db error")
+                            endTimeInExceptionDbErr = datetime.now()
+                            print("Exception - dberror occured at DownloadAndSaveView at " , endTimeInExceptionDbErr);
+                            errorLogger.error("Exception - dberror occured at DownloadAndSaveView at " +str(endTimeInExceptionDbErr))
+                            time_taken_exceptiondberr = endTimeInExceptionDbErr - startTime
+                            print('Time Taken to till db err exception got in DownloadAndSaveView: ',time_taken_exceptiondberr)
+                            errorLogger.error('Time Taken to till db err exception got in DownloadAndSaveView: '+ str(time_taken_exceptiondberr)) 
+                            errorLogger.error("db error - Loop- detail in detail_node_json_val :" + connecton_err1)
                             return HttpResponseRedirect('/channel/no_internet/')
                 
                 json_data_storage_view(request, ids)
 
-            except requests.exceptions.ConnectionError:
+            except requests.exceptions.ConnectionError as connecton_err2:
                 print("downlaod error ")
+                endTimeInException = datetime.now()
+                print("Exception - downlaod error occured at DownloadAndSaveView at " , endTimeInException);
+                errorLogger.error("Exception occured at DownloadAndSaveView at " + endTimeInException);
+                time_taken_exception = endTimeInException - startTime
+                print('Time Taken to till downlaod error got in DownloadAndSaveView: ',time_taken_exception) 
+                errorLogger.error('Time Taken to till downlaod error got in DownloadAndSaveView: '+time_taken_exception) 
+                errorLogger.error("downlaod error - Loop- ids in node_values :" + connecton_err2)
                 return HttpResponseRedirect('/channel/no_internet/')
 
         # return HttpResponse("success!!")
+        endTime = datetime.now()
+        print("Ending DownloadAndSaveView at " , endTime);
+        infoLogger.info("Ending DownloadAndSaveView at " + str(endTime));
+        time_taken = endTime - startTime
+        print('Time Taken to complete DownloadAndSaveView: ',time_taken) 
+        infoLogger.info('Time Taken to complete DownloadAndSaveView: '+ str(time_taken)) 
         print("successfully saved!")
+        infoLogger.info("successfully saved!")
         return HttpResponse("success")
 
 
@@ -224,6 +260,7 @@ def json_data_storage_view(request, id):
     
     except requests.exceptions.ConnectionError as con_err:
         print("json error ", con_err)
+        errorLogger.error("json error :" + con_err)
         return HttpResponseRedirect('/channel/no_internet/')
 
     return HttpResponse(json_result)
