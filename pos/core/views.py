@@ -17,7 +17,11 @@ import requests
 import string
 import random
 import json
+import logging
 
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
 
 homeDir = str(Path.home())
 
@@ -62,13 +66,15 @@ def home(request):
         else:
             if not request.session.has_key('session_id'):
                 request.session['session_id'] = randstr_session
-                # print("elif " ,request.session.get('session_id', randstr_session))
+                #print("elif " ,request.session.get('session_id', randstr_session))
+                #print("elif01 " ,request.session.get('session_id'))
             else:
                 request.session['session_id'] = request.session.get('session_id')
-                # print("el", request.session.get('session_id', randstr_session))
+                #print("el", request.session.get('session_id', randstr_session))
             return HttpResponseRedirect(reverse('content_viewer:app_available'))
     except Exception as e:
         print("setup error is:---", e)
+        errorLogger.error("setup error is:--- " + e)
         return check_internet(request)
 
 
@@ -84,6 +90,7 @@ def program_call(request):
         return render(request, 'core/index.html', context)
     except Exception as e:
         print("program error is:---", e)
+        errorLogger.error("program error is:--- " + e)
         return check_internet(request)
 
 
@@ -103,6 +110,7 @@ def state_call(request):
         return render(request, 'core/states.html', context)
     except Exception as e1:
         print("state error is:---", e1)
+        errorLogger.error("state error is:--- " + e1)
         return check_internet(request)
 
 
@@ -216,6 +224,7 @@ def post_all_data(request):
         crl_data.save()
     except requests.exceptions.ConnectionError as crl_error:
         print("crl error ---", crl_error)
+        errorLogger.error("crl error ---:--- " + crl_error)
 
     # posting the state data where key id will be AutoId
     try:
@@ -243,6 +252,7 @@ def post_all_data(request):
 
     except requests.exceptions.ConnectionError as state_error:
         print("state error is ", state_error)
+        errorLogger.error("state error is " + state_error)
 
     # saving selected village data into db
     for villages in villages_to_post:
@@ -265,6 +275,7 @@ def post_all_data(request):
             village_data_to_post.save()
         except Exception as village_error:
             print("village error ---", village_error)
+            errorLogger.error("village error --- " + village_error)
 
         try:
             grp_std_ids = str(villages['VillageId'])
@@ -296,6 +307,7 @@ def post_all_data(request):
             group_data.save()
         except Exception as grp_error:
             print("grp error ---", grp_error)
+            errorLogger.error("grp error --- " + grp_error)
 
         try:
             # student data fetching, filtering and saving
@@ -322,6 +334,7 @@ def post_all_data(request):
             student_data.save()
         except Exception as std_error:
             print("std error ---", std_error)
+            errorLogger.error("std error --- " + std_error)
 
     return HttpResponse("success")
 
