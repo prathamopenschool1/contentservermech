@@ -6,6 +6,11 @@ import random
 import platform
 import datetime
 from pathlib import Path
+import logging
+
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
 
 # rest framework imports
 from rest_framework import viewsets, status
@@ -150,6 +155,7 @@ class UsageDataView(viewsets.ModelViewSet):
                         newfile.write("\n")
                 except FileNotFoundError as e:
                     print(e)
+                    errorLogger.error("FileNotFoundError:--- " + e)
 
         show_data()
 
