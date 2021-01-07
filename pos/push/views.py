@@ -6,6 +6,7 @@ import platform
 import datetime
 import requests
 import time
+import logging
 from pathlib import Path
 from django.contrib import messages
 from core.models import UsageData, DeskTopData
@@ -14,10 +15,17 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.sessions.models import Session
 
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
 
 system_os = platform.system()
 print(system_os)
-print(type(system_os))
+#infoLogger.info("system_os in push module: " + system_os)
+#print(type(system_os))
+#infoLogger.info("type of system_os in push module: " + type(system_os).__name__)
+
+
 
 headers = {
     'cache-control': "no-cache",
@@ -32,9 +40,10 @@ def push_data(request):
 
 def create_usage_directory():
     # global homeDir
-    print("usgd")
+    #print("usgd")
     if system_os == 'Windows':
         print("usgdata")
+        infoLogger.info("system_os: " + system_os)
         homeDir = str(Path.home())
         homeDir = os.path.join(homeDir, r"generate\Backup")
         usageDir = os.path.join(homeDir, r"usageData")
@@ -45,6 +54,7 @@ def create_usage_directory():
             pass
     else:
         print("linux")
+        infoLogger.info("system_os: " + system_os)
         homeDir = str(Path.home())
         homeDir = os.path.join(homeDir, "generate/Backup")
         usageDir = os.path.join(homeDir, "usageData")
@@ -72,6 +82,7 @@ def create_desktop_directory():
                 pass
         except Exception as dir_err:
             print(dir_err)
+            errorLogger.error("Error in create_desktop_directory is " + dir_err)
     else:
         homeDir = str(Path.home())
         homeDir = os.path.join(homeDir, "generate/Backup")
@@ -115,6 +126,7 @@ def push_usageData(request):
         # checks the value of count
         if lstscore['count'] == 0 and lstscore['next'] is None:
             print("no data")
+            infoLogger.info("no data")
             return render(request, 'push/data_to_push.html')
         elif lstscore['count'] != 0 and lstscore['next'] is None:
             try:
@@ -127,7 +139,8 @@ def push_usageData(request):
 
                 # print("elif", response_post.status_code, response_post.reason)
             except Exception as bkp_error_next:
-                print("bkp error is ", bkp_error_next)
+                print("bkp error push_usageData is ", bkp_error_next)
+                errorLogger.error("bkp error push_usageData is: " + bkp_error_next)
             return render(request, 'push/data_to_push.html')
         else:
             data = lstscore  # providing lstscore value to data variable
@@ -141,7 +154,8 @@ def push_usageData(request):
                 # print("el", response_post.status_code, response_post.reason)
 
             except Exception as e1:
-                print("error e1 is ", e1)
+                print("error e1 is push_usageData", e1)
+                errorLogger.error("error e1 is push_usageData: " + e1)
                 return False
         i = i+1
     return render(request, 'push/data_to_push.html')
@@ -179,6 +193,7 @@ def backup(request):
 
         if lstscore['count'] == 0 and lstscore['next'] is None:
             print("no data")
+            infoLogger.info("lstscore -no data")
             return render(request, 'push/data_to_push.html')
         elif lstscore['count'] != 0 and lstscore['next'] is None:
             try:
@@ -187,17 +202,20 @@ def backup(request):
                           "w") as outfile:
                     json.dump(lstscore, outfile, indent=4, sort_keys=True)
             except Exception as bkp_error_next:
-                print("bkp error is ", bkp_error_next)
+                print("bkp error in backup(request) is: ", bkp_error_next)
+                errorLogger.error("bkp error in backup(request) is: " + bkp_error_next)
                 return render(request, 'push/data_to_push.html')
         else:
             print("lstscore ", lstscore['next'])
+            infoLogger.info("lstscore " + lstscore['next'])
             try:
                 with open(os.path.join(create_usage_directory(),
                                        randstr + str(datetime.datetime.now()) + '.json'),
                           "w") as outfile:
                     json.dump(lstscore, outfile, indent=4, sort_keys=True)
             except Exception as bkp_error:
-                print("bkp error is ", bkp_error)
+                print("bkp error in backup(request) else part is: ", bkp_error)
+                errorLogger.error("bkp error in backup(request) else part is:" + bkp_error)
                 return render(request, 'push/data_to_push.html')
 
         # desktop data backup
@@ -235,6 +253,7 @@ def backup(request):
                         json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
                 except Exception as bkp_error_next:
                     print("bkp error is ", bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post is: " + bkp_error_next)
                     return render(request, 'push/data_to_push.html')
 
             except Exception as e:
@@ -252,14 +271,15 @@ def backup(request):
                             "w") as outfile:
                         json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
                 except Exception as bkp_error_next:
-                    print("bkp error is ", bkp_error_next)
+                    print("bkp error in desktop_data_to_post else part is ", bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post else part is: " + bkp_error_next)
                     return render(request, 'push/data_to_push.html')
 
             except Exception as e:
                 print("dtp post error ", e)
+                errorLogger.error("dtp post error: " + bkp_error_next)
                 return False
             # return render(request, 'push/data_to_push.html')
-
 
         i = i+1
 
@@ -327,6 +347,7 @@ def desktop_data_to_server(request):
 
             except Exception as e:
                 # return False
+                errorLogger.error("Error in desktop_data_to_server : " + e)
                 return render(request, 'push/data_to_push.html')
         else:
             try:
@@ -345,6 +366,7 @@ def desktop_data_to_server(request):
 
             except Exception as e:
                 print("dtp post error ", e)
+                errorLogger.error("dtp post error in desktop_data_to_server : " + e)
                 return False
             # return render(request, 'push/data_to_push.html')
 
