@@ -1,5 +1,6 @@
 import os, time
 import platform
+import logging
 from pathlib import Path
 from itertools import chain
 from django.http import HttpResponse
@@ -15,6 +16,12 @@ from channels.models import AppListFromServerData, AppAvailableInDB, FileDataToB
 
 system_os = platform.system()
 
+from django.http import HttpResponse
+
+# This retrieves a Python logging instance (or creates it)
+infoLogger = logging.getLogger("info_logger")
+errorLogger = logging.getLogger("error_logger")
+
 # checking the list of available apps
 class AppAvailableListView(ListView):
     model = AppListFromServerData
@@ -28,7 +35,8 @@ class AppAvailableListView(ListView):
         context = super(AppAvailableListView, self).get_context_data(*args, **kwargs)
         queryset = self.get_queryset()
         context["apps_list"] = queryset
-        # print("context is ", context)
+        infoLogger.info("In get_context_data!!")
+        print("context is ", context)
         return context
 
 
@@ -39,16 +47,19 @@ class ParentAppView(ListView):
     def get_queryset(self, *args, **kwargs):
         AppId = self.kwargs['AppId']
         self.request.session['AppId'] = AppId
+        infoLogger.info("AppId is " + AppId)
         queryset = FileDataToBeStored.objects.all().select_related('appavailableindb').filter(appavailableindb__AppId=AppId)
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         print("AppId is ", self.request.session.get('AppId'))
+        infoLogger.info("AppId is " + self.request.session.get('AppId'))
         context = super(ParentAppView, self).get_context_data(*args, **kwargs)
         queryset = self.get_queryset()
         folder_app_name = AppListFromServerData.objects.filter(AppId=self.request.session.get('AppId'))
         for app in folder_app_name:
             print(app.AppName)
+            infoLogger.info("app.AppName " + app.AppName)
             self.request.session['folder_app_name'] = app.AppName
         context['folder_app_name'] = self.request.session.get('folder_app_name')
         context["parent_details"] = queryset
@@ -63,6 +74,7 @@ class ChildrenAppView(ListView):
         NodeId = self.kwargs['NodeId']
         self.request.session['NodeId'] = NodeId
         # print("child NodeId is ", self.request.session.get('NodeId'))
+        infoLogger.info("child NodeId is "+ self.request.session.get('NodeId'))
         queryset = FileDataToBeStored.objects.all().prefetch_related('appavailableindb').filter(appavailableindb__ParentId=NodeId)
         return queryset
 
@@ -120,6 +132,7 @@ def resource_view(request, NodeId):
     context['appid'] = request.session.get('AppId')
     context['parent_db_title'] = parent_db_title
     # print("genral path is ", general_path, zip_path)
+    infoLogger.info("general path is " +  general_path + " and zip path is " +  zip_path)
     if system_os == "Windows":
         zip_path = os.path.join(zip_path, r'storage'+'\\'+request.session.get('folder_app_name')+'\\'+r'content\zips')
         vid_m4v_path = os.path.join(general_path, r'storage'+'\\'+request.session.get('folder_app_name')+'\\'+r'content\videos\m4v')
@@ -190,6 +203,8 @@ def desktop_score_data(request):
             else:
                 logged_in_user = "guest"
 
+            infoLogger.info("logged_in_user is " +logged_in_user)    
+
             # pi id data to be collected
             os.system('cat /proc/cpuinfo > serial_data.txt')
             serial_file = open('serial_data.txt', "r+")
@@ -208,5 +223,6 @@ def desktop_score_data(request):
                                                       serial_id=serial_id)
         except Exception as e:
             print("desktop save error is ", e)
+            errorLogger.error("Error in desktop_score_data is " + e)
             return False
     return HttpResponse("success")
