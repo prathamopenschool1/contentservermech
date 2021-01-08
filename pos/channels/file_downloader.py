@@ -198,7 +198,7 @@ class Downloader(object):
                     path_to_put = os.path.join(
                         self.wrong_extension, str(os.path.basename(file_url)))
                 try:
-                    if file_url == '':
+                    if file_url == '' or "prathamopenschool.org" not in file_url:
                         continue
                     else:
                         self.localUrl = path_to_put
