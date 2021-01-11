@@ -59,7 +59,7 @@ def get_the_zip():
 
     except Exception as d:
         print(d)
-        errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + d)
+        errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + str(d))
 
     try:
         file_name = "/var/www/html/index.zip"
@@ -67,7 +67,7 @@ def get_the_zip():
             zip.extractall('/var/www/html/')
     except Exception as e:
         print(e)
-        errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + e)
+        errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + str(e))
 
     print("Done >>")
     infoLogger.info("Extracting knowledge portal Done >>")
@@ -112,7 +112,7 @@ def home(request):
             return HttpResponseRedirect(reverse('content_viewer:app_available'))
     except Exception as e:
         print("setup error is:---", e)
-        errorLogger.error("setup error is:--- " + e)
+        errorLogger.error("setup error is:--- " + str(e))
         return check_internet(request)
 
 
@@ -128,7 +128,7 @@ def program_call(request):
         return render(request, 'core/index.html', context)
     except Exception as e:
         print("program error is:---", e)
-        errorLogger.error("program error is:--- " + e)
+        errorLogger.error("program error is:--- " + str(e))
         return check_internet(request)
 
 
@@ -148,7 +148,7 @@ def state_call(request):
         return render(request, 'core/states.html', context)
     except Exception as e1:
         print("state error is:---", e1)
-        errorLogger.error("state error is:--- " + e1)
+        errorLogger.error("state error is:--- " + str(e1))
         return check_internet(request)
 
 
@@ -262,7 +262,7 @@ def post_all_data(request):
         crl_data.save()
     except requests.exceptions.ConnectionError as crl_error:
         print("crl error ---", crl_error)
-        errorLogger.error("crl error ---:--- " + crl_error)
+        errorLogger.error("crl error ---:--- " + str(crl_error))
 
     # posting the state data where key id will be AutoId
     try:
@@ -290,7 +290,7 @@ def post_all_data(request):
 
     except requests.exceptions.ConnectionError as state_error:
         print("state error is ", state_error)
-        errorLogger.error("state error is " + state_error)
+        errorLogger.error("state error is " + str(state_error))
 
     # saving selected village data into db
     for villages in villages_to_post:
@@ -313,7 +313,7 @@ def post_all_data(request):
             village_data_to_post.save()
         except Exception as village_error:
             print("village error ---", village_error)
-            errorLogger.error("village error --- " + village_error)
+            errorLogger.error("village error --- " + str(village_error))
 
         try:
             grp_std_ids = str(villages['VillageId'])
@@ -345,7 +345,7 @@ def post_all_data(request):
             group_data.save()
         except Exception as grp_error:
             print("grp error ---", grp_error)
-            errorLogger.error("grp error --- " + grp_error)
+            errorLogger.error("grp error --- " + str(grp_error))
 
         try:
             # student data fetching, filtering and saving
@@ -372,7 +372,7 @@ def post_all_data(request):
             student_data.save()
         except Exception as std_error:
             print("std error ---", std_error)
-            errorLogger.error("std error --- " + std_error)
+            errorLogger.error("std error --- " + str(std_error))
 
     return HttpResponse("success")
 
