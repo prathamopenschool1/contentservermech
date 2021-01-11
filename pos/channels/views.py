@@ -62,13 +62,15 @@ def channel_list_on_server(request):
                     downloading.download_files_without_qs(channels_url, v)
         context['channels_from_server'] = channels_result
         return render(request, 'channels/channels_list_from_server.html', context=context)
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as err_channel_list_on_server:
+        errorLogger.error("error-channel_list_on_server: " + str(err_channel_list_on_server))
         return HttpResponseRedirect('/channel/no_internet/')
 
 
 # return the json response in api form for showing checkboxes nad details
 @api_view(['GET'])
 def return_json_value(request, AppId):
+    #print("AppId in return_json_value" , AppId)
     try:
         url_to_convert = "http://devposapi.prathamopenschool.org/api/AppNode?id={}" .format(
             AppId)
@@ -78,7 +80,8 @@ def return_json_value(request, AppId):
             'json_data': result_url,
         }
         return Response(context, status=status.HTTP_200_OK)
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as err_return_json_value:
+        errorLogger.error("error-return_json_value: " + str(err_return_json_value))
         return HttpResponseRedirect('/channel/no_internet/')
 
 
@@ -95,7 +98,7 @@ class ShowDetailsOfChannelView(LoginRequiredMixin, View):
             context['AppName'] = AppName
             return render(self.request, self.template_name, context=context)
         except requests.exceptions.ConnectionError as  sdlcvConnectionError :
-            errorLogger.error("error-ShowDetailsOfChannelView:" + sdlcvConnectionError)
+            errorLogger.error("error-ShowDetailsOfChannelView:" + str(sdlcvConnectionError))
             return HttpResponseRedirect('/channel/no_internet/')
 
 
@@ -211,7 +214,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                             time_taken_exceptiondberr = endTimeInExceptionDbErr - startTime
                             print('Time Taken to till db err exception got in DownloadAndSaveView: ',time_taken_exceptiondberr)
                             errorLogger.error('Time Taken to till db err exception got in DownloadAndSaveView: '+ str(time_taken_exceptiondberr)) 
-                            errorLogger.error("db error - Loop- detail in detail_node_json_val :" + connecton_err1)
+                            errorLogger.error("db error - Loop- detail in detail_node_json_val :" + str(connecton_err1))
                             return HttpResponseRedirect('/channel/no_internet/')
                 
                 json_data_storage_view(request, ids)
@@ -220,11 +223,11 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 print("downlaod error ")
                 endTimeInException = datetime.now()
                 print("Exception - downlaod error occured at DownloadAndSaveView at " , endTimeInException);
-                errorLogger.error("Exception occured at DownloadAndSaveView at " + endTimeInException);
+                errorLogger.error("Exception occured at DownloadAndSaveView at " + str(endTimeInException));
                 time_taken_exception = endTimeInException - startTime
                 print('Time Taken to till downlaod error got in DownloadAndSaveView: ',time_taken_exception) 
-                errorLogger.error('Time Taken to till downlaod error got in DownloadAndSaveView: '+time_taken_exception) 
-                errorLogger.error("downlaod error - Loop- ids in node_values :" + connecton_err2)
+                errorLogger.error('Time Taken to till downlaod error got in DownloadAndSaveView: '+str(time_taken_exception)) 
+                errorLogger.error("downlaod error - Loop- ids in node_values :" + str(connecton_err2))
                 return HttpResponseRedirect('/channel/no_internet/')
 
         # return HttpResponse("success!!")
@@ -260,7 +263,7 @@ def json_data_storage_view(request, id):
     
     except requests.exceptions.ConnectionError as con_err:
         print("json error ", con_err)
-        errorLogger.error("json error :" + con_err)
+        errorLogger.error("json error :" + str(con_err))
         return HttpResponseRedirect('/channel/no_internet/')
 
     return HttpResponse(json_result)
