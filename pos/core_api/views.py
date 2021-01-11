@@ -155,7 +155,7 @@ class UsageDataView(viewsets.ModelViewSet):
                         newfile.write("\n")
                 except FileNotFoundError as e:
                     print(e)
-                    errorLogger.error("FileNotFoundError:--- " + e)
+                    errorLogger.error("FileNotFoundError:--- " + str(e))
 
         show_data()
 
