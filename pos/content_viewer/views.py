@@ -223,6 +223,6 @@ def desktop_score_data(request):
                                                       serial_id=serial_id)
         except Exception as e:
             print("desktop save error is ", e)
-            errorLogger.error("Error in desktop_score_data is " + e)
+            errorLogger.error("Error in desktop_score_data is " + str(e))
             return False
     return HttpResponse("success")
