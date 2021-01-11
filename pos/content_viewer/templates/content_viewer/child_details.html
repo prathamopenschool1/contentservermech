@@ -38,7 +38,7 @@
         <div class="row">
             <!-- Iterate over object_list -->
             {% for object in child_details %}
-                {% if object.appavailableindb.NodeType == "Topic" or object.appavailableindb.NodeType == 'Language' %}
+                {% if object.appavailableindb.NodeType == "Topic" or object.appavailableindb.NodeType == 'Language' or object.appavailableindb.NodeType == 'Course' %}
                     <div class="col-md-4 col-4">
                         <div class="card mb-4 box-shadow" style="width: 80%;">
                             <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
