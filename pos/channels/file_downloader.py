@@ -211,17 +211,20 @@ class Downloader(object):
                             for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024),
                                                         expected_size=(total_length/1024) + 1):
                                 if chunk:
-                                    target.write(chunk)
-                                    target.flush()
-
+                                    try:
+                                        target.write(chunk)
+                                        target.flush()
+                                    except requests.exceptions.ConnectionError as dataflush_err:    
+                                        errorLogger.error("Exception occurd while flushing data" + str(dataflush_err)) 
+                
                 except requests.exceptions.ConnectionError as dwnld_files_with_qs_error1:
                     print(" no internet in download_files_with_qs ", dwnld_files_with_qs_error1)
-                    errorLogger.error(" no internet in download_files_with_qs "+ dwnld_files_with_qs_error1)
+                    errorLogger.error(" no internet in download_files_with_qs "+ str(dwnld_files_with_qs_error1))
                     return False
 
         except requests.exceptions.ConnectionError as dwnld_files_with_qs_error2:
             print("in download_files_with_qs  ", dwnld_files_with_qs_error2)
-            errorLogger("e_error in download_files_with_qs " + dwnld_files_with_qs_error2)
+            errorLogger("e_error in download_files_with_qs " + str(dwnld_files_with_qs_error2))
             return False
 
         # print("with qs local ", self.localUrl)
@@ -261,7 +264,7 @@ class Downloader(object):
             # return True
         except requests.exceptions.ConnectionError as dwnld_files_without_qs_error:
             print("in download_files_without_qs  ", dwnld_files_without_qs_error)
-            errorLogger("e_error in download_files_without_qs " + dwnld_files_without_qs_error)
+            errorLogger("e_error in download_files_without_qs " + str(dwnld_files_without_qs_error))
             return False
         
         # print("this is ", self.localUrl)
