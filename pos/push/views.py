@@ -82,7 +82,7 @@ def create_desktop_directory():
                 pass
         except Exception as dir_err:
             print(dir_err)
-            errorLogger.error("Error in create_desktop_directory is " + dir_err)
+            errorLogger.error("Error in create_desktop_directory is " + str(dir_err))
     else:
         homeDir = str(Path.home())
         homeDir = os.path.join(homeDir, "generate/Backup")
@@ -140,7 +140,7 @@ def push_usageData(request):
                 # print("elif", response_post.status_code, response_post.reason)
             except Exception as bkp_error_next:
                 print("bkp error push_usageData is ", bkp_error_next)
-                errorLogger.error("bkp error push_usageData is: " + bkp_error_next)
+                errorLogger.error("bkp error push_usageData is: " + str(bkp_error_next))
             return render(request, 'push/data_to_push.html')
         else:
             data = lstscore  # providing lstscore value to data variable
@@ -155,7 +155,7 @@ def push_usageData(request):
 
             except Exception as e1:
                 print("error e1 is push_usageData", e1)
-                errorLogger.error("error e1 is push_usageData: " + e1)
+                errorLogger.error("error e1 is push_usageData: " + str(e1))
                 return False
         i = i+1
     return render(request, 'push/data_to_push.html')
@@ -203,7 +203,7 @@ def backup(request):
                     json.dump(lstscore, outfile, indent=4, sort_keys=True)
             except Exception as bkp_error_next:
                 print("bkp error in backup(request) is: ", bkp_error_next)
-                errorLogger.error("bkp error in backup(request) is: " + bkp_error_next)
+                errorLogger.error("bkp error in backup(request) is: " + str(bkp_error_next))
                 return render(request, 'push/data_to_push.html')
         else:
             print("lstscore ", lstscore['next'])
@@ -215,7 +215,7 @@ def backup(request):
                     json.dump(lstscore, outfile, indent=4, sort_keys=True)
             except Exception as bkp_error:
                 print("bkp error in backup(request) else part is: ", bkp_error)
-                errorLogger.error("bkp error in backup(request) else part is:" + bkp_error)
+                errorLogger.error("bkp error in backup(request) else part is:" + str(bkp_error))
                 return render(request, 'push/data_to_push.html')
 
         # desktop data backup
@@ -253,7 +253,7 @@ def backup(request):
                         json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
                 except Exception as bkp_error_next:
                     print("bkp error is ", bkp_error_next)
-                    errorLogger.error("bkp error in desktop_data_to_post is: " + bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post is: " + str(bkp_error_next))
                     return render(request, 'push/data_to_push.html')
 
             except Exception as e:
@@ -272,12 +272,12 @@ def backup(request):
                         json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
                 except Exception as bkp_error_next:
                     print("bkp error in desktop_data_to_post else part is ", bkp_error_next)
-                    errorLogger.error("bkp error in desktop_data_to_post else part is: " + bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post else part is: " + str(bkp_error_next))
                     return render(request, 'push/data_to_push.html')
 
             except Exception as e:
                 print("dtp post error ", e)
-                errorLogger.error("dtp post error: " + bkp_error_next)
+                errorLogger.error("dtp post error: " + str(bkp_error_next))
                 return False
             # return render(request, 'push/data_to_push.html')
 
@@ -347,7 +347,7 @@ def desktop_data_to_server(request):
 
             except Exception as e:
                 # return False
-                errorLogger.error("Error in desktop_data_to_server : " + e)
+                errorLogger.error("Error in desktop_data_to_server : " + str(e))
                 return render(request, 'push/data_to_push.html')
         else:
             try:
@@ -366,7 +366,7 @@ def desktop_data_to_server(request):
 
             except Exception as e:
                 print("dtp post error ", e)
-                errorLogger.error("dtp post error in desktop_data_to_server : " + e)
+                errorLogger.error("dtp post error in desktop_data_to_server : " + str(e))
                 return False
             # return render(request, 'push/data_to_push.html')
 
