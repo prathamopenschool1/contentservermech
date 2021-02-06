@@ -228,7 +228,9 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 print('Time Taken to till downlaod error got in DownloadAndSaveView: ',time_taken_exception) 
                 errorLogger.error('Time Taken to till downlaod error got in DownloadAndSaveView: '+str(time_taken_exception)) 
                 errorLogger.error("downlaod error - Loop- ids in node_values :" + str(connecton_err2))
-                return HttpResponseRedirect('/channel/no_internet/')
+                #commented redirect to no_internet to continue downloading after internet is up again and added continue below
+                #return HttpResponseRedirect('/channel/no_internet/')
+                continue
 
         # return HttpResponse("success!!")
         endTime = datetime.now()
