@@ -20,6 +20,8 @@ import json
 import logging
 import os
 from zipfile import ZipFile
+import subprocess
+import re  #For regular Expressions
 
 # This retrieves a Python logging instance (or creates it)
 infoLogger = logging.getLogger("info_logger")
@@ -416,3 +418,50 @@ def user_register(request):
     User.objects.bulk_create(users_list, ignore_conflicts=True)
 
     return HttpResponse("success")
+
+# ADDED TO GET DEVICES CONNECTED TO SYSTEM USING HOTSPOT
+def devices_connected_to_system(request):
+    infoLogger.info("inside users_connected_to_system")
+    # Store Mac address of all nodes here
+
+    #saved = {
+   # 'xx:xx:xx:xx:xx:xx': 'My laptop',
+    #'00:00:00:00:00:00': 'My device',
+   # }
+
+    # Set wireless interface using ifconfig
+    #to get the interface name use command  iw dev
+    interface = "wlan0" #"wlp4s0"
+
+    mac_regex = re.compile(r'([a-zA-Z0-9]{2}:){5}[a-zA-Z0-9]{2}')
+
+    devices = parse_arp(interface,mac_regex)
+    print("devices", devices)
+    deviceconnectedata = {
+                    "devicesconnted": devices                   
+                }
+    infoLogger.info("deviceconnectedata" + str(devices))         
+    devices = json.dumps(deviceconnectedata)
+         
+    return render(request, 'core/devicesConnected.html', context={"devices": devices})
+# Added to get interface
+def parse_arp(interface,mac_regex):
+    arp_out = subprocess.check_output(f'arp -e -i {interface}', shell=True).decode('utf-8')
+    if 'no match found' in arp_out:
+        return None
+
+    result = []
+    for lines in arp_out.strip().split('\n'):
+        line = lines.split()
+        if interface in line and '(incomplete)' not in line:
+            for element in line:
+                # If its a mac addr
+                if mac_regex.match(element):
+                    #result.append((line[0], element))
+                    if '.wlan' in line[0]:
+                        result.append(line[0].split('.wlan')[0])
+                    else:    
+                        result.append(line[0])
+    return result
+
+
