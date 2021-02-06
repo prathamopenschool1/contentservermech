@@ -9,5 +9,6 @@ urlpatterns = [
     path('backup/', views.backup, name="backup"),
     path('clear/', views.clear_data, name="clear"),
     path('desktop/', views.desktop_data_to_server, name="desktop"),
+    path('no_internet/', views.NoInternetView.as_view(), name='no_internet'),
 ]
 
