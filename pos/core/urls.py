@@ -12,4 +12,5 @@ urlpatterns = [
     path('villages/', views.show_villages, name='villages'),
     path('post_all_data/', views.post_all_data, name='post_all_data'),
     path('users/', views.user_register, name='users'),
+    path('devicesconnected/', views.devices_connected_to_system, name='devicesconnected'),
 ]
