@@ -14,6 +14,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.sessions.models import Session
+from django.template import Template, Context
+from django.views.generic import TemplateView
+from urllib.request import urlopen
 
 # This retrieves a Python logging instance (or creates it)
 infoLogger = logging.getLogger("info_logger")
@@ -32,7 +35,13 @@ headers = {
     'content-type': "application/json",
     'Accept': 'application/json'
 }
-
+#To Check internet is avialble or not
+def connect(host='http://google.com'):
+    try:
+        urlopen(host)
+        return True
+    except:
+        return False
 
 def push_data(request):
     return render(request, 'push/data_to_push.html')
@@ -295,81 +304,108 @@ def clear_data(request):
 
 
 def desktop_data_to_server(request):
-    i = 1
-    n = 6
-    serial_line = ''
-    randstr = ''.join(random.choice(
-        string.ascii_uppercase + string.digits) for _ in range(n))
+    print("Calling desktop_data_to_server")
+    infoLogger.info("Calling desktop_data_to_server")
+    print("internet connection status" , connect())
+    if connect():
+        i = 1
+        n = 6
+        desktop_resultlist = []
+        serial_line = ''
+        randstr = ''.join(random.choice(
+            string.ascii_uppercase + string.digits) for _ in range(n))
 
-    if request.session.has_key('session_id'):
-        sessionId = request.session.get('session_id')
+        if request.session.has_key('session_id'):
+            sessionId = request.session.get('session_id')
 
-    while True:
-        # get api
-        desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
-        appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+        while True:
+            # get api
+            desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
+            appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
 
-        # post api
-        post_url = "http://rpi.prathamskills.org/api/KolibriSession/Post"
+            # post api
+            post_url = "http://rpi.prathamskills.org/api/KolibriSession/Post"
 
-        # desktop data url
-        desktop_response = requests.get(desktop_url, headers=headers)
-        desktop_result = json.loads(desktop_response.content.decode('utf-8'))
+            # desktop data url
+            desktop_response = requests.get(desktop_url, headers=headers)
+            desktop_result = json.loads(desktop_response.content.decode('utf-8'))
 
-        # app list url
-        appList_response = requests.get(appList_url, headers=headers)
-        appList_result = json.loads(appList_response.content.decode('utf-8'))
+            # app list url
+            appList_response = requests.get(appList_url, headers=headers)
+            appList_result = json.loads(appList_response.content.decode('utf-8'))
 
-        if desktop_response.status_code == 404 and appList_response.status_code == 404:
-            return render(request, 'push/data_to_push.html')
-        elif desktop_response.status_code == 404:
-            return render(request, 'push/data_to_push.html')
-        else:
-            pass
-
-        if desktop_result['count'] == 0 and desktop_result['next'] is None:
-            # print("no data")
-            return render(request, 'push/data_to_push.html')
-        elif desktop_result['count'] != 0 and desktop_result['next'] is None:
-            try:
-                desktop_data_to_post = {
-                    "desktop_result": desktop_result,
-                    "appList_result": appList_result,
-                }
-                response_post = requests.post(
-                    post_url,
-                    headers=headers,
-                    data=json.dumps(desktop_data_to_post),
-                )
-                print(response_post.status_code, response_post.reason)
-                # from pprint import pprint
-                # pprint(desktop_data_to_post)
-
-            except Exception as e:
-                # return False
-                errorLogger.error("Error in desktop_data_to_server : " + str(e))
+            if desktop_response.status_code == 404 and appList_response.status_code == 404:
                 return render(request, 'push/data_to_push.html')
-        else:
-            try:
-                desktop_data_to_post = {
-                    "desktop_result": desktop_result,
-                    "appList_result": appList_result,
-                }
-                response_post = requests.post(
-                    post_url,
-                    headers=headers,
-                    data=json.dumps(desktop_data_to_post),
-                )
-                print(response_post.status_code, response_post.reason)
-                # from pprint import pprint
-                # pprint(desktop_data_to_post)
+            elif desktop_response.status_code == 404:
+                #commented to render data_to_push.html and added to render showpushed Data 
+                #desktop_resultlist contains all data i.e. from all pages of the output of the API
+                #return render(request, 'push/data_to_push.html')
+                desktop_data_to_post_list = {
+                        "desktop_resultlist": desktop_resultlist,                        
+                    }                
+                my_data = json.dumps(desktop_data_to_post_list)
+                return render(request, 'push/showPushedDTData.html', context={"my_data": my_data})
+            else:
+                pass
 
-            except Exception as e:
-                print("dtp post error ", e)
-                errorLogger.error("dtp post error in desktop_data_to_server : " + str(e))
-                return False
-            # return render(request, 'push/data_to_push.html')
+            if desktop_result['count'] == 0 and desktop_result['next'] is None:
+                # print("no data")
+                return render(request, 'push/data_to_push.html')
+            elif desktop_result['count'] != 0 and desktop_result['next'] is None:
+                #appending desktop_result to desktop_resultlist when next is none in API result
+                desktop_resultlist.append(desktop_result)
+                try:
+                    desktop_data_to_post = {
+                        "desktop_result": desktop_result,
+                        "appList_result": appList_result,
+                    }
+                    response_post = requests.post(
+                        post_url,
+                        headers=headers,
+                        data=json.dumps(desktop_data_to_post),
+                    )
+                    print(response_post.status_code, response_post.reason)
+                    # from pprint import pprint
+                    # pprint(desktop_data_to_post)
 
-        i = i+1
+                except Exception as e:
+                    # return False
+                    errorLogger.error("Error in desktop_data_to_server : " + str(e))
+                    return render(request, 'push/data_to_push.html')
+            else:
+                try:
+                    desktop_data_to_post = {
+                        "desktop_result": desktop_result,
+                        "appList_result": appList_result,
+                    }
+                    response_post = requests.post(
+                        post_url,
+                        headers=headers,
+                        data=json.dumps(desktop_data_to_post),
+                    )
+                    print(response_post.status_code, response_post.reason)
+                    #appending desktop_result to desktop_resultlist when next is not none in API result
+                    desktop_resultlist.append(desktop_result)
+                    # from pprint import pprint
+                    # pprint(desktop_data_to_post)
 
-    return render(request, 'push/data_to_push.html')
+                except Exception as e:
+                    print("dtp post error ", e)
+                    errorLogger.error("dtp post error in desktop_data_to_server : " + str(e))
+                    #commented return false and rendering to data_to_push instead
+                    #return False
+                    return render(request, 'push/data_to_push.html')
+                # return render(request, 'push/data_to_push.html')
+
+            i = i+1
+
+        return render(request, 'push/data_to_push.html')
+
+    else:
+        print("No internet connection")
+        infoLogger.info("No internetconnection")
+        return render(request, 'push/no_internet.html')
+
+class NoInternetView(TemplateView):
+    template_name = 'push/no_internet.html'              
+
