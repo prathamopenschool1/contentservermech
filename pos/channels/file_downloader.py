@@ -220,7 +220,9 @@ class Downloader(object):
                 except requests.exceptions.ConnectionError as dwnld_files_with_qs_error1:
                     print(" no internet in download_files_with_qs ", dwnld_files_with_qs_error1)
                     errorLogger.error(" no internet in download_files_with_qs "+ str(dwnld_files_with_qs_error1))
-                    return False
+                    #commented treturn false to continue downloading after internet is up again and added continue below
+                    #return False
+                    continue
 
         except requests.exceptions.ConnectionError as dwnld_files_with_qs_error2:
             print("in download_files_with_qs  ", dwnld_files_with_qs_error2)
