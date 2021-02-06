@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <title>Desktop Session Data</title>
+    <style>
+        th, td, p, input, h3 {
+            font:20px 'Segoe UI';
+        }
+        table, th, td {
+            border: solid 5px #ddd;
+            border-collapse: collapse;
+            margin-left: 40%;
+            padding: 2px 3px;
+            text-align: center;
+        }
+        th {
+            font-weight:bold;
+        }
+    </style>
+    <!--
+     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+     <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script> -->
+
+     <h2 style="margin-top: 20px; padding-left: 35%;background-color: darkgrey;">
+    	 Devices Connected To System
+    </h2>
+    
+        
+    <p id='showData'></p>
+
+   
+    <div id="print-btn"></div>
+    
+
+<script>
+    
+     var devicedata = [];
+	 var col = ['\xa0'+"Device Name"+'\xa0\xa0'];
+     var table ='table';
+     var divShowData ='divShowData';
+     
+
+     window.onload = function(){
+
+           var data = JSON.parse("{{devices|escapejs}}");
+           devicedata = data.devicesconnted;
+           //devicedata = null;
+           if(devicedata!=null){ 
+                table = document.createElement("table");
+                table.id = "datatable";
+
+                // Create table header row using the extracted headers above.
+                var tr = table.insertRow(-1);                   // table row.
+
+                for (var i = 0; i < col.length; i++) {
+                    var th = document.createElement("th");      // table header.
+                    th.innerHTML = col[i];
+                    tr.appendChild(th);
+                }
+                
+                for (var i = 0; i < devicedata.length; i++) {
+
+                        tr = table.insertRow(-1);
+                    
+                        var tabCell = tr.insertCell(-1);
+                        tabCell.innerText = devicedata[i] + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0';
+                    
+                }
+
+            // Now, add the newly created table with json data, to a container.
+            divShowData = document.getElementById('showData');
+            divShowData.innerHTML = "";
+            divShowData.appendChild(table);
+           }else {
+             divShowData = document.getElementById('showData');
+             var ss = "<html "
+             divShowData.innerHTML = '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+
+                                     "No Devices Found";
+           }
+       
+        }
+       
+
+   
+</script>
+{% endblock %}
