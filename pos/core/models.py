@@ -22,8 +22,12 @@ class VillageDataStore(models.Model):
 class UsageData(models.Model):
     data = JSONField(default={}, blank=True)
     filter_name = models.CharField(max_length=100, default="Enter filter name")
-    table_name = models.CharField(max_length=100, default="Enter table name")
+    #added new column for new field uploaded_file and changed deafult=USAGEDATA in pushing usage data API to be used from APK
+    #table_name = models.CharField(max_length=100, default="Enter table name")
+    table_name = models.CharField(max_length=100, default="USAGEDATA")
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    uploaded_file = models.FileField(upload_to='usage/')
+   
 
 
 class DeskTopData(models.Model):
