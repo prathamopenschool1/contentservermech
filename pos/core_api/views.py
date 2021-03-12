@@ -104,8 +104,8 @@ class UsageDataView(viewsets.ModelViewSet):
                     with open(os.path.join(homeDir, randstr+str(datetime.datetime.now())+'.json'), "w+") as outfile:
                         json.dump(json_data_to_save, outfile,
                                     indent=4, sort_keys=True)
-
-        save_in_folder()
+        #coomewnting as we are provindg FileUpload in usage API  for pushing thru apk
+        #save_in_folder()
 
         def show_data():
             if system_os == "Windows":
@@ -156,8 +156,8 @@ class UsageDataView(viewsets.ModelViewSet):
                 except FileNotFoundError as e:
                     print(e)
                     errorLogger.error("FileNotFoundError:--- " + str(e))
-
-        show_data()
+        #coomewnting as we are provindg FileUpload in usage API  for pushing thru apk
+        #show_data()
 
 
 class DeskTopDataView(viewsets.ModelViewSet):
