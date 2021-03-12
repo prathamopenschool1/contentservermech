@@ -75,7 +75,8 @@ class AppNodeDetailListByNodeView(viewsets.ModelViewSet):
     queryset = AppAvailableInDB.objects.all().order_by('NodeId')
     serializer_class = AppNodeDetailListSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    filter_fields = ('NodeId', 'AppId',)
+    #added ParentId fiter as requested by APK team
+    filter_fields = ('NodeId', 'AppId', 'ParentId')
     pagination_class = PageNumberPagination
 
 
