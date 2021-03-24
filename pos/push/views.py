@@ -116,7 +116,9 @@ def push_usageData(request):
         fetch_url = "http://192.168.4.1:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % i
 
         # post api
-        post_url = "http://rpi.prathamskills.org/api/KolibriSession/Post"
+        #commeted out to use new API for zip upload 
+        #post_url = "http://rpi.prathamskills.org/api/KolibriSession/Post"
+        post_url = "http://devprodigi.openiscool.org/api/RPIAppZipPush/PushFiles"
 
         response = requests.get(fetch_url)
 
@@ -140,28 +142,49 @@ def push_usageData(request):
         elif lstscore['count'] != 0 and lstscore['next'] is None:
             try:
                 data = lstscore
-                response_post = requests.post(
+                for i in range(len(data['results'])):                    
+                    actualfileName = data['results'][i]["uploaded_file"]
+                    actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                    lastndexofFwdSlsh = actualfileName.rfind('/')                    
+                    filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
+                    indexofDotzip = filenamestr.index(".zip")
+                    filenamestr = filenamestr[0:indexofDotzip]
+                    datasws = {filenamestr: open(actualfileName, 'rb')}
+                    response_post = requests.post(post_url,files = datasws)
+                    print("response_post in case lstscore next is none : ",response_post)   
+                """ response_post = requests.post(
                     post_url,
-                    headers=headers,
+                    headers=headers,   # modified for usagedata
+                    #headers=headers_ForUsage,
                     data=json.dumps(data),
-                )
-
-                # print("elif", response_post.status_code, response_post.reason)
+                ) """
+                
             except Exception as bkp_error_next:
                 print("bkp error push_usageData is ", bkp_error_next)
                 errorLogger.error("bkp error push_usageData is: " + str(bkp_error_next))
             return render(request, 'push/data_to_push.html')
         else:
-            data = lstscore  # providing lstscore value to data variable
+            
             try:
-                response_post = requests.post(
+                data = lstscore  # providing lstscore value to data variable
+                #print("length", len(data['results']))
+                #print("data " , data)
+                for i in range(len(data['results'])):                    
+                    actualfileName = data['results'][i]["uploaded_file"]
+                    actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                    lastndexofFwdSlsh = actualfileName.rfind('/')                    
+                    filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
+                    indexofDotzip = filenamestr.index(".zip")
+                    filenamestr = filenamestr[0:indexofDotzip]
+                    datasws = {filenamestr: open(actualfileName, 'rb')}
+                    response_post = requests.post(post_url,files = datasws)
+                    print("response_post : ",response_post)
+                """ response_post = requests.post(
                     post_url,
                     headers=headers,
                     data=json.dumps(data),
-                )
-
-                # print("el", response_post.status_code, response_post.reason)
-
+                ) """
+                
             except Exception as e1:
                 print("error e1 is push_usageData", e1)
                 errorLogger.error("error e1 is push_usageData: " + str(e1))
