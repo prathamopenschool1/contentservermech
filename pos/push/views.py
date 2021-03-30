@@ -1,4 +1,4 @@
-import os
+import os,shutil
 import json
 import string
 import random
@@ -107,10 +107,10 @@ def create_desktop_directory():
 
 def push_usageData(request):
     i = 1
-    n = 6
+    #n = 6
     serial_line = ''
-    randstr = ''.join(random.choice(
-        string.ascii_uppercase + string.digits) for _ in range(n))
+    #randstr = ''.join(random.choice(
+    #    string.ascii_uppercase + string.digits) for _ in range(n))
 
     while True:
         fetch_url = "http://192.168.4.1:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % i
@@ -149,9 +149,17 @@ def push_usageData(request):
                     filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                     indexofDotzip = filenamestr.index(".zip")
                     filenamestr = filenamestr[0:indexofDotzip]
-                    datasws = {filenamestr: open(actualfileName, 'rb')}
-                    response_post = requests.post(post_url,files = datasws)
-                    print("response_post in case lstscore next is none : ",response_post)   
+                    if os.path.isfile(actualfileName):
+                       datasws = {filenamestr: open(actualfileName, 'rb')}
+                       response_post = requests.post(post_url,files = datasws)
+                       print("response_post sws ",response_post.status_code)
+                       infoLogger.info("response_post sws "+ str(response_post.status_code))    
+                       if response_post.status_code == 200:
+                          os.remove(actualfileName) 
+                          
+                    else:
+                       print("Error, File "+ actualfileName +" not exists") 
+                       infoLogger.info("Error, File "+ actualfileName +" not exists")       
                 """ response_post = requests.post(
                     post_url,
                     headers=headers,   # modified for usagedata
@@ -160,15 +168,15 @@ def push_usageData(request):
                 ) """
                 
             except Exception as bkp_error_next:
-                print("bkp error push_usageData is ", bkp_error_next)
-                errorLogger.error("bkp error push_usageData is: " + str(bkp_error_next))
+                print("error push_usageData is ", bkp_error_next)
+                errorLogger.error("Error push_usageData is: " + str(bkp_error_next))
             return render(request, 'push/data_to_push.html')
         else:
             
             try:
                 data = lstscore  # providing lstscore value to data variable
-                #print("length", len(data['results']))
-                #print("data " , data)
+                print("length", len(data['results']))
+                print("data " , data)
                 for i in range(len(data['results'])):                    
                     actualfileName = data['results'][i]["uploaded_file"]
                     actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
@@ -176,9 +184,17 @@ def push_usageData(request):
                     filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                     indexofDotzip = filenamestr.index(".zip")
                     filenamestr = filenamestr[0:indexofDotzip]
-                    datasws = {filenamestr: open(actualfileName, 'rb')}
-                    response_post = requests.post(post_url,files = datasws)
-                    print("response_post : ",response_post)
+                    if os.path.isfile(actualfileName):
+                       datasws = {filenamestr: open(actualfileName, 'rb')}
+                       response_post = requests.post(post_url,files = datasws)
+                       print("response_post sws when lstscore['next'] is Not None",response_post.status_code)
+                       infoLogger.info("response_post sws when lstscore['next'] is not None "+ str(response_post.status_code))    
+                       if response_post.status_code == 200:
+                          os.remove(actualfileName) 
+                          
+                    else:
+                       print("Error, File "+ actualfileName +" not exists when lstscore['next'] is not None") 
+                       infoLogger.info("Error, File "+ actualfileName +" not exists when lstscore['next'] is not None")
                 """ response_post = requests.post(
                     post_url,
                     headers=headers,
@@ -186,14 +202,98 @@ def push_usageData(request):
                 ) """
                 
             except Exception as e1:
-                print("error e1 is push_usageData", e1)
-                errorLogger.error("error e1 is push_usageData: " + str(e1))
+                print("Error in push_usageData when lstscore['next'] is not None: ", e1)
+                errorLogger.error("Error in push_usageData when lstscore['next'] is not None: " + str(e1))
                 return False
         i = i+1
     return render(request, 'push/data_to_push.html')
 
-
 def backup(request):
+    
+    i = 1
+    n = 6
+    #serial_line = ''
+    randstr = ''.join(random.choice(
+        string.ascii_uppercase + string.digits) for _ in range(n))
+
+    destDir = os.path.join(create_usage_directory(),
+             randstr + str(datetime.datetime.now()))
+    
+    srcDir = '/home/pi/contentservermech/pos/media/usage'     
+
+    if os.listdir(srcDir):    
+        shutil.copytree(srcDir, destDir, symlinks = True)    
+
+    while True:        
+
+        # desktop data backup
+        desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
+        appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+
+        # desktop data url
+        desktop_response = requests.get(desktop_url, headers=headers)
+        desktop_result = json.loads(desktop_response.content.decode('utf-8'))
+
+        # app list url
+        appList_response = requests.get(appList_url, headers=headers)
+        appList_result = json.loads(appList_response.content.decode('utf-8'))
+
+        if desktop_response.status_code == 404 and appList_response.status_code == 404:
+            return render(request, 'push/data_to_push.html')
+        elif desktop_response.status_code == 404:
+            return render(request, 'push/data_to_push.html')
+        else:
+            pass
+
+        if desktop_result['count'] == 0 and desktop_result['next'] is None:
+            # print("no data")
+            return render(request, 'push/data_to_push.html')
+        elif desktop_result['count'] != 0 and desktop_result['next'] is None:
+            try:
+                desktop_data_to_post = {
+                    "desktop_result": desktop_result,
+                    "appList_result": appList_result,
+                }
+                try:
+                    with open(os.path.join(create_desktop_directory(),
+                                        randstr + str(datetime.datetime.now()) + '.json'),
+                            "w") as outfile:
+                        json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
+                except Exception as bkp_error_next:
+                    print("bkp error is ", bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post is: " + str(bkp_error_next))
+                    return render(request, 'push/data_to_push.html')
+
+            except Exception as e:
+                # return False
+                return render(request, 'push/data_to_push.html')
+        else:
+            try:
+                desktop_data_to_post = {
+                    "desktop_result": desktop_result,
+                    "appList_result": appList_result,
+                }
+                try:
+                    with open(os.path.join(create_desktop_directory(),
+                                        randstr + str(datetime.datetime.now()) + '.json'),
+                            "w") as outfile:
+                        json.dump(desktop_data_to_post, outfile, indent=4, sort_keys=True)
+                except Exception as bkp_error_next:
+                    print("bkp error in desktop_data_to_post else part is ", bkp_error_next)
+                    errorLogger.error("bkp error in desktop_data_to_post else part is: " + str(bkp_error_next))
+                    return render(request, 'push/data_to_push.html')
+
+            except Exception as e:
+                print("dtp post error ", e)
+                errorLogger.error("dtp post error: " + str(bkp_error_next))
+                return False
+            # return render(request, 'push/data_to_push.html')
+
+        i = i+1
+
+    return render(request, 'push/data_to_push.html')
+
+def backupOldMethod(request):
     i = 1
     n = 6
     serial_line = ''
@@ -323,7 +423,15 @@ def clear_data(request):
     instance_usage.delete()
     instance_desktop = DeskTopData.objects.all()
     instance_desktop.delete()
+    #called to delete zip files pushed from tab.
+    deleteUsageZipFiles() 
     return render(request, 'push/data_to_push.html')
+
+#new method added to delete zip files pushed from tab.
+def deleteUsageZipFiles():
+    dir = '/home/pi/contentservermech/pos/media/usage'
+    for f in os.listdir(dir):
+        os.remove(os.path.join(dir,f))
 
 
 def desktop_data_to_server(request):
