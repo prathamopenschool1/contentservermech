@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
+    <main role="main">
+      <nav aria-label="breadcrumb">
+          <ul class="breadcrumb">
+              <li>
+                  <a href="{% url 'content_viewer:app_available' %}">
+                  Home
+                </a>
+              </li>
+              <li>
+                  {% for qs in app_name %}
+                      <a href="{% url 'content_viewer:parent_details' AppId=qs.AppId %}">
+                          {% if qs.AppId == appid %}
+                            {{ qs.AppName }}
+                          {% endif %}
+                      </a>
+                  {% endfor %}
+              </li>
+              {% for qs in chaining_queries %}
+                  {% for ids in qs %}
+                      <li><a href="{% url 'content_viewer:child_details' NodeId=ids.NodeId %}">{{ ids.NodeTitle }}</a></li>
+                  {% endfor %}
+              {% endfor %}
+              {% for qs in parent_db_title %}
+                <li>{{ qs.NodeTitle }}</li>
+            {% endfor %}
+            </ul>
+        </nav>
+    
+      
+        <div class="album bg-light">
+          <div class="container ">
+  
+            <div class="row ">
+                {% if game_play %}
+                  {% for object in game_play %}
+                      {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                        <div class="title">
+                          <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                          <!-- <br/><br/> -->                          
+                            <embed type="text/html" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/zips/{{object.fileName}}" 
+                            width="900" height="500">
+                        </div><br>
+                      {% endif %}
+                  {% endfor %}
+                
+                <!-- pdf  -->
+                {% elif pdf_play %}
+                  {% for object in pdf_play %}
+                      {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                        <div class="title">
+                          <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                          <!-- <br/><br/> -->
+                            <embed type="application/pdf" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/docs/{{object.fileName}}" 
+                            width="800" height="900">
+                          </div><br>
+                      {% endif %}
+                  {% endfor %}
+                
+                <!-- videos  -->
+                {% elif video_play %}
+                  {% for object in video_play %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="title">
+                        <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                        <!-- <br/><br/> -->
+                          <video style="width:100%;" controls>
+                            <source src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/videos/mp4/{{object.fileName}}" type="video/mp4" controls>
+                            Your browser does not support the video tag
+                          </video>
+                        </div><br>
+                    {% endif %}
+                  {% endfor %}
+                
+                {% elif m4v_video_play %}
+                  {% for object in m4v_video_play %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="title">
+                        <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                        <!-- <br/><br/> -->
+                          <video style="width:100%;" controls>
+                            <source src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/videos/mp4/{{converted_video}}" type="video/mp4" controls>
+                            Your browser does not support the video tag
+                          </video>
+                        </div><br>
+                    {% endif %}
+                  {% endfor %}
+                
+                <!-- audio -->
+                {% elif audio_play %}
+                  {% for object in audio_play %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="title">
+                        <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                        <!-- <br/> -->
+                        
+                            <div class="jumbotron">
+                              <audio style="width:100%;" controls>
+                                <source src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/audios/mp3/{{object.fileName}}" type="audio/mp3" controls>
+                                Your browser does not support the audio tag
+                            </audio>
+                            </div>
+                      </div><br>
+                    {% endif %}
+                  {% endfor %}
+                
+                {% elif wav_audio_play %}
+                  {% for object in wav_audio_play %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="title">
+                        <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 2em;">{{object.appavailableindb.NodeTitle}}</p>
+                            <div class="jumbotron">
+                              <audio style="width:100%;" controls>
+                                <source src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/content/audios/mp3/{{converted_audio}}" type="audio/mp3" controls>
+                                Your browser does not support the audio tag
+                            </audio>
+                            </div>
+                      </div><br>
+                    {% endif %}
+                  {% endfor %}
+                
+                {% elif no_content %}
+                  {% for object in no_content %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="jumbotron">
+                        <p style="font-weight: bold;">This file is not available!!</p>
+                      </div><br>
+                    {% endif %}
+                  {% endfor %}
+                
+                <!-- wrong format  -->
+                {% else %}
+                  {% for object in wrong_format %}
+                    {% if object.FileType == "Content" and object.appavailableindb.NodeType == "Resource" %}
+                      <div class="jumbotron">
+                        <p style="font-weight: bold;">This file cannot be played it is in wrong format!!</p>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <br><br/>
+          <br><br/>
+  
+      </main>
+
+      <script>
+          $(document).ready(function () {
+            var startTime = new Date();
+            console.log(startTime.toLocaleString("en-US"));
+            node_id = "{{ node_id }}";
+            console.log(node_id);
+            requested_url = '/content/resource/'+node_id
+              console.log(requested_url);
+              $(window).on("beforeunload", function (){
+                var endTime = new Date();
+                var duration = (endTime - startTime);
+                duration = duration/1000;
+                console.log(duration);
+                $.ajax({
+                  url: requested_url,
+                  type: 'GET',
+                  data: {
+                    'NodeId': node_id,
+                    'startTime': startTime.toLocaleString("en-US"),
+                    'endTime': endTime.toLocaleString("en-US"),
+                    'duration': duration
+                  },
+                  crossDomain: true,
+                  datatype: 'jsonp',
+                  // async: false,
+                });
+              });
+          });
+          
+          $(document).ready(function () {
+            var startTime = new Date();
+            console.log(startTime);
+            node_id = "{{ node_id }}";
+            console.log(node_id);
+            requested_url = '/content/score/'
+            console.log(requested_url);
+            $(window).on("beforeunload", function (){
+              var endTime = new Date();
+              var duration = endTime - startTime;
+              console.log(duration);
+              $.ajax({
+                url: requested_url,
+                type: 'POST',
+                async: false,
+                data: {
+                  'NodeId': node_id,
+                  'startTime': startTime,
+                  'endTime': endTime,
+                  'duration': duration,
+                  csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                crossDomain: true,
+                datatype: 'json',
+                success: function(data){
+                  console.log(data);
+                },
+                error: function (error) {
+                    console.log('error; ' + eval(error));
+                },
+              });
+            })
+          })
+      </script>
+
+{% endblock  %}

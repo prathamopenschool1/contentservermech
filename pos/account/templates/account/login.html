@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/style.css'%}">
+    
+    <div class="login-box">
+      <img src="{% static '/images/logo.png' %}" class="logo">
+      <form method="post">
+        {% csrf_token %}
+        
+      <h1 class="h3 mb-1 font-weight-normal">Login</h1>
+      <input type="text" name="username" id="inputusername" class="form-control" placeholder="Enter Username" required autofocus>
+      <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        {% for field in login_form %}
+            {% for error in field.errors %}
+                    <p style="color: blue;">{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% if login_form.non_field_errors %}
+        <div style="color:red;">
+            <p>{{ login_form.non_field_errors }}</p>
+        </div>
+        {% endif %}
+      <button class="btn btn-success btn-block text-center rounded" type="submit" name="submit" value="Sign in">Sign in</button>
+    </form>
+         
+          </div>
+    
+{% endblock %}
