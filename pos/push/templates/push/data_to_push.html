@@ -184,10 +184,10 @@
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                <div class="modal-body push-body">
+                <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
                 </div>
 
@@ -208,6 +208,8 @@
                     success: function(){
                         $('#popup').hide();
                         $('#loaded').hide();
+                        $('#pushModal .modal-body').html('<p>Usage Data Pushed Successfully!</p>');
+                        $('#pushModal').modal('show')
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
@@ -227,6 +229,8 @@
                     success: function(){
                         $('#popupsbpush').hide();
                         $('#loadeddbpush').hide();
+                        $('#pushModal .modal-body').html('<p>DB Pushed Successfully!</p>');
+                        $('#pushModal').modal('show')
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
@@ -245,6 +249,8 @@
                     success: function(){
                         $('#popupBkp').hide();
                         $('#loadedBkp').hide();
+                        $('#pushModal .modal-body').html('<p>Data Backup is Successful!</p>');
+                        $('#pushModal').modal('show')
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
@@ -263,6 +269,8 @@
                     success: function(){
                         $('#cleardata').hide();
                         $('#loadedclear').hide();
+                        $('#pushModal .modal-body').html('<p>Data Deleted Successfully!</p>');
+                        $('#pushModal').modal('show')
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
@@ -281,6 +289,8 @@
                     success: function(){
                         $('#desktopdata').hide();
                         $('#loadedesktop').hide();
+                        $('#pushModal .modal-body').html('<p>Desktop Data Pushed Successfully!</p>');
+                        $('#pushModal').modal('show')
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
