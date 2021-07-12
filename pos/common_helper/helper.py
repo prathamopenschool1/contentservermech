@@ -32,31 +32,36 @@ class CommonHelpers:
     @classmethod
     def get_the_zip(cls):
         #upgrade_dns()
-        try:
-            zip_file_url = "http://rpi.prathamskills.org/apps/index.zip"
-            path_to_put = "/var/www/html/index.zip"
 
-            if os.path.exists(path_to_put):
+        check_path = '/var/www/'
+
+        if os.path.exists(check_path):
+            try:
+                zip_file_url = "http://rpi.prathamskills.org/apps/index.zip"
+                path_to_put = "/var/www/html/index.zip"
+
                 os.system('sudo chmod 777 -R /var/www/')
-                os.system('sudo rm -rf /var/www/html/index.zip')
 
-            file_to_get = requests.get(zip_file_url)
+                if os.path.exists(path_to_put):
+                    os.system('sudo rm -rf /var/www/html/index.zip')
 
-            with open(path_to_put, "wb") as new_file:
-                for chunk in file_to_get.iter_content(chunk_size=1024):
-                    new_file.write(chunk)
+                file_to_get = requests.get(zip_file_url)
 
-        except Exception as d:
-            print(d)
-            cls.errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + str(d))
+                with open(path_to_put, "wb") as new_file:
+                    for chunk in file_to_get.iter_content(chunk_size=1024):
+                        new_file.write(chunk)
 
-        try:
-            file_name = "/var/www/html/index.zip"
-            with ZipFile(file_name, 'r') as zip:
-                zip.extractall('/var/www/html/')
-            cls.infoLogger.info("Extracting knowledge portal Done >>")
-        except Exception as e:
-            print(e)
-            cls.errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + str(e))
+            except Exception as d:
+                print(d)
+                cls.errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + str(d))
 
-        print("Done >>")
+            try:
+                file_name = "/var/www/html/index.zip"
+                with ZipFile(file_name, 'r') as zip:
+                    zip.extractall('/var/www/html/')
+                cls.infoLogger.info("Extracting knowledge portal Done >>")
+            except Exception as e:
+                print(e)
+                cls.errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + str(e))
+
+            print("Done >>")
