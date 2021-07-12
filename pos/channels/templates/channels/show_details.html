@@ -28,18 +28,18 @@
 
             <!-- Modal -->
             <div id="recordModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
+                <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                </div>
-                </div>
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                    </div>
 
-            </div>
+                </div>
             </div>
             
         </div>
@@ -61,7 +61,7 @@
             treeData = data.json_data;
             console.log('treeData ', treeData, typeof(treeData));
             if (treeData.length === 0){
-                $('#recordModal .modal-body').html('<p>No Record Found in ' + AppName + '</p>');
+                $('#recordModal .modal-body').html('<p>No Record Found for ' + AppName + '</p>');
                 $('#recordModal').modal('show')
             }
             else{

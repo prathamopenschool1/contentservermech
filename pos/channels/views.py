@@ -76,7 +76,6 @@ def return_json_value(request, AppId):
             AppId)
         response_url = requests.get(url_to_convert, headers=headers)
         result_url = json.loads(response_url.content.decode('utf-8'))
-        print("response ", response_url, result_url)
         context = {
             'json_data': result_url,
         }
@@ -93,7 +92,6 @@ class ShowDetailsOfChannelView(LoginRequiredMixin, View):
     def get(self, request, AppId, AppName, *args, **kwargs):
         try:
             context = {}
-            print('AppId ', AppId, AppName)
             infoLogger.info("AppId,AppName in ShowDetailsOfChannelView - AppId: " + AppId + "AppName: " + AppName )
             context['AppId'] = AppId
             context['AppName'] = AppName
