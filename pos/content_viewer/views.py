@@ -218,7 +218,7 @@ def desktop_score_data(request):
             if request.session.has_key('session_id'):
                 session_id = request.session.get('session_id')
 
-            desktop_data = DeskTopData.objects.create(session_id=session_id, node_id=node_id, start_time=startTime, 
+            DeskTopData.objects.create(session_id=session_id, node_id=node_id, start_time=startTime, 
                                                       end_time=endTime, duration=duration, user=user,
                                                       serial_id=serial_id)
         except Exception as e:

@@ -6,6 +6,7 @@ import platform
 import datetime
 import requests
 import time
+import traceback
 import logging
 from pathlib import Path
 from django.contrib import messages
@@ -147,7 +148,7 @@ def push_usageData(request):
         #    string.ascii_uppercase + string.digits) for _ in range(n))
 
         while True:
-            fetch_url = "http://192.168.4.1:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % pageNo
+            fetch_url = "http://192.168.1.16:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % pageNo
 
             # post api
             #commeted out to use new API for zip upload 
@@ -157,7 +158,7 @@ def push_usageData(request):
             response = requests.get(fetch_url)
 
             lstscore = json.loads(response.content.decode('utf-8'))
-            print("lstscore ", lstscore['count'])
+            print("lstscore >>>>>>>>>>>>>>>>>>>>>>>>>>", lstscore['count'], lstscore)
 
             # pi id data to be collected
             os.system('cat /proc/cpuinfo > serial_data.txt')
@@ -178,7 +179,9 @@ def push_usageData(request):
                     data = lstscore
                     for i in range(len(data['results'])):                    
                         actualfileName = data['results'][i]["uploaded_file"]
-                        actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                        print("actualfileName >>>>>>>>>>>>>", actualfileName)
+                        actualfileName = actualfileName.replace("http://192.168.1.16:8000", "/home/mark2/contentservermech/pos")
+                        print("replaced filenae ===========================  ", actualfileName)
                         lastndexofFwdSlsh = actualfileName.rfind('/')                    
                         filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                         indexofDotzip = filenamestr.index(".zip")
@@ -196,7 +199,7 @@ def push_usageData(request):
                             infoLogger.info("Error, File "+ actualfileName +" not exists")                   
                     
                 except Exception as bkp_error_next:
-                    print("error push_usageData is ", bkp_error_next)
+                    print("error push_usageData is ", bkp_error_next, traceback.print_exc())
                     errorLogger.error("Error push_usageData is: " + str(bkp_error_next))
                 # To clear usage data after pushing usage data pos server
                 clear_usage_data()    
@@ -209,7 +212,8 @@ def push_usageData(request):
                     #print("data " , data)
                     for i in range(len(data['results'])):                    
                         actualfileName = data['results'][i]["uploaded_file"]
-                        actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                        print("only else file fname ", actualfileName)
+                        actualfileName = actualfileName.replace("http://192.168.1.16:8000", "/home/mark2/contentservermech/pos")
                         lastndexofFwdSlsh = actualfileName.rfind('/')                    
                         filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                         indexofDotzip = filenamestr.index(".zip")
@@ -228,7 +232,7 @@ def push_usageData(request):
                             infoLogger.info("Error, File "+ actualfileName +" not exists when lstscore['next'] is not None")
                                        
                 except Exception as e1:
-                    print("Error in push_usageData when lstscore['next'] is not None: ", e1)
+                    print("Error in push_usageData when lstscore['next'] is not None: ", e1, traceback.print_exc())
                     errorLogger.error("Error in push_usageData when lstscore['next'] is not None: " + str(e1))
                     return False
             pageNo = pageNo+1        
@@ -249,7 +253,7 @@ def backup(request):
     destDir = os.path.join(create_usage_directory(),
              randstr + str(datetime.datetime.now()))
     
-    srcDir = '/home/pi/contentservermech/pos/media/usage'
+    srcDir = '/home/mark2/contentservermech/pos/media/usage'
     if os.listdir(srcDir):    
         shutil.copytree(srcDir, destDir, symlinks = True)    
 
@@ -257,15 +261,15 @@ def backup(request):
     destDbPushDir = os.path.join(create_dbpush_directory(),
              randstr + str(datetime.datetime.now()))
     
-    srcDbPushDir = '/home/pi/contentservermech/pos/media/dbpushdata'
+    srcDbPushDir = '/home/mark2/contentservermech/pos/media/dbpushdata'
     if os.listdir(srcDbPushDir):    
         shutil.copytree(srcDbPushDir, destDbPushDir, symlinks = True)  
 
     while True:        
 
         # desktop data backup
-        desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
-        appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+        desktop_url = "http://192.168.1.16:8000/api/desktopdata/?page=%s&page_size=15" % i
+        appList_url = "http://192.168.1.16:8000/api/channel/AppList/"
 
         # desktop data url
         desktop_response = requests.get(desktop_url, headers=headers)
@@ -340,7 +344,7 @@ def backupOldMethod(request):
     while True:
         # usagedata backup code
         # get api
-        usage_url = "http://192.168.4.1:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % i
+        usage_url = "http://192.168.1.16:8000/api/usagedata/?table_name=USAGEDATA&page=%s&page_size=15" % i
         print("usage_url ", usage_url)
 
         response = requests.get(usage_url)
@@ -388,8 +392,8 @@ def backupOldMethod(request):
                 return render(request, 'push/data_to_push.html')
 
         # desktop data backup
-        desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
-        appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+        desktop_url = "http://192.168.1.16:8000/api/desktopdata/?page=%s&page_size=15" % i
+        appList_url = "http://192.168.1.16:8000/api/channel/AppList/"
 
         # desktop data url
         desktop_response = requests.get(desktop_url, headers=headers)
@@ -470,13 +474,13 @@ def clear_data(request):
 
 #new method added to delete zip files pushed from tab after pushing to server
 def deleteUsageZipFiles():
-    dir = '/home/pi/contentservermech/pos/media/usage'
+    dir = '/home/mark2/contentservermech/pos/media/usage'
     for f in os.listdir(dir):
         os.remove(os.path.join(dir,f))
 
 #new method added to delete db zip files pushed from tab after pushing to server
 def deleteDbPushZipFiles():
-    dir = '/home/pi/contentservermech/pos/media/dbpushdata'
+    dir = '/home/mark2/contentservermech/pos/media/dbpushdata'
     for f in os.listdir(dir):
         os.remove(os.path.join(dir,f))
 
@@ -512,8 +516,8 @@ def desktop_data_to_server(request):
         desktop_resultlist = []
         while True:
             # get api
-            desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page=%s&page_size=15" % i
-            appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+            desktop_url = "http://192.168.1.16:8000/api/desktopdata/?page=%s&page_size=15" % i
+            appList_url = "http://192.168.1.16:8000/api/channel/AppList/"
 
             # post api
             post_url = "http://rpi.prathamskills.org/api/KolibriSession/Post"
@@ -578,7 +582,7 @@ def desktop_data_to_server(request):
                         headers=headers,
                         data=json.dumps(desktop_data_to_post),
                     )
-					#print("in desktop_data_to_server next is Nit None")
+                    #print("in desktop_data_to_server next is Nit None")
                     print(response_post.status_code, response_post.reason)
                     #appending desktop_result to desktop_resultlist when next is not none in API result
                     desktop_resultlist.append(desktop_result)
@@ -614,7 +618,7 @@ def push_dbPushData(request):
             string.ascii_uppercase + string.digits) for _ in range(n))
 
         while True:
-            fetch_url = "http://192.168.4.1:8000/api/dbpushdata/?table_name=DBPUSHDATA&page=%s&page_size=15" % pageNo
+            fetch_url = "http://192.168.1.16:8000/api/dbpushdata/?table_name=DBPUSHDATA&page=%s&page_size=15" % pageNo
 
             # post api
             post_url = "http://devprodigi.openiscool.org/api/RPIAppDB/PushFiles"
@@ -647,7 +651,7 @@ def push_dbPushData(request):
                     for i in range(len(data['results'])):                    
                         actualfileName = data['results'][i]["uploaded_file"]
                         print("actualfileName" ,actualfileName)
-                        actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                        actualfileName = actualfileName.replace("http://192.168.1.16:8000", "/home/mark2/contentservermech/pos")
                         lastndexofFwdSlsh = actualfileName.rfind('/')                    
                         filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                         indexofDotzip = filenamestr.index(".zip")
@@ -678,7 +682,7 @@ def push_dbPushData(request):
                     print("data when next is not none " , data)
                     for i in range(len(data['results'])):                    
                         actualfileName = data['results'][i]["uploaded_file"]
-                        actualfileName = actualfileName.replace("http://192.168.4.1:8000", "/home/pi/contentservermech/pos")
+                        actualfileName = actualfileName.replace("http://192.168.1.16:8000", "/home/mark2/contentservermech/pos")
                         lastndexofFwdSlsh = actualfileName.rfind('/')                    
                         filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                         indexofDotzip = filenamestr.index(".zip")
@@ -707,5 +711,4 @@ def push_dbPushData(request):
         return render(request, 'push/no_internet.html')         
 
 class NoInternetView(TemplateView):
-    template_name = 'push/no_internet.html'              
-
+    template_name = 'push/no_internet.html'

@@ -52,7 +52,6 @@ class CommonHelpers:
                         new_file.write(chunk)
 
             except Exception as d:
-                print(d)
                 cls.errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + str(d))
 
             try:
@@ -64,4 +63,3 @@ class CommonHelpers:
                 print(e)
                 cls.errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + str(e))
 
-            print("Done >>")

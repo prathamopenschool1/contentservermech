@@ -200,7 +200,7 @@
                 $.ajax({
                     type: 'POST',
                     crossDomain: true,
-                    dataType: "jsonp",
+                    dataType: "json",
                     beforeSend: function(){
                         $('#popup').show();
                         $('#loaded').show();
@@ -249,8 +249,9 @@
                     success: function(){
                         $('#popupBkp').hide();
                         $('#loadedBkp').hide();
-                        $('#pushModal .modal-body').html('<p>Data Backup is Successful!</p>');
-                        $('#pushModal').modal('show')
+                        // $('#pushModal .modal-body').html('<p>Data Backup is Successful!</p>');
+                        // $('#pushModal').modal('show')
+                        alert("success")
                     },
                     error: function (error) {
                         console.log('error; ' + eval(error));
