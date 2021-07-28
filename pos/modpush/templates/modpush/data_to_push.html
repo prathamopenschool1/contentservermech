@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
+    <br>
+    <br>
+    <!-- {% url 'push:usage' %} -->
+    <div class="row col-md-12">
+        <p class="span6" style="float: none; margin:auto;">
+            <button type="submit" id="usage" class="btn btn-success float-right">Upload To Server &#8593</button>
+        </p>
+
+        <p class="span6" style="float: none; margin:auto;">
+            <button type="submit" id="dbpush" class="btn btn-success float-right">Upload DBPush Data &#8593</button>
+       </p>
+
+        <p class="span6" style="float: none; margin:auto;">
+            <button type="submit" id="desktop" class="btn btn-success float-right">DeskTop Data</button>
+        </p>
+
+        <p class="span6" style="float: none; margin:auto;">
+            <button type="submit" id="backup" class="btn btn-success float-right">Backup Data</button>
+        </p>
+
+        <p class="span6" style="float: none; margin:auto;">
+            <button type="submit" id="clear" class="btn btn-success float-right">Delete Data</button>
+       </p>
+    </div>
+
+    <!-- before send modal -->
+    <div id="popupModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button> -->
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+    <!-- success or error modal -->
+    <div id="pushModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+    <!-- confirmation modal -->
+    <div id="confirmModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary mr-auto yes" data-dismiss="modal">OK</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+    <div class="loading"></div>
+
+    <script>
+
+        $('#usage').click(function () {
+
+            $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Upload??</p>');
+            $('#confirmModal').modal('show');
+
+            $('#confirmModal .yes').unbind().click(function (){
+                $.ajax({
+                    type: 'POST',
+                    url: '/push/usage',
+                    dataType: "json",
+                    headers:{
+                        "X-CSRFToken": '{{ csrf_token }}'
+                    },
+                    beforeSend: function(response){
+                        setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                        $('.loading').css("visibility", "visible");
+                    },
+                    success: function(response){
+                        response = JSON.parse(response)
+                        if (response['msg'] == 'No Data'){
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>No Usage Data Pushed Since Records Not Found!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                        else{
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>Usage Data Pushed Successfully!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                    },
+                    error: function (error) {
+                        console.log('error; ', eval(error));
+                        $('.loading').css("visibility", "hidden");
+                        $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                        $('#pushModal').modal('show')
+                    }
+                });
+            })
+
+        })
+        
+        $('#dbpush').click(function () {
+
+            $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Upload DB?</p>');
+            $('#confirmModal').modal('show');
+
+            $('#confirmModal .yes').unbind().click(function (){
+                $.ajax({
+                    type: 'POST',
+                    url: '/push/dbpush',
+                    dataType: "json",
+                    headers:{
+                        "X-CSRFToken": '{{ csrf_token }}'
+                    },
+                    beforeSend: function(response){
+                        setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                        $('.loading').css("visibility", "visible");
+                    },
+                    success: function(response){
+                        response = JSON.parse(response)
+                        if (response['msg'] == 'No Data'){
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>No DB Pushed Since Records Not Found!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                        else{
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>DB Pushed Successfully!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                    },
+                    error: function (error) {
+                        // console.log('error; ', eval(error));
+                        $('.loading').css("visibility", "hidden");
+                        $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                        $('#pushModal').modal('show')
+                    }
+                });
+            })
+
+        })
+
+        $('#desktop').click(function () {
+
+            $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Upload DeskTop Data?</p>');
+            $('#confirmModal').modal('show');
+
+            $('#confirmModal .yes').unbind().click(function (){
+                $.ajax({
+                    type: 'POST',
+                    url: '/push/desktop',
+                    dataType: "json",
+                    headers:{
+                        "X-CSRFToken": '{{ csrf_token }}'
+                    },
+                    beforeSend: function(response){
+                        setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                        $('.loading').css("visibility", "visible");
+                    },
+                    success: function(response){
+                        response = JSON.parse(response)
+                        if (response['msg'] == 'No Data'){
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>No DeskTop Data Pushed Since Records Not Found!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                        else{
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>DeskTop Data Pushed Successfully!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                    },
+                    error: function (error) {
+                        // console.log('error; ', eval(error));
+                        $('.loading').css("visibility", "hidden");
+                        $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                        $('#pushModal').modal('show')
+                    }
+                });
+            })
+
+        })
+
+
+        $('#backup').click(function () {
+
+            $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Take Backup?</p>');
+            $('#confirmModal').modal('show');
+
+            $('#confirmModal .yes').unbind().click(function (){
+                $.ajax({
+                    type: 'POST',
+                    url: '/push/backup',
+                    dataType: "json",
+                    headers:{
+                        "X-CSRFToken": '{{ csrf_token }}'
+                    },
+                    beforeSend: function(response){
+                        setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                        $('.loading').css("visibility", "visible");
+                    },
+                    success: function(response){
+                        response = JSON.parse(response)
+                        if (response['msg'] == 'No Data'){
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>No BackUp Taken Since Records Not Found!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                        else{
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>Data Backup is Successfull!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                    },
+                    error: function (error) {
+                        // console.log('error; ', eval(error));
+                        $('.loading').css("visibility", "hidden");
+                        $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                        $('#pushModal').modal('show')
+                    }
+                });
+            })
+
+        })
+
+
+        $('#clear').click(function () {
+
+            $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Delete Data?</p>');
+            $('#confirmModal').modal('show');
+
+            $('#confirmModal .yes').unbind().click(function (){
+                $.ajax({
+                    type: 'POST',
+                    url: '/push/clear',
+                    dataType: "json",
+                    headers:{
+                        "X-CSRFToken": '{{ csrf_token }}'
+                    },
+                    beforeSend: function(response){
+                        setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                        $('.loading').css("visibility", "visible");
+                    },
+                    success: function(response){
+                        response = JSON.parse(response)
+                        if (response['msg'] == 204){
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>No Data To Delete!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                        else{
+                            $('.loading').css("visibility", "hidden");
+                            $('#pushModal .modal-body').html('<p>Data Deleted Successfully!</p>');
+                            $('#pushModal').modal('show')
+                        }
+                    },
+                    error: function (error) {
+                        // console.log('error; ', eval(error));
+                        $('.loading').css("visibility", "hidden");
+                        $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                        $('#pushModal').modal('show')
+                    }
+                });
+            })
+
+        })
+
+
+
+
+
+        
+    </script>
+
+{% endblock %}

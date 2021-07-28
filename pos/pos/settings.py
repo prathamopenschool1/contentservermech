@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     # rest framework
     'rest_framework',
     'django_filters',
+    'modpush',
 ]
 
 MIDDLEWARE = [
