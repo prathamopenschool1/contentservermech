@@ -352,7 +352,6 @@ def user_register(request):
         program_id, state_id)
     user_response = requests.get(user_url, headers=headers)
     user_result = json.loads(user_response.content.decode('utf-8'))
-
     # fetching all users from table
     all_users = User.objects.all()
 
@@ -364,14 +363,12 @@ def user_register(request):
         last_name = i['LastName']
 
         # checking if User table is empty or not
-        if all_users:
+        if all_users.exists():
             # filtering if table is not empty according to username
             present_users = User.objects.filter(username=i['UserName'])
             # deleting specific column according to username
             for j in present_users:
                 j.delete()
-        else:
-            pass
 
         # creating and saving user in user table(auth_user)
         # user = User.objects.create_user(username=username, password=password,

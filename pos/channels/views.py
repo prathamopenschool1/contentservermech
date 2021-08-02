@@ -257,7 +257,7 @@ def json_data_storage_view(request, id):
             JsonData = result['JsonData']
             DateUpdated = result['DateUpdated']
 
-            if not JsonDataStorage.objects.filter(NodeId=NodeId).exists():
+            if not JsonDataStorage.objects.filter(NodeId=NodeId, JsonType=JsonType).exists():
                 json_data_storage = JsonDataStorage.objects.create(JsonId=JsonId, NodeId=NodeId, JsonType=JsonType, JsonData=JsonData,
                                                                     DateUpdated=DateUpdated)
                 json_data_storage.save()

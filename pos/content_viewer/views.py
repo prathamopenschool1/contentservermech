@@ -52,13 +52,11 @@ class ParentAppView(ListView):
         return queryset
 
     def get_context_data(self, *args, **kwargs):
-        print("AppId is ", self.request.session.get('AppId'))
         infoLogger.info("AppId is " + self.request.session.get('AppId'))
         context = super(ParentAppView, self).get_context_data(*args, **kwargs)
         queryset = self.get_queryset()
         folder_app_name = AppListFromServerData.objects.filter(AppId=self.request.session.get('AppId'))
         for app in folder_app_name:
-            print(app.AppName)
             infoLogger.info("app.AppName " + app.AppName)
             self.request.session['folder_app_name'] = app.AppName
         context['folder_app_name'] = self.request.session.get('folder_app_name')
