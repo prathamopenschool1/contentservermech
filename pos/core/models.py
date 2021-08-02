@@ -1,5 +1,6 @@
 from django.db import models
 from jsonfield import JSONField
+from django.contrib.auth.models import User
 
 
 # storing village, crl, student and group data in this model
@@ -53,5 +54,16 @@ class DbPushData(models.Model):
     filter_name = models.CharField(max_length=100, default="Enter filter name")
     table_name = models.CharField(max_length=100, default="DBPUSHDATA")
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)    
-    uploaded_file = models.FileField(upload_to='dbpushdata/')    
+    uploaded_file = models.FileField(upload_to='dbpushdata/')
+
+
+
+class ProfileModel(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    CRLId = models.CharField(max_length=255)
+
+
+    def __str__(self):
+        return self.user.username
+    
 

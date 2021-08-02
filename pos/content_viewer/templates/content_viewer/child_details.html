@@ -27,8 +27,7 @@
                 {% endfor %}
             {% endfor %}
             {% for qs in parent_db_title %}
-                <li>{{ qs.NodeTitle }}
-                </li>
+                <li>{{ qs.NodeTitle }}</li>
             {% endfor %}
           </ul>
       </nav>
@@ -38,28 +37,7 @@
         <div class="row">
             <!-- Iterate over object_list -->
             {% for object in child_details %}
-                {% if object.appavailableindb.NodeType == "Topic" or object.appavailableindb.NodeType == 'Language' or object.appavailableindb.NodeType == 'Course' %}
-                    <div class="col-md-4 col-4">
-                        <div class="card mb-4 box-shadow" style="width: 80%;">
-                            <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
-                                <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/images/{{object.fileName}}"
-                                width="50%" height="120" alt="Pratham Open School">
-                            </a>
-                        <div class="card-body">
-                            <span class="card-text"><strong>{{object.appavailableindb.NodeTitle}}</strong></span>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                &nbsp;&nbsp;
-                            <div class="btn-group">
-                                <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
-                                    <button class="btn btn-outline-primary" type="button">View</button>
-                                </a>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    {% elif object.FileType == "Thumbnail" and object.appavailableindb.NodeType == "Resource" %}
+                    {% if object.FileType == "Thumbnail" and object.appavailableindb.NodeType == "Resource" %}
                     <div class="col-md-4">
                         <div class="card mb-4 box-shadow" style="width: 14rem;">
                             <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
@@ -80,29 +58,28 @@
                         </div>
                         </div>
                     </div>
-                    {% elif object.FileType == "Thumbnail" and object.appavailableindb.NodeType == "Category" %}
-                    <div class="col-md-4">
-                        <div class="card mb-4 box-shadow" style="width: 14rem;">
-                            <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/images/{{object.fileName}}"
-                                width="50%" height="120" alt="Pratham Open School">
-                            {% comment %} <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
-                                <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/images/{{object.fileName}}"
-                                width="50%" height="120" alt="Pratham Open School">
-                            </a> {% endcomment %}
-                        <div class="card-body">
-                            <span class="card-text"><strong>{{object.appavailableindb.NodeTitle}}</strong></span>
-                            <hr>
-                            <div class="d-flex justify-content-between align-items-center">
-                                &nbsp;&nbsp;
-                            {% comment %} <div class="btn-group">
-                                <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
-                                    <button class="btn btn-outline-primary my-2 my-sm-0" type="button">Watch</button>
+                    {% elif object.FileType == "Thumbnail"%}
+                        <div class="col-md-4 col-4">
+                            <div class="card mb-4 box-shadow" style="width: 80%;">
+                                <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
+                                    <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/images/{{object.fileName}}"
+                                    width="50%" height="120" alt="Pratham Open School">
                                 </a>
-                            </div> {% endcomment %}
+                            <div class="card-body">
+                                <span class="card-text"><strong>{{object.appavailableindb.NodeTitle}}</strong></span>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    &nbsp;&nbsp;
+                                <div class="btn-group">
+                                    <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
+                                        <button class="btn btn-outline-primary" type="button">View</button>
+                                    </a>
+                                </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
+
                   {% endif %}
              <!-- If objet_list is empty  -->
             {% empty %}
