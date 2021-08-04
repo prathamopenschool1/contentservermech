@@ -131,31 +131,32 @@ def resource_view(request, NodeId):
     context['parent_db_title'] = parent_db_title
     # print("genral path is ", general_path, zip_path)
     infoLogger.info("general path is " +  general_path + " and zip path is " +  zip_path)
-    if system_os == "Windows":
-        zip_path = os.path.join(zip_path, r'storage'+'\\'+request.session.get('folder_app_name')+'\\'+r'content\zips')
-        vid_m4v_path = os.path.join(general_path, r'storage'+'\\'+request.session.get('folder_app_name')+'\\'+r'content\videos\m4v')
-        audio_wav_path = os.path.join(general_path, r'storage'+'\\'+request.session.get('folder_app_name')+'\\'+r'content\audios\wav')
-    else:
-        zip_path = os.path.join(zip_path, 'storage'+'/'+request.session.get('folder_app_name')+'/'+'content/zips')
-        vid_m4v_path = os.path.join(general_path, 'storage/'+request.session.get('folder_app_name')+'/content/videos/m4v')
-        # print("vid_m4v_path path is ", vid_m4v_path, zip_path)
-        audio_wav_path = os.path.join(general_path, 'storage'+'/'+request.session.get('folder_app_name')+'/'+'content/audios/wav')
-        # print("audio_wav_path path is ", audio_wav_path, zip_path)
+    zip_path = os.path.join(zip_path, 'storage'+'/'+request.session.get('folder_app_name')+'/'+'content/zips')
+    vid_m4v_path = os.path.join(general_path, 'storage/'+request.session.get('folder_app_name')+'/content/videos/m4v')
+    # print("vid_m4v_path path is ", vid_m4v_path, zip_path)
+    audio_wav_path = os.path.join(general_path, 'storage'+'/'+request.session.get('folder_app_name')+'/'+'content/audios/wav')
+    # print("audio_wav_path path is ", audio_wav_path, zip_path)
     for qs in queryset:
         if qs.FileType == "Content" and qs.fileName.endswith('.zip'):
             zip_path1 = os.path.join(zip_path, qs.fileName)
             qs.fileName = extraction(zip_path1, request.session.get('folder_app_name'))
-            zip_path = os.path.join(zip_path, qs.fileName)
-            context['file'] = qs.fileName
-            context['game_play'] = queryset
-            return render(request, "content_viewer/content_play.html", context=context)
+            if qs.fileName == '-1':
+                context['bad_file'] = "This file is not a proper zip file!!"
+                return render(request, "content_viewer/content_play.html", context=context)
+            elif qs.fileName == '-2':
+                context['android_file'] = "This File can only be played on Android Devices!"
+                return render(request, "content_viewer/content_play.html", context=context)
+            else:
+                zip_path = os.path.join(zip_path, qs.fileName)
+                context['file'] = qs.fileName
+                context['game_play'] = queryset
+                return render(request, "content_viewer/content_play.html", context=context)
+                
         elif qs.FileType == "Content" and qs.fileName.endswith('.mp4'):
             context['video_play'] = queryset
-            # print(context)
             return render(request, "content_viewer/content_play.html", context=context)
         elif qs.FileType == "Content" and qs.fileName == '':
             context['no_content'] = queryset
-            # print(context)
             return render(request, "content_viewer/content_play.html", context=context)
         elif qs.FileType == "Content" and qs.fileName.endswith('.m4v'):
             vid_m4v_path1 = os.path.join(vid_m4v_path, qs.fileName)
