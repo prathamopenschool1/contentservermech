@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
     <br>
     <div class="container">
         <p> Select content from {{ AppName }} </p>
@@ -12,12 +13,12 @@
                 <div class="btn-block pull-right">
                     <button type="submit" id="sort_ids" class="btn btn-success float-right" disabled>Download</button>
                     <div class="loading" id="loaded" style="display:none;">
-                <div class="loader">
+                <!-- <div class="loader">
                 <button class="btn btn-primary float-right" disabled>
                         <span class="spinner-grow spinner-grow-sm"></span>
                         Loading..
                       </button>
-                </div>
+                </div> -->
                 
                 
             </div>
@@ -57,15 +58,23 @@
         type: 'GET',
         crossDomain: true,
         datatype: "jsonp",
+        beforeSend: function(data){
+            $('#loaded').show();
+            $('.loading').css("visibility", "visible");
+        },
         success: function(data) {
             treeData = data.json_data;
             console.log('treeData ', treeData, typeof(treeData));
             if (treeData.length === 0){
+                $('#loaded').hide();
+                $('.loading').css("visibility", "hidden");
                 $('#recordModal .modal-body').html('<p>No Record Found for ' + AppName + '</p>');
                 $('#recordModal').modal('show')
             }
             else{
                 createTree();
+                $('#loaded').hide();
+                $('.loading').css("visibility", "hidden");
             }
     }
 
@@ -208,8 +217,6 @@ function populateTree(parentid)
         jsonObject = uniqueArray.map(JSON.stringify);
         uniqueSet = new Set(jsonObject);
         uniqueArray = Array.from(uniqueSet).map(JSON.parse);
-        console.log(uniqueArray)
-        console.log(uniqueArray.length)
     }
 
     // uncheck function for removing all child nodes once parent is selected
@@ -250,8 +257,6 @@ function populateTree(parentid)
                 }
             }
         }
-    console.log(uniqueArray);
-    console.log("after uncheck length is " + uniqueArray.length);
     }
 
     // auto selecting the parent checkboxes when children checkbox is selected
@@ -339,17 +344,19 @@ function populateTree(parentid)
             datatype: "jsonp",
             beforeSend: function(){
                 $('#loaded').show();
+                $('.loading').css("visibility", "visible");
                 $('#sort_ids').hide();
-                //checkInternetConnection();
             },
             success: function(result){
                 console.log(result);
                 if(result != null && result == 'success'){
                     $('#loaded').hide();
+                    $('.loading').css("visibility", "hidden");
                     $('#sort_ids').show();
                     window.location.href = '/content/app_available/';
                 }
                 else{
+                    $('.loading').css("visibility", "hidden");
                     window.location.href = '/channel/no_internet/';
                 }
             },
