@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
 <br>
 <div class="wrapper col-md-4 text-center container">
         <img src="{% static 'images/logo.png' %}" alt="Pratham">
@@ -72,12 +73,6 @@
                     </div>
                   </div>
                 <div class="loading" id="loaded" style="display:none;">
-                    <div class="loader">
-                    </div>                
-                    <button class="btn btn-primary" disabled>
-                        <span class="spinner-grow spinner-grow-sm"></span>
-                        Loading..
-                      </button>
                 </div>
         </form>
     </div>
@@ -185,6 +180,7 @@
         datatype: "jsonp",
         beforeSend: function(){
             $('#loaded').show();
+            $('.loading').css("visibility", "visible");
             $('#get_villages').hide();
         },
         success: function(data){
@@ -192,6 +188,7 @@
             if(data != null && data == 'success')
                 {
                     $('#loaded').hide();
+                    $('.loading').css("visibility", "hidden");
                     $('#get_villages').show();
                     window.location="/register/user_login/";
                 }

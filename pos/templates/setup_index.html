@@ -2,6 +2,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static '/css/dropdown.css'%}">
 {% block content %}
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
     <div class="wrapper col-md-4 text-center container">
         <img src="{% static 'images/logo.png' %}" alt="Pratham">
     <div class="container vertical-center rounded" style="padding: 15px;background-color: #DCC551;">        
@@ -71,12 +72,6 @@
                     </div>
                   </div>
                 <div class="loading" id="loaded" style="display:none;">
-                    <div class="loader">
-                    </div>
-                    <button class="btn btn-primary" disabled>
-                        <span class="spinner-grow spinner-grow-sm"></span>
-                        Loading..
-                      </button>
                 </div>
                 
         </form>
@@ -185,6 +180,7 @@
         datatype: "jsonp",
         beforeSend: function(){
             $('#loaded').show();
+            $('.loading').css("visibility", "visible");
             $('#get_villages').hide();
         },
         success: function(data){
@@ -192,6 +188,7 @@
             if(data != null && data == 'success')
                 {
                     $('#loaded').hide();
+                    $('.loading').css("visibility", "hidden");
                     window.location="/register/user_login/";
                 }
         },
