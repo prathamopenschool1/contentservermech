@@ -1,27 +1,20 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.hashers import make_password
-from pprint import pprint
-from django.conf import settings
-from django.contrib.sessions.models import Session
-from pathlib import Path
-from django.db.models import F
-from django.contrib.auth.models import User
-from .models import VillageDataStore
-from channels.models import AppAvailableInDB, AppListFromServerData, FileDataToBeStored
-import requests
+import re
+import os
 import json
 import logging
-import os
-from zipfile import ZipFile
-from common_helper.helper import CommonHelpers as chp
-import subprocess
-import re  #For regular Expressions
+import requests
 import netifaces
+import subprocess
+from pathlib import Path
+from django.urls import reverse
+from django.shortcuts import render
+from .models import VillageDataStore
+from django.contrib.auth.models import User
+from common_helper.helper import CommonHelpers as chp
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
+from channels.models import AppAvailableInDB, AppListFromServerData, FileDataToBeStored
 
 
 # This retrieves a Python logging instance (or creates it)
@@ -413,6 +406,7 @@ def devices_connected_to_system(request):
     devices = json.dumps(deviceconnectedata)
          
     return render(request, 'core/devicesConnected.html', context={"devices": devices})
+
 # Added to get interface
 def parse_arp(interface,mac_regex):
     arp_out = subprocess.check_output(f'arp -e -i {interface}', shell=True).decode('utf-8')
@@ -434,5 +428,3 @@ def parse_arp(interface,mac_regex):
                     else:    
                         result.append(line[0])
     return result
-
-
