@@ -305,69 +305,75 @@ class PushHelper(object):
         status_quo = {}
         result_set = {}
 
-        destDir = os.path.join(self.create_usage_directory(), randstr + str(datetime.datetime.now()))
-        srcDir = os.path.join(self.homePath, 'contentservermech/pos/media/usage')
-        if os.listdir(srcDir):
-            shutil.copytree(srcDir, destDir, symlinks = True)
+        try:
+            destDir = os.path.join(self.create_usage_directory(), randstr + str(datetime.datetime.now()))
+            srcDir = os.path.join(self.homePath, 'contentservermech/pos/media/usage')
+            if os.listdir(srcDir):
+                shutil.copytree(srcDir, destDir, symlinks = True)
 
-        # added for DB Push
-        destDbPushDir = os.path.join(self.create_dbpush_directory(), randstr + str(datetime.datetime.now()))
-        srcDbPushDir = os.path.join(self.homePath, 'contentservermech/pos/media/dbpushdata')
-        if os.listdir(srcDbPushDir):    
-            shutil.copytree(srcDbPushDir, destDbPushDir, symlinks = True)
+            # added for DB Push
+            destDbPushDir = os.path.join(self.create_dbpush_directory(), randstr + str(datetime.datetime.now()))
+            srcDbPushDir = os.path.join(self.homePath, 'contentservermech/pos/media/dbpushdata')
+            if os.listdir(srcDbPushDir):    
+                shutil.copytree(srcDbPushDir, destDbPushDir, symlinks = True)
 
 
-        desktop_url = 'http://192.168.4.1:8000/api/desktopdata/'
-        appList_url = 'http://192.168.4.1:8000/api/channel/AppList/'
+            desktop_url = 'http://192.168.4.1:8000/api/desktopdata/'
+            appList_url = 'http://192.168.4.1:8000/api/channel/AppList/'
 
-        dresponse = requests.get(desktop_url)
-        aresponse = requests.get(appList_url)
+            dresponse = requests.get(desktop_url)
+            aresponse = requests.get(appList_url)
 
-        dresult = json.loads(dresponse.content.decode('utf-8'))
-        aresult = json.loads(aresponse.content.decode('utf-8'))
+            dresult = json.loads(dresponse.content.decode('utf-8'))
+            aresult = json.loads(aresponse.content.decode('utf-8'))
 
-        if dresult['count'] == 0 and aresult['count'] == 0:
-            infoLogger.info("No Data Found in both Applist and DeskTop w/o loop")
-            status_quo['status'] = 403
-            status_quo['msg'] = 'Data Not Found'
-            return status_quo
-        elif dresult['count'] == 0:
-            infoLogger.info("No Data Found in both Applist or DeskTop")
-            status_quo['status'] = 403
-            status_quo['msg'] = 'Data Not Found'
-            # print("status quo ", status_quo)
-            return status_quo
-        else:
-            while True:
-                # get api
-                desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=15".format(pageNo)
-                appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+            if dresult['count'] == 0 and aresult['count'] == 0:
+                infoLogger.info("No Data Found in both Applist and DeskTop w/o loop")
+                status_quo['status'] = 403
+                status_quo['msg'] = 'Data Not Found'
+                return status_quo
+            elif dresult['count'] == 0:
+                infoLogger.info("No Data Found in both Applist or DeskTop")
+                status_quo['status'] = 403
+                status_quo['msg'] = 'Data Not Found'
+                # print("status quo ", status_quo)
+                return status_quo
+            else:
+                while True:
+                    # get api
+                    desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=15".format(pageNo)
+                    appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
 
-                # desktop data url
-                desktop_response = requests.get(desktop_url, headers=self.headers)
-                desktop_result = json.loads(desktop_response.content.decode('utf-8'))
+                    # desktop data url
+                    desktop_response = requests.get(desktop_url, headers=self.headers)
+                    desktop_result = json.loads(desktop_response.content.decode('utf-8'))
 
-                # app list url
-                appList_response = requests.get(appList_url, headers=self.headers)
-                appList_result = json.loads(appList_response.content.decode('utf-8'))
+                    # app list url
+                    appList_response = requests.get(appList_url, headers=self.headers)
+                    appList_result = json.loads(appList_response.content.decode('utf-8'))
 
-                if desktop_response.status_code == 404 and appList_response.status_code == 404:
-                    infoLogger.info("No Data Found in both Applist and DeskTop")
-                    status_quo['status'] = 404
-                    status_quo['msg'] = 'Data Not Found'
-                    return status_quo
-                else:
-                    if desktop_result['count'] != 0 and desktop_result['next'] is None:
-                        result_set = self.backupFile(desktop_result, appList_result)
-                        return result_set
+                    if desktop_response.status_code == 404 and appList_response.status_code == 404:
+                        infoLogger.info("No Data Found in both Applist and DeskTop")
+                        status_quo['status'] = 404
+                        status_quo['msg'] = 'Data Not Found'
+                        return status_quo
                     else:
-                        result_set = self.backupFile(desktop_result, appList_result)
-                        # if desktop_result['count'] == 0 and desktop_result['next'] is None:
-                        #     return result_set
-                        # else:
-                        #     result_set = self.backupFile(desktop_result, appList_result)
+                        if desktop_result['count'] != 0 and desktop_result['next'] is None:
+                            result_set = self.backupFile(desktop_result, appList_result)
+                            return result_set
+                        else:
+                            result_set = self.backupFile(desktop_result, appList_result)
+                            # if desktop_result['count'] == 0 and desktop_result['next'] is None:
+                            #     return result_set
+                            # else:
+                            #     result_set = self.backupFile(desktop_result, appList_result)
 
-                pageNo =  pageNo + 1
+                    pageNo =  pageNo + 1
+
+        except FileNotFoundError as fnf:
+            result_set['msg'] = str(fnf)
+            result_set['status'] = 403
+            return result_set
 
 
     def backupFile(self, desktop_result, appList_result):
@@ -402,16 +408,29 @@ class PushHelper(object):
 
     #new method added to delete zip files pushed from tab after pushing to server
     def deleteUsageZipFiles(self):
-        dir = os.path.join(self.homePath, 'contentservermech/pos/media/usage')
-        for f in os.listdir(dir):
-            os.remove(os.path.join(dir,f))
+        result_set = {}
+        try:
+            dir = os.path.join(self.homePath, 'contentservermech/pos/media/usage')
+            for f in os.listdir(dir):
+                os.remove(os.path.join(dir,f))
+        except FileNotFoundError as fnf:
+            print(fnf, "455")
+            result_set['status'] = 403
+            return result_set
+
 
 
     #new method added to delete db zip files pushed from tab after pushing to server
     def deleteDbPushZipFiles(self):
-        dir = os.path.join(self.homePath, 'contentservermech/pos/media/dbpushdata')
-        for f in os.listdir(dir):
-            os.remove(os.path.join(dir,f))
+        result_set = {}
+        try:
+            dir = os.path.join(self.homePath, 'contentservermech/pos/media/dbpushdata')
+            for f in os.listdir(dir):
+                os.remove(os.path.join(dir,f))
+        except FileNotFoundError as fnf:
+            print(fnf, "485")
+            result_set['status'] = 403
+            return result_set
 
 
 

@@ -144,6 +144,7 @@ class ClearDataView(View):
             context = {'msg': 204}
             context = json.dumps(context)
             return JsonResponse(context, safe=False)
+
         else:
             queryset_usage.delete()
             queryset_dbpush.delete()
