@@ -1,10 +1,13 @@
 import re
 import os
+import time
 import json
 import logging
 import requests
 import netifaces
 import subprocess
+import pandas as pd
+import numpy as np
 from pathlib import Path
 from django.urls import reverse
 from django.shortcuts import render
@@ -340,39 +343,66 @@ def post_all_data(request):
 
 
 def user_register(request):
-    users_list = []
+    # users_list = []
     user_url = "http://www.hlearning.openiscool.org/api/crl/get/?programid=%s&state=%s" % (
         program_id, state_id)
     user_response = requests.get(user_url, headers=headers)
     user_result = json.loads(user_response.content.decode('utf-8'))
+
+    df = pd.DataFrame(user_result)
+
+    colDrops = ['CRLId', 'ProgramId', 'Mobile', 'State']
+    df.drop(columns=colDrops, inplace=True, axis=1)
+
+    rename_map = {
+        'UserName': 'username',
+        'Password': 'password',
+        'Email': 'email',
+        'FirstName': 'first_name',
+        'LastName': 'last_name'
+    }
+
+    df.rename(columns=rename_map, inplace=True)
+
+    df['password'] = df['password'].apply(lambda x: make_password(x))
+    df['email'] = df['email'].fillna("NA")
+
+    user_name_lst = df['username'].tolist()
+
     # fetching all users from table
     all_users = User.objects.all()
+    if all_users.exists():
+        User.objects.filter(username__in=user_name_lst).delete()
 
-    for i in user_result:
-        username = i['UserName']
-        password = i['Password']
-        email = i['Email']
-        first_name = i['FirstName']
-        last_name = i['LastName']
+    User.objects.bulk_create(
+        User(**item) for item in df.to_dict(orient='records')
+    )
 
-        # checking if User table is empty or not
-        if all_users.exists():
-            # filtering if table is not empty according to username
-            present_users = User.objects.filter(username=i['UserName'])
-            # deleting specific column according to username
-            for j in present_users:
-                j.delete()
 
-        # creating and saving user in user table(auth_user)
-        # user = User.objects.create_user(username=username, password=password,
-        #                                 email=email, first_name=first_name, last_name=last_name)
-        # user.save()
-        users_list.append(User(username=username, password=make_password(password),
-                               email=email, first_name=first_name, last_name=last_name))
 
-    # print('user list is ', users_list)
+    # for i in user_result:
+    #     username = i['UserName']
+    #     password = i['Password']
+    #     email = i['Email']
+    #     first_name = i['FirstName']
+    #     last_name = i['LastName']
 
-    User.objects.bulk_create(users_list, ignore_conflicts=True)
+    #     # checking if User table is empty or not
+    #     if all_users.exists():
+    #         # filtering if table is not empty according to username
+    #         User.objects.filter(username=i['UserName']).delete()
+    #         # deleting specific column according to username
+    #         # for j in present_users:
+    #         #     j.delete()
+
+    #     # creating and saving user in user table(auth_user)
+    #     # user = User.objects.create_user(username=username, password=password,
+    #     #                                 email=email, first_name=first_name, last_name=last_name)
+    #     # user.save()
+    #     users_list.append(User(username=username, password=make_password(password),
+    #                            email=email, first_name=first_name, last_name=last_name))
+
+    # User.objects.bulk_create(users_list, ignore_conflicts=True)
 
     return HttpResponse("success")
 

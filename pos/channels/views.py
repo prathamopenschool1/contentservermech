@@ -70,7 +70,6 @@ def channel_list_on_server(request):
 # return the json response in api form for showing checkboxes nad details
 @api_view(['GET'])
 def return_json_value(request, AppId):
-    print("AppId in return_json_value" , AppId)
     try:
         url_to_convert = "http://devposapi.prathamopenschool.org/api/AppNode?id={}" .format(
             AppId)

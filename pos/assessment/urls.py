@@ -1,6 +1,13 @@
 from django.urls import path
 from . import views
 
+
+app_name = 'assessment'
+
 urlpatterns = [
-    path('', views.assindex, name='index'),
+    path('', views.CommonView.as_view(), name='common'),
+    path('language', views.LanguageView.as_view(), name='language'),
+    path('subject/<str:langId>/<str:langName>', views.SubjectView.as_view(), name='subject'),
+    path('exam/<str:langName>/<str:langId>/<str:subjName>/<str:subjId>', views.ExamV2View.as_view(), name='exam'),
+    path('download', views.DownloadView.as_view(), name='download'),
 ]

@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from .pushhelper.connectcheck import PushHelper
 from django.http import JsonResponse, HttpResponse
+from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.models import UsageData, DeskTopData,DbPushData
 
@@ -154,3 +155,10 @@ class ClearDataView(View):
             context = {'msg': 'success'}
             context = json.dumps(context)
             return JsonResponse(context, safe=False)
+
+
+class PushedDTDataView(TemplateView):
+    template_name = 'modpush/showPushedDTData.html'
+
+
+
