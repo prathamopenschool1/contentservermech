@@ -190,3 +190,6 @@ try:
 except Exception as e:
     # in case of any error, pass silently.
     pass
+
+
+AUTH_USER_MODEL = 'account.CrlUserModel'
