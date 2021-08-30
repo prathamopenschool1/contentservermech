@@ -16,7 +16,7 @@
             <div class="row">
                 <!-- Iterate over object_list -->
                 {% for object in apps_list %}
-                <div class="col-md-6 col-6">
+                <div class="col-md-4 col-4">
                   <div class="card mb-4 box-shadow">
                     <a href="{% url 'content_viewer:parent_details' AppId=object.AppId %}">
                         <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.AppName}}/images/{{object.fileName}}"

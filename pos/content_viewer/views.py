@@ -36,7 +36,6 @@ class AppAvailableListView(ListView):
         queryset = self.get_queryset()
         context["apps_list"] = queryset
         infoLogger.info("In get_context_data!!")
-        print("context is ", context)
         return context
 
 
