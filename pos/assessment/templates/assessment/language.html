@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
+<br>
+    <main role="main">
+
+      <section class="text-center">
+        <div class="container">
+          <h3 class="jumbotron-heading">Available Languages</h3>
+        </div>
+      </section>
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+          {% for lang in language_result %}
+                <div class="col-md-4">
+                <div class="card mb-4 box-shadow" style="width: 14rem;">
+                  <div class="card-body">
+                    <p class="card-text" style="font-size:medium;">
+                    {{ lang.languagename }}</br></br>
+                        <a href="{% url 'assessment:subject' langId=lang.languageid langName=lang.languagename %}">
+                            <button type="button" class="btn btn-md btn-success float-right langBtn">{{ lang.languagename }}</button>
+                        </a>
+                    </p>                    
+                  </div>
+                </div>
+              </div>
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <script>
+        $('.langBtn').click(function () {
+
+            console.log("some vals")
+            // $.ajax({
+            //         type: 'POST',
+            //         url: '/assessment/subject',
+            //         dataType: "json",
+            //         headers:{
+            //             "X-CSRFToken": '{{ csrf_token }}'
+            //         },
+            //         beforeSend: function(response){
+            //             setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+            //             $('.loading').css("visibility", "visible");
+            //         },
+            //         success: function(response){
+            //             response = JSON.parse(response)
+            //             if (response['msg'] == 'No Data'){
+            //                 $('.loading').css("visibility", "hidden");
+            //                 $('#pushModal .modal-body').html('<p>No Usage Data Pushed Since Records Not Found!</p>');
+            //                 $('#pushModal').modal('show')
+            //             }
+            //             else{
+            //                 $('.loading').css("visibility", "hidden");
+            //                 $('#pushModal .modal-body').html('<p>Usage Data Pushed Successfully!</p>');
+            //                 $('#pushModal').modal('show')
+            //             }
+            //         },
+            //         error: function (error) {
+            //             console.log('error; ', eval(error));
+            //             $('.loading').css("visibility", "hidden");
+            //             $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+            //             $('#pushModal').modal('show')
+            //         }
+            //     });
+        })
+    </script>
+
+{% endblock %}

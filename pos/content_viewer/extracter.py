@@ -1,5 +1,6 @@
 import os
 import logging
+import platform
 from zipfile import BadZipFile, ZipFile
 
 
@@ -10,8 +11,14 @@ errorLogger = logging.getLogger("error_logger")
 
 def extraction(file_with_path, AppName):
 
+    system_os = platform.system()
+
     path = os.getcwd()
-    new_path = os.path.join(path, 'storage/'+str(AppName)+'/content/zips')
+    if system_os == "Windows":
+        new_path = os.path.join(path, r'storage'+'\\'+str(AppName)+'\\'+r'content\zips')
+        # print("new path is", new_path)
+    else:
+        new_path = os.path.join(path, 'storage/'+str(AppName)+'/content/zips')
     index = ''
     try:
         with ZipFile(file_with_path, 'r') as zip1:

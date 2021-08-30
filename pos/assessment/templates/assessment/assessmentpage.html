@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
+    <link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
+    <br>
+    <div class="container">
+        <div class="">
+            <div class="breadcrumb">
+                <div class="items">
+                </div>
+                <div class="btn-block pull-right">
+                    <button type="submit" id="sort_ids" class="btn btn-secondary float-right" disabled>Download</button>
+                    <div class="loading" id="loaded" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <div id="dvtree">
+            </div>
+            <!-- Modal -->
+            <div id="recordModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+    var treeData = ''
+    var languageId = ''
+    var languageName = ''
+    var subjectId = ''
+    var subjectName = ''
+    var languageArray = [];
+    var subjectArray = [];
+    var examIdArray = [];
+
+    window.onload = function(){
+        callLanguage();
+        
+    }
+
+    function callLanguage() {
+        subjectId = ''
+        subjectName = ''
+        languageId = ''
+        languageName = ''
+        let lang_url = "/assessment/language"
+        fetch(lang_url, {
+            method: 'POST',
+            headers: {
+                "Content-Type" : "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(jsondata => fetchLangData(jsondata))
+    }
+    
+    function fetchLangData(jsondata) {
+        let treeData = jsondata.language_result;
+        createCrumb();
+        
+        if (treeData.length === 0){
+                $('#loaded').hide();
+                $('.loading').css("visibility", "hidden");
+                $('#recordModal .modal-body').html('<p>No Records Found</p>');
+                $('#recordModal').modal('show')
+            }
+            else{
+                $('#loaded').hide();
+                $('.loading').css("visibility", "hidden");
+                loadLanguageData(treeData);
+            }
+    }
+
+    function loadLanguageData(treeData) {
+        let str = '';
+        str=str+'<ul>';
+        for (let i = 0; i < treeData.length; i++) {
+                str=str+'<li>\
+                <a href="#" style="color:black;"\
+                onclick="fetchSubjectData(\''+treeData[i]["languageid"].toString()+'\', \''+treeData[i]["languagename"].toString()+'\');">'+treeData[i]["languagename"]+'</a></li>';
+        }
+
+        str=str+'</ul>';
+        $("#dvtree").html(str);
+    }
+
+
+    function fetchSubjectData(langId, langName) {
+        subjectId = ''
+        subjectName = ''
+        languageId = langId;
+        languageName = langName;
+        let subj_url = "/assessment/subject"
+        fetch(subj_url, {
+            method: 'POST',
+            headers: {
+                "Content-Type" : "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'langId': langId,
+                'langName': langName
+            })
+        })
+        .then(response => response.json())
+        .then(jsondata => loadSubjectData(jsondata))
+    }
+
+    function loadSubjectData(jsondata) {
+        let treeData = jsondata.subject_result['subj_result']
+        let subjectDatas = treeData
+        let str = '';
+        str=str+'<ul>';
+            for (let i = 0; i < treeData.length; i++) {
+                if(treeData[i].checked){
+                    str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        checked="true" onchange="subjecTicked(this)" onclick="">\
+                        <a href="#" style="color:black;"\
+                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
+                    }
+                else{
+                    str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        onchange="subjecTicked(this);" onclick="">\
+                        <a href="#" style="color:black;"\
+                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=0);">'+treeData[i]["subjectname"]+'</a></li>';
+                    }
+             }
+                    
+        str=str+'</ul>';
+        $("#dvtree").html(str);
+        // $(".items").empty();
+        createCrumb();
+    }
+
+    function fectchExamData(languageid, subjectid, subjectname, flag) {
+        console.log("flag ", flag, typeof(flag))
+        subjectName = subjectname;
+        let exam_url = "/assessment/exam"
+        fetch(exam_url, {
+            method: 'POST',
+            headers: {
+                "Content-Type" : "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'languageid': languageid,
+                'subjectid': subjectid
+            })
+        })
+        .then(response => response.json())
+        .then(jsondata => loadExamData(jsondata))
+    }
+
+    function loadExamData(jsondata) {
+        let treeData = jsondata.exam_result['exam_result'][0]['lstsubjectexam'];
+        let str = '';
+        str=str+'<ul>';
+        for (let i = 0; i < treeData.length; i++) {
+                if(treeData[i].checked){
+                    str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        checked="true" onchange="" onclick="">\
+                        <p style="color:black;">'+treeData[i]["examname"]+'</p></li>';
+                }
+                else{
+                    str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        onchange="" onclick="">\
+                        '+treeData[i]["examname"]+'</li>';
+                }
+        }
+
+        str=str+'</ul>';
+        $("#dvtree").html(str);
+        createCrumb();
+        
+    }
+
+    function createCrumb() {
+        $(".items").empty();
+        $(".items").prepend('<a href="#" style="color:green;text-decoration:None;" onclick="callLanguage();">Home</a>');
+        if (languageName !== ''){
+            $(".items").append(' > <a href="#" style="color:green;text-decoration:None;" onclick="fetchSubjectData(\''+languageId+'\', \''+languageName+'\');">'+languageName.toString()+'</a>');
+        }
+        if (subjectName !== ''){
+            $(".items").append(' > <a href="#" style="color:green;text-decoration:None;">'+subjectName.toString()+'</a>');
+        }
+    }
+
+    function subjecTicked(id){
+        if($(id).is(":checked")){
+            console.log($(id));
+            console.log("poll ", id.id);
+            $(id).checked = true;
+        }
+    }
+
+
+    
+
+
+
+</script>
+
+{% endblock %}

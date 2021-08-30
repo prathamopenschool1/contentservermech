@@ -11,6 +11,8 @@
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
 
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5); }
+
+.navbar-nav > li > .dropdown-menu { background-color: rgba(0, 0, 0, 1); }
 </style>
 
 <nav class="navbar navbar-expand-md navbar-default fixed-top navbar-dark bg-dark border-bottom ">
@@ -23,18 +25,6 @@
       {% if request.user.is_authenticated %}
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'core:programs' %}">
-                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">
-                    Data Download<span class="sr-only">(current)</span>
-                </button>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'content_viewer:app_available' %}">
-                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Content Download</button>
-            </a>
-          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'push:push-data' %}">
                 <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Push Data</button>
@@ -45,11 +35,39 @@
                 <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Devices Linked</button>
             </a>
           </li>
+          <li class="dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">
+                  Downloads<span class="caret"></span>
+              </button>
+            </a>
+            <!-- <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1
+              <span class="caret"></span></a> -->
+              <ul class="dropdown-menu">
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'core:programs' %}">
+                      <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">
+                          Data Download<span class="sr-only">(current)</span>
+                      </button>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'content_viewer:app_available' %}">
+                      <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Content Download</button>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'assessment:common' %}"> 
+                      <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Assessment Download</button>
+                  </a>
+                </li>
+              </ul>
+          </li>
         </ul>
         <ul class="navbar-nav my-2 my-md-0 mr-md-3">
           <li class="nav-item active">
             <span style="color: #e5e5e5;">
-              Welcome, {{ request.user.username }}
+              Welcome, {{ request.user.username|title }}
             </span>
           </li>
       </ul>

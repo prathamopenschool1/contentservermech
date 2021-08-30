@@ -14,7 +14,7 @@
                 {% for qs in app_name %}
                     <a href="{% url 'content_viewer:parent_details' AppId=qs.AppId %}">
                         {% if qs.AppId == appid %}
-                            {{ qs.AppName }}
+                            {{ qs.AppName|title }}
                         {% endif %}
                     </a>
                 {% endfor %}
@@ -22,12 +22,12 @@
             {% for qs in chaining_queries %}
                 {% for ids in qs %}
                     <li><a href="{% url 'content_viewer:child_details' NodeId=ids.NodeId %}">
-                    {{ ids.NodeTitle }}
+                    {{ ids.NodeTitle|title }}
                     </a></li>
                 {% endfor %}
             {% endfor %}
             {% for qs in parent_db_title %}
-                <li>{{ qs.NodeTitle }}</li>
+                <li>{{ qs.NodeTitle|title }}</li>
             {% endfor %}
           </ul>
       </nav>
@@ -60,7 +60,7 @@
                     </div>
                     {% elif object.FileType == "Thumbnail"%}
                         <div class="col-md-4 col-4">
-                            <div class="card mb-4 box-shadow" style="width: 80%;">
+                            <div class="card mb-4 box-shadow" style="width: 100%;">
                                 <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
                                     <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.appavailableindb.applistfromserverdata.AppName}}/images/{{object.fileName}}"
                                     width="50%" height="120" alt="Pratham Open School">

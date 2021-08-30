@@ -1,10 +1,13 @@
 import re
 import os
+import time
 import json
 import logging
 import requests
 import netifaces
 import subprocess
+import pandas as pd
+import numpy as np
 from pathlib import Path
 from django.urls import reverse
 from django.shortcuts import render
@@ -15,6 +18,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from channels.models import AppAvailableInDB, AppListFromServerData, FileDataToBeStored
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 # This retrieves a Python logging instance (or creates it)
@@ -340,40 +347,44 @@ def post_all_data(request):
 
 
 def user_register(request):
-    users_list = []
     user_url = "http://www.hlearning.openiscool.org/api/crl/get/?programid=%s&state=%s" % (
         program_id, state_id)
     user_response = requests.get(user_url, headers=headers)
     user_result = json.loads(user_response.content.decode('utf-8'))
+
+    df = pd.DataFrame(user_result)
+
+    rename_map = {
+        'UserName': 'username',
+        'Password': 'password',
+        'Email': 'email',
+    }
+
+    df.rename(columns=rename_map, inplace=True)
+    df['email'] = df['email'].fillna("NA")
+    crlid_lst = df['CRLId'].tolist()
+    username_lst = df['username'].tolist()
+
     # fetching all users from table
-    all_users = User.objects.all()
+    if not User.objects.filter(CRLId__in=crlid_lst, username__in=username_lst).exists():
+        df['password'] = df['password'].apply(lambda x: make_password(x))
+        User.objects.bulk_create(
+            (User(**item) for item in df.to_dict(orient='records')), batch_size=10000, ignore_conflicts=True
+        )
 
-    for i in user_result:
-        username = i['UserName']
-        password = i['Password']
-        email = i['Email']
-        first_name = i['FirstName']
-        last_name = i['LastName']
+    # users_list = [
+    #     User(
+    #         username = row['username'],
+    #         password = row['password'],
+    #         email = row['email'],
+    #         first_name = row['first_name'],
+    #         last_name = row['last_name'],
+    #     )
+    #     for i, row in df.iterrows()
+    # ]
 
-        # checking if User table is empty or not
-        if all_users.exists():
-            # filtering if table is not empty according to username
-            present_users = User.objects.filter(username=i['UserName'])
-            # deleting specific column according to username
-            for j in present_users:
-                j.delete()
-
-        # creating and saving user in user table(auth_user)
-        # user = User.objects.create_user(username=username, password=password,
-        #                                 email=email, first_name=first_name, last_name=last_name)
-        # user.save()
-        users_list.append(User(username=username, password=make_password(password),
-                               email=email, first_name=first_name, last_name=last_name))
-
-    # print('user list is ', users_list)
-
-    User.objects.bulk_create(users_list, ignore_conflicts=True)
-
+    # User.objects.bulk_create(users_list, ignore_conflicts=True)
+    
     return HttpResponse("success")
 
 # ADDED TO GET DEVICES CONNECTED TO SYSTEM USING HOTSPOT
