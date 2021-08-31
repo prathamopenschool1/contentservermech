@@ -4,6 +4,7 @@ import time
 import json
 import logging
 import requests
+import traceback
 import netifaces
 import subprocess
 import pandas as pd
@@ -80,6 +81,7 @@ def home(request):
                 #print("el", request.session.get('session_id', randstr_session))
             return HttpResponseRedirect(reverse('content_viewer:app_available'))
     except Exception as e:
+        traceback.print_exc()
         print("setup error is:---", e)
         errorLogger.error("setup error is:--- " + str(e))
         return check_internet(request)
