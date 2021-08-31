@@ -88,6 +88,7 @@
     }
 
     function loadLanguageData(treeData) {
+        console.log("language data !!!!!!!");
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
@@ -123,6 +124,7 @@
     }
 
     function loadSubjectData(jsondata) {
+        console.log("subject data !!!!!!!");
         let treeData = jsondata.subject_result['subj_result']
         let subjectDatas = treeData
         let str = '';
@@ -131,14 +133,14 @@
                 if(treeData[i].checked){
                     str=str+'<li>\
                         <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        checked="true" onchange="subjecTicked(this)" onclick="">\
+                        checked="true" onclick="">\
                         <a href="#" style="color:black;"\
                         onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
                     }
                 else{
                     str=str+'<li>\
                         <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        onchange="subjecTicked(this);" onclick="">\
+                        onclick="">\
                         <a href="#" style="color:black;"\
                         onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=0);">'+treeData[i]["subjectname"]+'</a></li>';
                     }
@@ -175,6 +177,7 @@
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
                 if(treeData[i].checked){
+                    treeData[i].checked = true;
                     str=str+'<li>\
                         <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         checked="true" onchange="" onclick="">\
@@ -205,13 +208,36 @@
         }
     }
 
-    function subjecTicked(id){
-        if($(id).is(":checked")){
-            console.log($(id));
-            console.log("poll ", id.id);
-            $(id).checked = true;
-        }
-    }
+    var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
+    // // var $checkboxes = $("#dvtree :checkbox");
+    var checkboxes = document.querySelector('#dvtree');
+
+    checkboxes.addEventListener('change', (event) => {
+        console.log("changed " ,event);
+        
+    })
+
+    // $checkboxes.on("change", function(){
+    //     console.log("clicked ")
+    // $checkboxes.each(function(){
+    //     checkboxValues[this.id] = this.checked;
+    // });
+    // localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+    // });
+
+    // function subjecTicked(id, subjectDatas){
+    //     if ($(id).is(':checked')) {
+    //         checkboxValues[id.id] = id.checked;
+    //     }
+    //     localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+    // }
+
+    // window.onload = function(){
+    //     cbvals = JSON.parse(localStorage.getItem('checkboxValues'))
+    //     console.log(cbvals, typeof(cbvals));
+        
+    // }
+     
 
 
     
