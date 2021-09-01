@@ -50,7 +50,6 @@
 
     window.onload = function(){
         callLanguage();
-        
     }
 
     function callLanguage() {
@@ -130,26 +129,28 @@
         let str = '';
         str=str+'<ul>';
             for (let i = 0; i < treeData.length; i++) {
-                if(treeData[i].checked){
+                if(!treeData[i].checked){
+                    console.log("908111");
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        checked="true" onclick="">\
-                        <a href="#" style="color:black;"\
-                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
-                    }
-                else{
-                    str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        onclick="">\
+                        <input name="apiData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        onchange="" onclick="">\
                         <a href="#" style="color:black;"\
                         onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=0);">'+treeData[i]["subjectname"]+'</a></li>';
+                    }
+                    else{
+                        console.log("90800");
+                        str=str+'<li>\
+                        <input name="apiData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        checked=true onchange="" onclick="">\
+                        <a href="#" style="color:black;"\
+                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
                     }
              }
                     
         str=str+'</ul>';
         $("#dvtree").html(str);
-        // $(".items").empty();
         createCrumb();
+        lisner();
     }
 
     function fectchExamData(languageid, subjectid, subjectname, flag) {
@@ -168,24 +169,24 @@
             })
         })
         .then(response => response.json())
-        .then(jsondata => loadExamData(jsondata))
+        .then(jsondata => loadExamData(jsondata, flag, subjectid))
     }
 
-    function loadExamData(jsondata) {
+    function loadExamData(jsondata, flag, subjectid) {
+        console.log("new flag ", flag, typeof(flag))
         let treeData = jsondata.exam_result['exam_result'][0]['lstsubjectexam'];
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
-                if(treeData[i].checked){
-                    treeData[i].checked = true;
+                if(flag == 1){
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        <input name="apiData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         checked="true" onchange="" onclick="">\
                         <p style="color:black;">'+treeData[i]["examname"]+'</p></li>';
                 }
                 else{
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        <input name="apiData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         onchange="" onclick="">\
                         '+treeData[i]["examname"]+'</li>';
                 }
@@ -194,7 +195,7 @@
         str=str+'</ul>';
         $("#dvtree").html(str);
         createCrumb();
-        
+        lisner();
     }
 
     function createCrumb() {
@@ -209,34 +210,26 @@
     }
 
     var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
-    // // var $checkboxes = $("#dvtree :checkbox");
-    var checkboxes = document.querySelector('#dvtree');
+    var cbox = document.querySelector("#dvtree");
 
-    checkboxes.addEventListener('change', (event) => {
-        console.log("changed " ,event);
-        
-    })
+    function lisner() {
+        cbox.addEventListener("change", function () {
+            let subjid = '';
+            var $checkboxes = $("#dvtree :checkbox");
+            $checkboxes.each(function(){
+                checkboxValues[this.id] = this.checked;
+                subjid = this.id
+            });
+            console.log(subjid)
+            localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+            // fectchExamData(languageId, subjid, subjectName, flag=1)
+        })
 
-    // $checkboxes.on("change", function(){
-    //     console.log("clicked ")
-    // $checkboxes.each(function(){
-    //     checkboxValues[this.id] = this.checked;
-    // });
-    // localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    // });
-
-    // function subjecTicked(id, subjectDatas){
-    //     if ($(id).is(':checked')) {
-    //         checkboxValues[id.id] = id.checked;
-    //     }
-    //     localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    // }
-
-    // window.onload = function(){
-    //     cbvals = JSON.parse(localStorage.getItem('checkboxValues'))
-    //     console.log(cbvals, typeof(cbvals));
-        
-    // }
+        $.each(checkboxValues, function(key, value) {
+            $("#" + key).prop('checked', value);
+        });
+    
+    }
      
 
 
