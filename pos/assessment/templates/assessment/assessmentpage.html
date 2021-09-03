@@ -50,7 +50,6 @@
 
     window.onload = function(){
         callLanguage();
-        
     }
 
     function callLanguage() {
@@ -93,12 +92,15 @@
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
                 str=str+'<li>\
-                <a href="#" style="color:black;"\
-                onclick="fetchSubjectData(\''+treeData[i]["languageid"].toString()+'\', \''+treeData[i]["languagename"].toString()+'\');">'+treeData[i]["languagename"]+'</a></li>';
+                    <input name="apiLanguageData" type="checkbox" class="box" id="'+treeData[i]["languageid"].toString()+'"\
+                        onchange="" onclick="">\
+                    <a href="#" style="color:black;"\
+                    onclick="fetchSubjectData(\''+treeData[i]["languageid"].toString()+'\', \''+treeData[i]["languagename"].toString()+'\');">'+treeData[i]["languagename"]+'</a></li>';
         }
 
         str=str+'</ul>';
         $("#dvtree").html(str);
+        langlistener();
     }
 
 
@@ -130,26 +132,28 @@
         let str = '';
         str=str+'<ul>';
             for (let i = 0; i < treeData.length; i++) {
-                if(treeData[i].checked){
+                if(!treeData[i].checked){
+                    console.log("908111");
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        checked="true" onclick="">\
-                        <a href="#" style="color:black;"\
-                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
-                    }
-                else{
-                    str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
-                        onclick="">\
+                        <input name="apiSubjectData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        onchange="" onclick="">\
                         <a href="#" style="color:black;"\
                         onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=0);">'+treeData[i]["subjectname"]+'</a></li>';
+                    }
+                    else{
+                        console.log("90800");
+                        str=str+'<li>\
+                        <input name="apiSubjectData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
+                        checked=true onchange="" onclick="">\
+                        <a href="#" style="color:black;"\
+                        onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=1);">'+treeData[i]["subjectname"]+'</a></li>';
                     }
              }
                     
         str=str+'</ul>';
         $("#dvtree").html(str);
-        // $(".items").empty();
         createCrumb();
+        subjlistener();
     }
 
     function fectchExamData(languageid, subjectid, subjectname, flag) {
@@ -168,24 +172,23 @@
             })
         })
         .then(response => response.json())
-        .then(jsondata => loadExamData(jsondata))
+        .then(jsondata => loadExamData(jsondata, flag, subjectid))
     }
 
-    function loadExamData(jsondata) {
+    function loadExamData(jsondata, flag, subjectid) {
         let treeData = jsondata.exam_result['exam_result'][0]['lstsubjectexam'];
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
-                if(treeData[i].checked){
-                    treeData[i].checked = true;
+                if(flag == 1){
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        <input name="apiExamData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         checked="true" onchange="" onclick="">\
                         <p style="color:black;">'+treeData[i]["examname"]+'</p></li>';
                 }
                 else{
                     str=str+'<li>\
-                        <input type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
+                        <input name="apiExamData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         onchange="" onclick="">\
                         '+treeData[i]["examname"]+'</li>';
                 }
@@ -194,7 +197,7 @@
         str=str+'</ul>';
         $("#dvtree").html(str);
         createCrumb();
-        
+        examlistener();
     }
 
     function createCrumb() {
@@ -208,35 +211,91 @@
         }
     }
 
-    var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
-    // // var $checkboxes = $("#dvtree :checkbox");
-    var checkboxes = document.querySelector('#dvtree');
+    var checkboxLanguageValues = JSON.parse(localStorage.getItem('checkboxLanguageValues')) || {};
+    var checkboxSubjectValues = JSON.parse(localStorage.getItem('checkboxSubjectValues')) || {};
+    var checkboxExamValues = JSON.parse(localStorage.getItem('checkboxExamValues')) || {};
+    var cbox = document.querySelector("#dvtree");
 
-    checkboxes.addEventListener('change', (event) => {
-        console.log("changed " ,event);
+    function langlistener() {
+        cbox.addEventListener("change", function () {
+            let subjid = '';
+            var $checkboxes = $("#dvtree :input:checkbox[name=apiLanguageData]");
+                    
+            $checkboxes.each(function(){
+                checkboxLanguageValues[this.id] = this.checked;
+            });
+            console.log(checkboxLanguageValues, 'check', typeof(checkboxLanguageValues), Object.keys(checkboxLanguageValues).length)
+            localStorage.setItem("checkboxLanguageValues", JSON.stringify(checkboxLanguageValues));
+            // fectchExamData(languageId, subjid, subjectName, flag=1)
+        })
         
-    })
+        $.each(checkboxLanguageValues, function(key, value) {
+            $("#" + key).prop('checked', value);
+        });
+        // enableDloadBtn();
+    
+    }
 
-    // $checkboxes.on("change", function(){
-    //     console.log("clicked ")
-    // $checkboxes.each(function(){
-    //     checkboxValues[this.id] = this.checked;
-    // });
-    // localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    // });
+    function subjlistener() {
+        cbox.addEventListener("change", function () {
+            let subjid = '';
+            var $checkboxes = $("#dvtree :input:checkbox[name=apiSubjectData]");
+                    
+            $checkboxes.each(function(){
+                checkboxSubjectValues[this.id] = this.checked;
+            });
+            console.log(checkboxSubjectValues, 'check', typeof(checkboxSubjectValues), Object.keys(checkboxSubjectValues).length)
+            localStorage.setItem("checkboxSubjectValues", JSON.stringify(checkboxSubjectValues));
+            // fectchExamData(languageId, subjid, subjectName, flag=1)
+        })
 
-    // function subjecTicked(id, subjectDatas){
-    //     if ($(id).is(':checked')) {
-    //         checkboxValues[id.id] = id.checked;
-    //     }
-    //     localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    // }
+        $.each(checkboxSubjectValues, function(key, value) {
+            $("#" + key).prop('checked', value);
+        });
+    
+    }
 
-    // window.onload = function(){
-    //     cbvals = JSON.parse(localStorage.getItem('checkboxValues'))
-    //     console.log(cbvals, typeof(cbvals));
-        
-    // }
+    function examlistener() {
+        cbox.addEventListener("change", function () {
+            let subjid = '';
+            var $checkboxes = $("#dvtree :input:checkbox[name=apiExamData]");
+                    
+            $checkboxes.each(function(){
+                checkboxExamValues[this.id] = this.checked;
+            });
+            console.log(checkboxExamValues, 'check', typeof(checkboxExamValues), Object.keys(checkboxExamValues).length)
+            localStorage.setItem("checkboxExamValues", JSON.stringify(checkboxExamValues));
+
+            enableDloadBtn();
+            for (const key in checkboxExamValues) {
+                if (Object.hasOwnProperty.call(checkboxExamValues, key)) {
+                    if (checkboxExamValues[key] === true){
+                        console.log(key, 'key', checkboxExamValues[key])
+                    }
+                    
+                }
+            }
+        })
+
+
+
+        $.each(checkboxExamValues, function(key, value) {
+            $("#" + key).prop('checked', value);
+        });
+
+
+        // console.log(Object.keys(checkboxExamValues).length);
+    }
+
+    function enableDloadBtn() {
+        if (Object.keys(checkboxExamValues).length > 0 && Object.keys(checkboxSubjectValues).length > 0 && Object.keys(checkboxLanguageValues).length > 0) {
+            console.log(Object.keys(checkboxExamValues).length, Object.keys(checkboxSubjectValues).length, Object.keys(checkboxLanguageValues).length, 'lengths')
+            document.getElementById('sort_ids').disabled = false;
+        }
+        else{
+            document.getElementById('sort_ids').disabled = true;
+        }
+    }
      
 
 
