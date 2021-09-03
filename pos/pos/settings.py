@@ -192,4 +192,4 @@ except Exception as e:
     pass
 
 
-AUTH_USER_MODEL = 'account.CrlUserModel'
+# AUTH_USER_MODEL = 'account.CrlUserModel'
