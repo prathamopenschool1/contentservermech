@@ -88,8 +88,25 @@ class ExamV2View(LoginRequiredMixin, View):
 
 class DownloadView(LoginRequiredMixin, View):
 
-    def get(self, *args, **kwargs):
+    psh = PushHelper()
+    ash = AssesmentHelper()
 
-        return HttpResponse("this is download view")
+    def post(self, request, *args, **kwargs):
+        asessment_array_data = json.loads(request.body.decode("utf-8"))
+        languageIds = asessment_array_data['languageid']
+        subjectIds = asessment_array_data['subjectid']
+        examIds = asessment_array_data['examid']
+        if self.psh.connect() == True:
+            result = self.ash.pattern_call(examIds)
+            print("my lst result >>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
+            print("results >>>> ", result)
+            if result['status'] == 200:
+                quesPatternDetails = self.ash.question_details(languageIds, result['exam_pattern'])
+            context = {}
+            context['languageIds'] = languageIds
+            context['subjectIds'] = subjectIds
+            context['exexamIds'] = examIds
+            # print(context)
+        return JsonResponse(context, safe=False)
 
 
