@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models.language_models import Language
+from .models.subject_models import Subject
 
-# Register your models here.
+admin.site.register(Language)
+admin.site.register(Subject)

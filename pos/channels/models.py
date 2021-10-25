@@ -67,7 +67,7 @@ class FileDataToBeStored(models.Model):
                                 blank=True)
 
     @classmethod
-    def create(cls, FileId, NodeId, FileType, FileUrl, DateUpdated):
+    def create(cls, FileId, NodeId, FileType, FileUrl, DateUpdated, fileName, localUrl):
         file_data = cls(FileId=FileId, NodeId=NodeId, FileType=FileType, FileUrl=FileUrl,
                         DateUpdated=DateUpdated, fileName=fileName, localUrl=localUrl)
 

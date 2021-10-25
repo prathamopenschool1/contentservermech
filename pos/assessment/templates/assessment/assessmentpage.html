@@ -3,7 +3,6 @@
 
 {% block content %}
     <link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
-    <link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
     <br>
     <div class="container">
         <div class="">
@@ -93,7 +92,7 @@
         for (let i = 0; i < treeData.length; i++) {
                 str=str+'<li>\
                     <input name="apiLanguageData" type="checkbox" class="box" id="'+treeData[i]["languageid"].toString()+'"\
-                        onchange="" onclick="">\
+                     value="apiLanguageData"  onchange="" onclick="">\
                     <a href="#" style="color:black;"\
                     onclick="fetchSubjectData(\''+treeData[i]["languageid"].toString()+'\', \''+treeData[i]["languagename"].toString()+'\');">'+treeData[i]["languagename"]+'</a></li>';
         }
@@ -126,9 +125,8 @@
     }
 
     function loadSubjectData(jsondata) {
-        console.log("subject data !!!!!!!");
         let treeData = jsondata.subject_result['subj_result']
-        let subjectDatas = treeData
+        console.log("subject data !!!!!!!", treeData);
         let str = '';
         str=str+'<ul>';
             for (let i = 0; i < treeData.length; i++) {
@@ -141,7 +139,6 @@
                         onclick="fectchExamData(\''+languageId+'\',\''+treeData[i]["subjectid"].toString()+'\', \''+treeData[i]["subjectname"].toString()+'\', flag=0);">'+treeData[i]["subjectname"]+'</a></li>';
                     }
                     else{
-                        console.log("90800");
                         str=str+'<li>\
                         <input name="apiSubjectData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
                         checked=true onchange="" onclick="">\
@@ -216,37 +213,56 @@
     var checkboxExamValues = JSON.parse(localStorage.getItem('checkboxExamValues')) || {};
     var cbox = document.querySelector("#dvtree");
 
+    // language checkbox function
     function langlistener() {
         cbox.addEventListener("change", function () {
             let subjid = '';
-            var $checkboxes = $("#dvtree :input:checkbox[name=apiLanguageData]");
-                    
-            $checkboxes.each(function(){
-                checkboxLanguageValues[this.id] = this.checked;
-            });
-            console.log(checkboxLanguageValues, 'check', typeof(checkboxLanguageValues), Object.keys(checkboxLanguageValues).length)
+            // var checkboxesLang = document.querySelectorAll('input[type="checkbox"]:checked');
+            let checkboxesLang = document.querySelectorAll('input[type="checkbox"][name="apiLanguageData"]');
+            for (let i = 0; i < checkboxesLang.length; i++) {
+                    if (checkboxesLang[i].checked === true) {
+                        checkboxLanguageValues[checkboxesLang[i].id] = true
+                        languageArray.push(checkboxesLang[i].id)
+                    }
+                    else{
+                        delete checkboxLanguageValues[checkboxesLang[i].id]
+                        languageArray = languageArray.filter(item => item != checkboxesLang[i].id)
+                    }
+            }
             localStorage.setItem("checkboxLanguageValues", JSON.stringify(checkboxLanguageValues));
-            // fectchExamData(languageId, subjid, subjectName, flag=1)
+            // console.log(languageArray, "lang2nd");
+            langJsonObject = languageArray.map(JSON.stringify);
+            langUniqueSet = new Set(langJsonObject);
+            languageArray = Array.from(langUniqueSet).map(JSON.parse);
+            // console.log(languageArray, "lang3rd");
         })
         
         $.each(checkboxLanguageValues, function(key, value) {
             $("#" + key).prop('checked', value);
         });
-        // enableDloadBtn();
-    
     }
 
+    // subject checkbox function
     function subjlistener() {
         cbox.addEventListener("change", function () {
             let subjid = '';
-            var $checkboxes = $("#dvtree :input:checkbox[name=apiSubjectData]");
-                    
-            $checkboxes.each(function(){
-                checkboxSubjectValues[this.id] = this.checked;
-            });
-            console.log(checkboxSubjectValues, 'check', typeof(checkboxSubjectValues), Object.keys(checkboxSubjectValues).length)
+            let checkboxesSubj = document.querySelectorAll('input[type="checkbox"][name="apiSubjectData"]');
+            for (let i = 0; i < checkboxesSubj.length; i++) {
+                    if (checkboxesSubj[i].checked === true) {
+                        checkboxSubjectValues[checkboxesSubj[i].id] = true
+                        subjectArray.push(checkboxesSubj[i].id)
+                    }
+                    else{
+                        delete checkboxSubjectValues[checkboxesSubj[i].id]
+                        subjectArray = subjectArray.filter(item => item != checkboxesSubj[i].id)
+                    }
+            }
             localStorage.setItem("checkboxSubjectValues", JSON.stringify(checkboxSubjectValues));
-            // fectchExamData(languageId, subjid, subjectName, flag=1)
+            // console.log(subjectArray, "subj2nd");
+            subjJsonObject = subjectArray.map(JSON.stringify);
+            subjUniqueSet = new Set(subjJsonObject);
+            subjectArray = Array.from(subjUniqueSet).map(JSON.parse);
+            // console.log(subjectArray, "subj3rd");
         })
 
         $.each(checkboxSubjectValues, function(key, value) {
@@ -255,47 +271,71 @@
     
     }
 
+    // exam checkbox function
     function examlistener() {
         cbox.addEventListener("change", function () {
             let subjid = '';
-            var $checkboxes = $("#dvtree :input:checkbox[name=apiExamData]");
-                    
-            $checkboxes.each(function(){
-                checkboxExamValues[this.id] = this.checked;
-            });
-            console.log(checkboxExamValues, 'check', typeof(checkboxExamValues), Object.keys(checkboxExamValues).length)
-            localStorage.setItem("checkboxExamValues", JSON.stringify(checkboxExamValues));
-
-            enableDloadBtn();
-            for (const key in checkboxExamValues) {
-                if (Object.hasOwnProperty.call(checkboxExamValues, key)) {
-                    if (checkboxExamValues[key] === true){
-                        console.log(key, 'key', checkboxExamValues[key])
+            let checkboxesExam = document.querySelectorAll('input[type="checkbox"][name="apiExamData"]');
+            for (let i = 0; i < checkboxesExam.length; i++) {
+                    if (checkboxesExam[i].checked === true) {
+                        checkboxExamValues[checkboxesExam[i].id] = true
+                        examIdArray.push(checkboxesExam[i].id)
                     }
-                    
-                }
+                    else{
+                        delete checkboxExamValues[checkboxesExam[i].id]
+                        examIdArray = examIdArray.filter(item => item != checkboxesExam[i].id)
+                    }
             }
+            localStorage.setItem("checkboxExamValues", JSON.stringify(checkboxExamValues));
+            // console.log(examIdArray, "exam2nd");
+            examJsonObject = examIdArray.map(JSON.stringify);
+            examUniqueSet = new Set(examJsonObject);
+            examIdArray = Array.from(examUniqueSet).map(JSON.parse);
+            // console.log(examIdArray, "exam3rd");
+            enableDloadBtn();
         })
-
-
-
         $.each(checkboxExamValues, function(key, value) {
             $("#" + key).prop('checked', value);
         });
-
-
-        // console.log(Object.keys(checkboxExamValues).length);
     }
 
+
     function enableDloadBtn() {
-        if (Object.keys(checkboxExamValues).length > 0 && Object.keys(checkboxSubjectValues).length > 0 && Object.keys(checkboxLanguageValues).length > 0) {
-            console.log(Object.keys(checkboxExamValues).length, Object.keys(checkboxSubjectValues).length, Object.keys(checkboxLanguageValues).length, 'lengths')
+        if (examIdArray.length > 0 && languageArray.length && subjectArray.length > 0){
+            console.log(examIdArray, languageArray, subjectArray, 'disable');
             document.getElementById('sort_ids').disabled = false;
         }
         else{
+            console.log(examIdArray, languageArray, subjectArray, 'enable');
             document.getElementById('sort_ids').disabled = true;
         }
     }
+
+    $('#sort_ids').click(function (){
+            let download_url = "/assessment/downloadassess"
+            fetch(download_url, {
+                method: 'POST',
+                headers: {
+                    "Content-Type" : "application/json",
+                    "X-CSRFToken": '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'languageid': languageArray,
+                    'subjectid': subjectArray,
+                    'examid': examIdArray
+                })
+            })
+            .then(response => response.json())
+            .then(jsondata => {
+                console.log(jsondata, 'jsondata');
+                // window.location.href = '/content/app_available/';
+                localStorage.clear();
+                // window.location.href = '/assessment/';
+            })
+            .catch(error => console.log("error is ", error));
+    })
+
+
      
 
 

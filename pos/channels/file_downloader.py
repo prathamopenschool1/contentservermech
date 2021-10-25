@@ -53,94 +53,68 @@ class Downloader(object):
         # print('sf', store_files)
         if not os.path.exists(self.store_files):
             os.makedirs(self.store_files)
-        else:
-            pass
 
         self.store_files = os.path.join(self.store_files, AppName)
         # print('sf', store_files)
         if not os.path.exists(self.store_files):
             os.makedirs(self.store_files)
-        else:
-            pass
 
         # images folder
         self.store_img = os.path.join(self.store_files, 'images')
         # print('simg', store_img)
         if not os.path.exists(self.store_img):
             os.makedirs(self.store_img)
-        else:
-            pass
 
         # content (videos and zips)
         self.content = os.path.join(self.store_files, 'content')
         # print('content', content)
         if not os.path.exists(self.content):
             os.makedirs(self.content)
-        else:
-            pass
 
         self.zip_files = os.path.join(self.content, 'zips')
         # print('content', content)
         if not os.path.exists(self.zip_files):
             os.makedirs(self.zip_files)
-        else:
-            pass
 
         self.audio_files = os.path.join(self.content, 'audios')
         # print('content', content)
         if not os.path.exists(self.audio_files):
             os.makedirs(self.audio_files)
-        else:
-            pass
 
         self.mp3_files = os.path.join(self.audio_files, 'mp3')
         # print('content', content)
         if not os.path.exists(self.mp3_files):
             os.makedirs(self.mp3_files)
-        else:
-            pass
 
         self.wav_files = os.path.join(self.audio_files, 'wav')
         # print('content', content)
         if not os.path.exists(self.wav_files):
             os.makedirs(self.wav_files)
-        else:
-            pass
 
         self.video_files = os.path.join(self.content, 'videos')
         # print('content', content)
         if not os.path.exists(self.video_files):
             os.makedirs(self.video_files)
-        else:
-            pass
 
         self.mp4_files = os.path.join(self.video_files, 'mp4')
         # print('content', content)
         if not os.path.exists(self.mp4_files):
             os.makedirs(self.mp4_files)
-        else:
-            pass
 
         self.m4v_files = os.path.join(self.video_files, 'm4v')
         # print('content', content)
         if not os.path.exists(self.m4v_files):
             os.makedirs(self.m4v_files)
-        else:
-            pass
 
         self.pdf_files = os.path.join(self.content, 'docs')
         # print('content', content)
         if not os.path.exists(self.pdf_files):
             os.makedirs(self.pdf_files)
-        else:
-            pass
 
         self.wrong_extension = os.path.join(self.content, 'wrong_extensions')
         # print('content', content)
         if not os.path.exists(self.wrong_extension):
             os.makedirs(self.wrong_extension)
-        else:
-            pass
 
 
     def download_files_with_qs(self, download_url, querystring, AppName):

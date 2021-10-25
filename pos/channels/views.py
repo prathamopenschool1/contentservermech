@@ -185,7 +185,6 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                 app_in_db.save()
                                 start = time.time()
                                 for file in detail["LstFileList"]:
-                                    print("file data is ", file)
                                     FileId = file['FileId']
                                     NodeId = file['NodeId']
                                     FileType = file['FileType']
@@ -205,12 +204,9 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                         file_in_db.save()
                                     
                         except requests.exceptions.ConnectionError as connecton_err1:
-                            print("db error")
                             endTimeInExceptionDbErr = datetime.now()
-                            print("Exception - dberror occured at DownloadAndSaveView at " , endTimeInExceptionDbErr);
                             errorLogger.error("Exception - dberror occured at DownloadAndSaveView at " +str(endTimeInExceptionDbErr))
                             time_taken_exceptiondberr = endTimeInExceptionDbErr - startTime
-                            print('Time Taken to till db err exception got in DownloadAndSaveView: ',time_taken_exceptiondberr)
                             errorLogger.error('Time Taken to till db err exception got in DownloadAndSaveView: '+ str(time_taken_exceptiondberr)) 
                             errorLogger.error("db error - Loop- detail in detail_node_json_val :" + str(connecton_err1))
                             return HttpResponseRedirect('/channel/no_internet/')
@@ -218,12 +214,9 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 json_data_storage_view(request, ids)
 
             except requests.exceptions.ConnectionError as connecton_err2:
-                print("downlaod error ")
                 endTimeInException = datetime.now()
-                print("Exception - downlaod error occured at DownloadAndSaveView at " , endTimeInException);
-                errorLogger.error("Exception occured at DownloadAndSaveView at " + str(endTimeInException));
+                errorLogger.error("Exception occured at DownloadAndSaveView at " + str(endTimeInException))
                 time_taken_exception = endTimeInException - startTime
-                print('Time Taken to till downlaod error got in DownloadAndSaveView: ',time_taken_exception) 
                 errorLogger.error('Time Taken to till downlaod error got in DownloadAndSaveView: '+str(time_taken_exception)) 
                 errorLogger.error("downlaod error - Loop- ids in node_values :" + str(connecton_err2))
                 #commented redirect to no_internet to continue downloading after internet is up again and added continue below
@@ -232,18 +225,14 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
 
         # return HttpResponse("success!!")
         endTime = datetime.now()
-        print("Ending DownloadAndSaveView at " , endTime);
-        infoLogger.info("Ending DownloadAndSaveView at " + str(endTime));
+        infoLogger.info("Ending DownloadAndSaveView at " + str(endTime))
         time_taken = endTime - startTime
-        print('Time Taken to complete DownloadAndSaveView: ',time_taken) 
         infoLogger.info('Time Taken to complete DownloadAndSaveView: '+ str(time_taken)) 
-        print("successfully saved!")
         infoLogger.info("successfully saved!")
         return HttpResponse("success")
 
 
 def json_data_storage_view(request, id):
-    # json_url = "http://fcapp.openiscool.org/api/AppNodeJsonListByNode?id=%s" % id
     json_url = "http://devposapi.prathamopenschool.org/api/AppNodeJsonListByNode?id=%s" % id
     json_response = requests.get(json_url, headers=headers)
     json_result = json.loads(json_response.content.decode("utf-8"))
@@ -262,7 +251,6 @@ def json_data_storage_view(request, id):
                 json_data_storage.save()
     
     except requests.exceptions.ConnectionError as con_err:
-        print("json error ", con_err)
         errorLogger.error("json error :" + str(con_err))
         return HttpResponseRedirect('/channel/no_internet/')
 
