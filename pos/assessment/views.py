@@ -4,6 +4,9 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from modpush.pushhelper.connectcheck import PushHelper
 from .assesshelper import AssesmentHelper
+from .models.language_models import LanguageModelManager
+from .models.subject_models import SubjectModelManager
+from .models.exam_models import ExamModelManager, Exam
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -42,6 +45,7 @@ class SubjectView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         posted_data = json.loads(request.body.decode("utf-8"))
         langId = posted_data['langId']
+        # print("type of langiage id >>>>>>>>>>>>>. ", langId, type(langId))
         langName = posted_data['langName']
         if self.psh.connect() == True:
             result = self.ash.subject_call(langId)
@@ -74,6 +78,9 @@ class ExamV2View(LoginRequiredMixin, View):
         # subjName = posted_exam_data['subjName']
         if self.psh.connect() == True:
             result = self.ash.exam_call(languageid, subjectid)
+            # print('exam callls>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            # print(result)
+            # print('exam callls>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             if result['status'] == 200:
                 context = {}
                 context['exam_result'] = result
@@ -97,11 +104,42 @@ class DownloadView(LoginRequiredMixin, View):
         subjectIds = asessment_array_data['subjectid']
         examIds = asessment_array_data['examid']
         if self.psh.connect() == True:
-            result = self.ash.pattern_call(examIds)
-            print("my lst result >>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
-            print("results >>>> ", result)
-            if result['status'] == 200:
-                quesPatternDetails = self.ash.question_details(languageIds, result['exam_pattern'])
+            result_lang = self.ash.language_call()
+            if result_lang['status'] == 200:
+                LanguageModelManager.save_language_data(self, result_lang['lang_result'])
+                i=1
+                for lids in languageIds:
+                    print(lids, "lang ids for subject call>>>>")
+                    result_subj = self.ash.subject_call(lids)
+                    if result_subj['status'] == 200:
+                        print("calling subj>>>", i)
+                        SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
+                        i=i+1
+                # quit()
+                for nlids in languageIds:
+                    for sids in subjectIds:
+                        result_exam = self.ash.exam_call(nlids, sids)
+                        if result_exam['status'] == 200:
+                            print(result_exam['exam_result'], 'exams>>>>>>>>>>>>>>>>>>>', nlids, sids)
+                            ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
+
+                                    # for lst in result_exam['exam_result'][0]['lstsubjectexam']:
+                                    #     print(lst['examid'], type(lst['examid']))
+                        # elif result_exam['status'] == 250:
+                        #     continue
+            # result = self.ash.pattern_call(examIds)
+            # if result['status'] == 200:
+            #     quesPatternDetails = self.ash.question_details(languageIds, result['exam_pattern'])
+            #     lang_to_save_result, subj_to_save_result, exam_result, langId = self.ash.fetch_accurate(languageIds, subjectIds, examIds)
+            #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
+                # LanguageModelManager.save_language_data(self, lang_to_save_result)
+                # SubjectModelManager.save_subject_data(self, subj_to_save_result)
+                # print("quesPatternDetails ", type(quesPatternDetails), examIds)
+                # print(quesPatternDetails)
+                # print(exam_result)
+                # print("lang_to_save ", type(lang_to_save), languageIds)
+                # print("subj_to_save ", type(subj_to_save), subjectIds)
+
             context = {}
             context['languageIds'] = languageIds
             context['subjectIds'] = subjectIds

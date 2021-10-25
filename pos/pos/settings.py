@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django_filters',
     'modpush',
     'assessment',
+    'assessment_api',
 ]
 
 MIDDLEWARE = [
