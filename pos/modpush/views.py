@@ -119,8 +119,12 @@ class BackUpDataView(View):
 
     def post(self, request, *args, **kwargs):
         result_data = self.psh.backup()
-        if result_data['status'] == 404 or result_data['status'] == 403:
+        if result_data['status'] == 404:
             context = {'msg': 'No Data'}
+            context = json.dumps(context)
+            return JsonResponse(context, safe=False)
+        elif result_data['status'] == 403:
+            context = {'msg': 'success'}
             context = json.dumps(context)
             return JsonResponse(context, safe=False)
         else:
