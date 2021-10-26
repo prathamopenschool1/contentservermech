@@ -106,34 +106,28 @@ class DownloadView(LoginRequiredMixin, View):
         if self.psh.connect() == True:
             result_lang = self.ash.language_call()
             if result_lang['status'] == 200:
-                LanguageModelManager.save_language_data(self, result_lang['lang_result'])
-                i=1
+                # LanguageModelManager.save_language_data(self, result_lang['lang_result'])
                 for lids in languageIds:
-                    print(lids, "lang ids for subject call>>>>")
                     result_subj = self.ash.subject_call(lids)
                     if result_subj['status'] == 200:
-                        print("calling subj>>>", i)
-                        SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
-                        i=i+1
-                # quit()
+                        print(result_subj['subj_result'])
+                        # SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
                 for nlids in languageIds:
                     for sids in subjectIds:
                         result_exam = self.ash.exam_call(nlids, sids)
                         if result_exam['status'] == 200:
-                            print(result_exam['exam_result'], 'exams>>>>>>>>>>>>>>>>>>>', nlids, sids)
-                            ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
-
-                                    # for lst in result_exam['exam_result'][0]['lstsubjectexam']:
-                                    #     print(lst['examid'], type(lst['examid']))
-                        # elif result_exam['status'] == 250:
-                        #     continue
-            # result = self.ash.pattern_call(examIds)
+                            print(result_exam['exam_result'])
+                            # ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
+            print("exam ids >>>>> ", examIds, type(examIds))
+            i=1
+            for eids in examIds:
+                result_pattern = self.ash.pattern_call(eids)
+                print("result >>> ", result_pattern, i)
+                i=i+1
             # if result['status'] == 200:
             #     quesPatternDetails = self.ash.question_details(languageIds, result['exam_pattern'])
             #     lang_to_save_result, subj_to_save_result, exam_result, langId = self.ash.fetch_accurate(languageIds, subjectIds, examIds)
             #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
-                # LanguageModelManager.save_language_data(self, lang_to_save_result)
-                # SubjectModelManager.save_subject_data(self, subj_to_save_result)
                 # print("quesPatternDetails ", type(quesPatternDetails), examIds)
                 # print(quesPatternDetails)
                 # print(exam_result)
