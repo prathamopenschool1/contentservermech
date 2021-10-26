@@ -34,7 +34,7 @@ class ExamModelManager(models.Manager):
                     #     lst_exam_data.save()
         except IntegrityError as ie:
             traceback.print_exc()
-            print("subject integrity error is ", ie)
+            print("Exam integrity error is ", ie)
             return '-1'
 
 

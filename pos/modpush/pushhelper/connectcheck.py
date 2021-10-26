@@ -16,7 +16,7 @@ errorLogger = logging.getLogger("error_logger")
 
 class PushHelper(object):
 
-    homePath = str(Path.home())
+    homePath = '/home/pi' # str(Path.home())
     deskDir = os.path.join(homePath, 'DesktopBackup')
 
     #usage post api
