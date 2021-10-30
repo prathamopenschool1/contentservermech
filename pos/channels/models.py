@@ -17,7 +17,7 @@ class AppListFromServerData(models.Model):
                                 blank=True)
 
     @classmethod
-    def create(cls, AppId, AppName, ThumbUrl, AppDesc, AppOrder, DateUpdated):
+    def create(cls, AppId, AppName, ThumbUrl, AppDesc, AppOrder, DateUpdated, fileName, localUrl):
         applist_server_data = cls(AppId=AppId, AppName=AppName, ThumbUrl=ThumbUrl,
                                   AppDesc=AppDesc, AppOrder=AppOrder,
                                   DateUpdated=DateUpdated, fileName=fileName,

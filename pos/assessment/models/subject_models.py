@@ -35,7 +35,6 @@ class SubjectModelManager(models.Manager):
 
 
 class SubjectModel(models.Model):
-    # languageId = models.ForeignKey(Language, related_name='languageId', on_delete=models.CASCADE)
     languageid = models.CharField(max_length=30)
     subjectid = models.CharField(max_length=30)
     subjectname = models.CharField(max_length=150)
@@ -45,7 +44,7 @@ class SubjectModel(models.Model):
 
     class Meta:
         abstract = True
-        app_label = 'channels'
+        # app_label = 'channels'
 
 
 class Subject(SubjectModel):

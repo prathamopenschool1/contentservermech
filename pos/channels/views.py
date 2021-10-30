@@ -185,6 +185,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                                 app_in_db.save()
                                 start = time.time()
                                 for file in detail["LstFileList"]:
+                                    print("file data is ", file)
                                     FileId = file['FileId']
                                     NodeId = file['NodeId']
                                     FileType = file['FileType']

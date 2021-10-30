@@ -36,7 +36,7 @@ class LanguageModel(models.Model):
 
     class Meta:
         abstract = True
-        app_label = 'channels'
+        # app_label = 'channels'
         ordering = ['-updated_at']
 
 
