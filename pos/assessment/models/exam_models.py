@@ -48,7 +48,7 @@ class ExamModel(models.Model):
 
     class Meta:
         abstract = True
-        app_label = 'channels'
+        # app_label = 'channels'
 
 
 class Exam(ExamModel):
@@ -65,8 +65,8 @@ class LstSubjectExamModel(models.Model):
     languagename    = models.CharField(max_length=100, blank=True, null=True)
     lstexampaper    = models.CharField(max_length=100, blank=True, null=True)
 
-    class Meta:
-        app_label = 'channels'
+    # class Meta:
+    #     app_label = 'channels'
 
     
     @classmethod

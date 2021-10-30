@@ -118,7 +118,7 @@ class Downloader(object):
 
 
     def download_files_with_qs(self, download_url, querystring, AppName):
-        # print("url is ", download_url)
+        print("url is ", download_url)
         #infoLogger.info(" In download_files_with_qs")
         self.createdir(AppName)
         response = requests.get(download_url, params=querystring, headers=self.headers)
@@ -172,24 +172,31 @@ class Downloader(object):
                     path_to_put = os.path.join(
                         self.wrong_extension, str(os.path.basename(file_url)))
                 try:
-                    if file_url == '' or "prathamopenschool.org" not in file_url:
+                    if file_url == '':
+                        continue
+                    elif "prathamopenschool.org" not in file_url:
                         continue
                     else:
                         self.localUrl = path_to_put
                         # print("local path is ", self.localUrl)
                         file_to_get = requests.get(
                             file_url, stream=True, timeout=10)
-                        with open(path_to_put, "wb") as target:
-                            total_length = int(
-                                file_to_get.headers.get('content-length'))
-                            for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024),
-                                                        expected_size=(total_length/1024) + 1):
-                                if chunk:
-                                    try:
-                                        target.write(chunk)
-                                        target.flush()
-                                    except requests.exceptions.ConnectionError as dataflush_err:    
-                                        errorLogger.error("Exception occurd while flushing data" + str(dataflush_err)) 
+                        print(file_to_get.status_code, 'status code ', file_url)
+                        if file_to_get.status_code != 200:
+                            continue
+                        else:
+                            with open(path_to_put, "wb") as target:
+                                total_length = int(
+                                    file_to_get.headers.get('content-length'))
+                                for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024),
+                                                            expected_size=(total_length/1024) + 1):
+                                    if chunk:
+                                        try:
+                                            target.write(chunk)
+                                            target.flush()
+                                        except requests.exceptions.ConnectionError as dataflush_err:
+                                            print("Exception occurd while flushing data ", str(dataflush_err))
+                                            errorLogger.error("Exception occurd while flushing data" + str(dataflush_err))
                 
                 except requests.exceptions.ConnectionError as dwnld_files_with_qs_error1:
                     print(" no internet in download_files_with_qs ", dwnld_files_with_qs_error1)

@@ -101,12 +101,20 @@ class AssesmentHelper(object):
                         quest_response = requests.get(quest_urls, params={'languageid': lid, 'subjectid': sid['subjectid'], 'topicid': tid['topicid']})
                         quest_result = json.loads(quest_response.content.decode('utf-8'))
                         if len(quest_result) > 0:
+                            download_response = self.download_url_data(quest_result)
+                            # if download_response['status'] == 200:
                             questions_lst.append(quest_result)
 
             return questions_lst
         except Exception as e:
             traceback.print_exc()
             return -1
+
+    
+    def download_url_data(self, quest_result):
+        print(quest_result, type(quest_result))
+        download_response = {}
+        # quit()
 
 
     def fetch_accurate(self, languageIds=None, subjectIds=None, examIds=None):
