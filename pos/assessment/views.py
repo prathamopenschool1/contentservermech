@@ -8,6 +8,7 @@ from .models.language_models import LanguageModelManager
 from .models.subject_models import SubjectModelManager
 from .models.exam_models import ExamModelManager, Exam
 from .models.pattern_models import PaperPatternModelManager
+from .models.question_models import QuestionModelManager
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -78,10 +79,7 @@ class ExamV2View(LoginRequiredMixin, View):
         subjectid = posted_exam_data['subjectid']
         # subjName = posted_exam_data['subjName']
         if self.psh.connect() == True:
-            result = self.ash.exam_call(languageid, subjectid)
-            # print('exam callls>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            # print(result)
-            # print('exam callls>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            result, result_to_save = self.ash.exam_call(languageid, subjectid)
             if result['status'] == 200:
                 context = {}
                 context['exam_result'] = result
@@ -115,9 +113,9 @@ class DownloadView(LoginRequiredMixin, View):
                         # SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
                 for nlids in languageIds:
                     for sids in subjectIds:
-                        result_exam = self.ash.exam_call(nlids, sids)
+                        result_ui, result_exam = self.ash.exam_call(nlids, sids, examIds)
                         if result_exam['status'] == 200:
-                            print(type(result_exam['exam_result']))
+                            print(type(result_exam['exam_result']), result_exam['exam_result'])
                             # ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
             print("exam ids >>>>> ", examIds, type(examIds))
             i=1
@@ -134,7 +132,8 @@ class DownloadView(LoginRequiredMixin, View):
             #     lang_to_save_result, subj_to_save_result, exam_result, langId = self.ash.fetch_accurate(languageIds, subjectIds, examIds)
             #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
             print("quesPatternDetails ", type(quesPatternDetails), examIds)
-            # print(quesPatternDetails)
+            print(quesPatternDetails)
+            QuestionModelManager.save_question_data(self, quesPatternDetails)
                 # print(exam_result)
                 # print("lang_to_save ", type(lang_to_save), languageIds)
                 # print("subj_to_save ", type(subj_to_save), subjectIds)

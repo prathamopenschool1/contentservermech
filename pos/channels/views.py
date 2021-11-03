@@ -166,7 +166,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                     # print("localUrl is ", downloading.localUrl)
                     local_url = downloading.localUrl
                     local_url = local_url.split('static')[1]
-                    # print("local url is ", 'static'+local_url)
+                    print("local url is ", 'static'+local_url, local_url)
                     local_url = 'static'+local_url
                     for detail in detail_node_json_val:
                         try:
