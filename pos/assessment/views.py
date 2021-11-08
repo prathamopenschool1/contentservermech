@@ -8,7 +8,7 @@ from .models.language_models import LanguageModelManager
 from .models.subject_models import SubjectModelManager
 from .models.exam_models import ExamModelManager, Exam
 from .models.pattern_models import PaperPatternModelManager
-from .models.question_models import QuestionModelManager
+# from .models.question_models import QuestionModelManager
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -133,7 +133,7 @@ class DownloadView(LoginRequiredMixin, View):
             #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
             print("quesPatternDetails ", type(quesPatternDetails), examIds)
             print(quesPatternDetails)
-            QuestionModelManager.save_question_data(self, quesPatternDetails)
+            # QuestionModelManager.save_question_data(self, quesPatternDetails)
                 # print(exam_result)
                 # print("lang_to_save ", type(lang_to_save), languageIds)
                 # print("subj_to_save ", type(subj_to_save), subjectIds)

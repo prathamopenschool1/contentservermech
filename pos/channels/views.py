@@ -125,7 +125,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 if apps["AppId"] == AppId:
                     applist_local_url = downloading.localUrl
                     applist_local_url = applist_local_url.split('static')[1]
-                    # print("local url is ", 'static'+local_url)
+                    print("local url is ", 'static'+applist_local_url)
                     applist_local_url = 'static'+applist_local_url
                     AppId = apps["AppId"]
                     AppName = apps['AppName']
