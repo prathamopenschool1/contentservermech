@@ -136,10 +136,9 @@ class AssesmentHelper(object):
                             download_response = downloads.download_assesment_data('Assessment', quest_result)
                             # if download_response['status'] == 200:
                             # questions_lst.append(quest_result)
-                        print(quest_result)
-                        print("this is quest result ?????????????????????????...................", i)
-                        print()
-                        i=i+1
+                            print("this is quest result ?????????????????????????...................", i)
+                            print()
+                            i=i+1
 
             return questions_lst
         except Exception as e:
