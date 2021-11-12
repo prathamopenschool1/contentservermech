@@ -283,6 +283,10 @@ class Downloader(object):
             for res in quest_result:
                 print(res)
                 print("this is result : ", i)
+                if len(res['lstquestionchoice']) > 0:
+                    for lst in res['lstquestionchoice']:
+                        print(lst, type(lst))
+
                 
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
             print("in download_files_with_asessment  ", dwnld_files_asess_error2)
