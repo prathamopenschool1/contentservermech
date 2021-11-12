@@ -124,6 +124,8 @@ class AssesmentHelper(object):
         try:
             result = {}
             questions_lst = []
+            i=1
+            print("my exam list ", examLst)
             for lid in languageLst:
                 for sid in examLst:
                     for tid in sid['lstpatterndetail']:
@@ -132,8 +134,12 @@ class AssesmentHelper(object):
                         quest_result = json.loads(quest_response.content.decode('utf-8'))
                         if len(quest_result) > 0:
                             download_response = downloads.download_assesment_data('Assessment', quest_result)
-                            if download_response['status'] == 200:
-                                questions_lst.append(quest_result)
+                            # if download_response['status'] == 200:
+                            # questions_lst.append(quest_result)
+                        print(quest_result)
+                        print("this is quest result ?????????????????????????...................", i)
+                        print()
+                        i=i+1
 
             return questions_lst
         except Exception as e:

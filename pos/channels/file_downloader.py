@@ -269,106 +269,23 @@ class Downloader(object):
         
         # print("this is ", self.localUrl)
 
+    
+
     def download_assesment_data(self, AppName, quest_result):
+
         photo_url = ""
         match_url = ""
         choice_url = ""
         download_result = {}
+        i=1
         try:
             self.createdir(AppName)
             for res in quest_result:
-                photo_url = res['photourl']
-                if photo_url != '':
-                    print(photo_url, "photo url>>>>")
-                    self.common_extensions(photo_url)
-
-                for lst in res['lstquestionchoice']:
-                    match_url = lst['matchingurl']
-                    choice_url = lst['choiceurl']
-                    if match_url != '':
-                        print(lst['matchingurl'], "matching urls ")
-                        self.common_extensions(match_url)
-                    if choice_url != '':
-                        print(lst['choiceurl'], "choice urls ")
-                        self.common_extensions(choice_url)
-                    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-            download_result['status'] = 200
-            return download_result
+                print(res)
+                print("this is result : ", i)
+                
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
             print("in download_files_with_asessment  ", dwnld_files_asess_error2)
-            errorLogger("e_error in download_files_with_asessment " + str(dwnld_files_asess_error2))
-            download_result['status'] = 505 
-            return download_result
-    
-    def common_extensions(self, extension_url):
-        download_result = {}
-        path_to_put_asses = ""
-        if extension_url.endswith('.png'):
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        elif extension_url.endswith('.PNG'):
-            extension_url = extension_url.replace('.PNG', '.png')
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        elif extension_url.endswith('.JPG'):
-            extension_url = extension_url.replace('.JPG', '.jpg')
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        elif extension_url.endswith('.jpg'):
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        elif extension_url.endswith('.jpeg'):
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        elif extension_url.endswith('.JPEG'):
-            extension_url = extension_url.replace('.JPEG', '.jpeg')
-            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
-        #videos
-        elif extension_url.endswith('.MP4'):
-            extension_url = extension_url.replace('.MP4', '.mp4')
-            path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.mp4'):
-            path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.3gp'):
-            path_to_put_asses = os.path.join(self.v3gp_files, os.path.basename(extension_url))
-        #audios
-        elif extension_url.endswith('.mp3'):
-            path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.MP3'):
-            extension_url = extension_url.replace('.MP3', '.mp3')
-            path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.3gpp'):
-            path_to_put_asses = os.path.join(self.a3gpp_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.m4a'):
-            path_to_put_asses = os.path.join(self.m4a_files, os.path.basename(extension_url))
-        elif extension_url.endswith('.amr'):
-            path_to_put_asses = os.path.join(self.amr_files, os.path.basename(extension_url))
-
-
-        try:
-            self.localUrl = path_to_put_asses
-            print("local path is ", self.localUrl)
-            file_to_get = requests.get(extension_url, stream=True, timeout=10)
-            if file_to_get.status_code == 200:
-                with open(path_to_put_asses, "wb") as target:
-                    total_length = int(file_to_get.headers.get('content-length'))
-                    for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
-                        if chunk:
-                            # try:
-                            target.write(chunk)
-                            target.flush()
-                            # except requests.exceptions.ConnectionError as dataflush_err:
-                            #     print("Exception occurd while flushing data ", str(dataflush_err))
-                            #     errorLogger.error("Exception occurd while flushing data" + str(dataflush_err))
-
-            download_result['status'] = 200
-            return download_result
-        except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
-            print("in download_files_with_asessment  ", dwnld_files_asess_error2)
-            errorLogger("e_error in download_files_with_asessment " + str(dwnld_files_asess_error2))
-            download_result['status'] = 505 
-            return download_result
         
 
 

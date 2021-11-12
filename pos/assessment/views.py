@@ -132,7 +132,7 @@ class DownloadView(LoginRequiredMixin, View):
             #     lang_to_save_result, subj_to_save_result, exam_result, langId = self.ash.fetch_accurate(languageIds, subjectIds, examIds)
             #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
             print("quesPatternDetails ", type(quesPatternDetails), examIds)
-            print(quesPatternDetails)
+            # print(quesPatternDetails)
             # QuestionModelManager.save_question_data(self, quesPatternDetails)
                 # print(exam_result)
                 # print("lang_to_save ", type(lang_to_save), languageIds)
