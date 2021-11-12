@@ -36,15 +36,26 @@ class QuestionModel(models.Model):
 
     # objects = QuestionModelManager()
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
+
+    @classmethod
+    def create(cls, qid, languageid, subjectid, topicid, lessonid, qtid, qname, answer, photourl, ansdesc, qlevel, hint, addedby, addedtime, updatedby, updatedtime, IsParaQuestion, RefParaID, isdeleted, AppVersion, localPhotoUrl):
+        question_data = cls(qid=qid, languageid=languageid, subjectid=subjectid, topicid=topicid, lessonid=lessonid, qtid=qtid, qname=qname, answer=answer, photourl=photourl, ansdesc=ansdesc, qlevel=qlevel, hint=hint, addedby=addedby, addedtime=addedtime, updatedby=updatedby, updatedtime=updatedtime, IsParaQuestion=IsParaQuestion, RefParaID=RefParaID, isdeleted=isdeleted, AppVersion=AppVersion, localPhotoUrl=localPhotoUrl)
+
+        return question_data
+
+    
+    def __str__(self):
+        return str(self.qid)
+    
 
 
-class Question(QuestionModel):
-    pass
+# class Question(QuestionModel):
+#     pass
 
 class LstQuestionChoiceModel(models.Model):
-    lstquestionchoice       = models.ForeignKey(Question, related_name='lstquestionchoice', on_delete=models.CASCADE, blank=True, null=True)
+    lstquestionchoice       = models.ForeignKey(QuestionModel, related_name='lstquestionchoice', on_delete=models.CASCADE, blank=True, null=True)
     qid                     = models.IntegerField(default=0)
     qcid                    = models.IntegerField(default=0)
     matchingname            = models.CharField(max_length=255, default="")
