@@ -35,6 +35,22 @@
                 </div>
             </div>
 
+            <!-- success or error modal -->
+            <div id="pushModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+
             <!-- confirmation modal -->
             <div id="confirmModal" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -384,6 +400,8 @@
             console.log("error is ", error);
             localStorage.clear();
             hideloader();
+            $('#pushModal .modal-body').html('<p>OOps!! Something Went Wrong While Downloading</p>');
+                            $('#pushModal').modal('show')
         });
 
 })
