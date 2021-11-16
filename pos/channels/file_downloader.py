@@ -7,6 +7,7 @@ from zipfile import ZipFile
 from io import BytesIO, StringIO
 from clint.textui import progress
 from urllib.request import urlopen
+from assessment.models.question_models import QuestionModel, LstQuestionChoiceModel
 
 # This retrieves a Python logging instance (or creates it)
 infoLogger = logging.getLogger("info_logger")
@@ -34,6 +35,9 @@ class Downloader(object):
     a3gpp_files = ""
     m4a_files = ""
     amr_files = ""
+    local_photo_url = ""
+    local_match_url = ""
+    local_choice_url = ""
     
 
     current_dir = os.getcwd()
@@ -281,15 +285,149 @@ class Downloader(object):
         try:
             self.createdir(AppName)
             for res in quest_result:
-                print(res)
-                print("this is result : ", i)
+                photo_url = res['photourl']
+                if photo_url != '':
+                    fetched_url_val = self.common_extensions(photo_url, photo=1)
+                qobj, qcreated = QuestionModel.objects.get_or_create(
+                    languageid      = res['languageid'],
+                    qid             = res['qid'],
+                    subjectid       = res['subjectid'],
+                    topicid         = res['topicid'],
+                    lessonid        = res['lessonid'],
+                    qtid            = res['qtid'],
+                    qname           = res['qname'],
+                    answer          = res['answer'],
+                    photourl        = res['photourl'],
+                    ansdesc         = res['ansdesc'],
+                    qlevel          = res['qlevel'],
+                    hint            = res['hint'],
+                    addedby         = res['addedby'],
+                    addedtime       = res['addedtime'],
+                    updatedby       = res['updatedby'],
+                    updatedtime     = res['updatedtime'],
+                    IsParaQuestion  = res['IsParaQuestion'],
+                    RefParaID       = res['RefParaID'],
+                    isdeleted       = res['isdeleted'],
+                    AppVersion      = res['AppVersion'],
+                    localPhotoUrl   = self.local_photo_url if photo_url != "" else ""
+                )
                 if len(res['lstquestionchoice']) > 0:
                     for lst in res['lstquestionchoice']:
-                        print(lst, type(lst))
+                        match_url = lst['matchingurl']
+                        choice_url = lst['choiceurl']
+                        if match_url != "":
+                            fetched_url_val = self.common_extensions(match_url, match=1)
+                        if choice_url != "":
+                            fetched_url_val = self.common_extensions(choice_url, choice=1)
+                        lobj, lcreated = LstQuestionChoiceModel.objects.get_or_create(
+                            lstquestionchoice   = qobj,
+                            qid = lst['qid'],
+                            qcid    = lst['qcid'],
+                            matchingname    = lst['matchingname'],
+                            choicename  = lst['choicename'],
+                            correct = lst['correct'],
+                            matchingurl = lst['matchingurl'],
+                            choiceurl   = lst['choiceurl'],
+                            AppVersionChoice    = lst['AppVersionChoice'],
+                            localMatchUrl   = self.local_match_url if match_url != "" else "",
+                            localChoiceUrl  = self.local_choice_url if choice_url != "" else ""
+                        )
 
                 
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
             print("in download_files_with_asessment  ", dwnld_files_asess_error2)
+
+
+    def common_extensions(self, extension_url, match=0, photo=0, choice=0):
+        
+        download_result = {}
+        path_to_put_asses = ""
+        if extension_url.endswith('.png'):
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.PNG'):
+            extension_url = extension_url.replace('.PNG', '.png')
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.JPG'):
+            extension_url = extension_url.replace('.JPG', '.jpg')
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.jpg'):
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.jpeg'):
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.JPEG'):
+            extension_url = extension_url.replace('.JPEG', '.jpeg')
+            path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
+            print("my image path >>> ", path_to_put_asses)
+        #videos
+        elif extension_url.endswith('.MP4'):
+            extension_url = extension_url.replace('.MP4', '.mp4')
+            path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
+            print("my videos path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.mp4'):
+            path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
+            print("my videos path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.3gp'):
+            path_to_put_asses = os.path.join(self.v3gp_files, os.path.basename(extension_url))
+            print("my videos path >>> ", path_to_put_asses)
+        #audios
+        elif extension_url.endswith('.mp3'):
+            path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
+            print("my audios path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.MP3'):
+            extension_url = extension_url.replace('.MP3', '.mp3')
+            path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
+            print("my audios path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.3gpp'):
+            path_to_put_asses = os.path.join(self.a3gpp_files, os.path.basename(extension_url))
+            print("my audios path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.m4a'):
+            path_to_put_asses = os.path.join(self.m4a_files, os.path.basename(extension_url))
+            print("my audios path >>> ", path_to_put_asses)
+        elif extension_url.endswith('.amr'):
+            path_to_put_asses = os.path.join(self.amr_files, os.path.basename(extension_url))
+            print("my audios path >>> ", path_to_put_asses)
+
+
+        try:
+            self.localUrl = path_to_put_asses
+            if photo == 1:
+                self.local_photo_url = self.localUrl
+                self.local_photo_url = self.local_photo_url.split('static')[1]
+                self.local_photo_url = 'http://192.168.4.1:8000/static'+self.local_photo_url
+            if match == 1:
+                self.local_match_url = self.localUrl
+                self.local_match_url = self.local_match_url.split('static')[1]
+                self.local_match_url = 'http://192.168.4.1:8000/static'+self.local_match_url
+            if choice == 1:
+                self.local_choice_url = self.localUrl
+                self.local_choice_url = self.local_choice_url.split('static')[1]
+                self.local_choice_url = 'http://192.168.4.1:8000/static'+self.local_choice_url
+
+            file_to_get = requests.get(extension_url, stream=True, timeout=30)
+            if file_to_get.status_code == 200:
+                with open(path_to_put_asses, "wb") as target:
+                    total_length = int(file_to_get.headers.get('content-length'))
+                    for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+                        if chunk:
+                            try:
+                                target.write(chunk)
+                                target.flush()
+                            except requests.exceptions.ConnectionError as dataflush_err:
+                                print("Exception occurd while flushing data ", str(dataflush_err))
+                                errorLogger.error("Exception occurd while flushing data" + str(dataflush_err))
+
+                    download_result['status'] = 200
+                    return download_result
+        except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
+            print("in download_files_with_asessment  ", dwnld_files_asess_error2)
+            errorLogger("e_error in download_files_with_asessment " + str(dwnld_files_asess_error2))
+            download_result['status'] = 505 
+            return download_result
         
 
 

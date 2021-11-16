@@ -34,7 +34,7 @@ class PaperPatternModelManager(models.Manager):
             )
             for lst in pattern_result['lstpatterndetail']:
                 lobj, lcreated = LstPatternDetailModel.objects.get_or_create(
-                    paper_pattern       = obj,
+                    lstpatterndetail       = obj,
                     topicid             = lst['topicid'],
                     topicname           = lst['topicname'], 
                     qtid                = lst['qtid'],
@@ -50,7 +50,7 @@ class PaperPatternModelManager(models.Manager):
             
             for data in pattern_result['lstexamcertificatetopiclist']:
                 dobj, dcreated = LstExamCertificateTopicListModel.objects.get_or_create(
-                    paperPattern        = obj,
+                    lstexamcertificatetopiclist        = obj,
                     certificatequestion = data['certificatequestion'],
                     certificatekeyword  = data['certificatekeyword']
                 )
@@ -95,7 +95,7 @@ class PaperPattern(PaperPatternModel):
 
 
 class LstPatternDetailModel(models.Model):
-    paper_pattern = models.ForeignKey(PaperPattern, related_name='lstpatterndetail',on_delete=models.CASCADE)
+    lstpatterndetail = models.ForeignKey(PaperPattern, related_name='lstpatterndetail',on_delete=models.CASCADE)
     topicid = models.IntegerField()
     topicname   = models.CharField(max_length=255, blank=True, null=True)
     qtid    = models.IntegerField()
@@ -126,7 +126,7 @@ class LstPatternDetailModel(models.Model):
 
 
 class LstExamCertificateTopicListModel(models.Model):
-    paper_pattern = models.ForeignKey(PaperPattern, related_name='lstexamcertificatetopiclist', on_delete=models.CASCADE)
+    lstexamcertificatetopiclist = models.ForeignKey(PaperPattern, related_name='lstexamcertificatetopiclist', on_delete=models.CASCADE)
     certificatequestion = models.TextField(blank=True, null=True)
     certificatekeyword  = models.TextField(blank=True, null=True)
 

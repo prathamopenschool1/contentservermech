@@ -57,7 +57,6 @@
         },
         success: function(data) {
             treeData = data.json_data;
-            console.log('treeData ', treeData, typeof(treeData));
             if (treeData.length === 0){
                 $('#loaded').hide();
                 $('.loading').css("visibility", "hidden");

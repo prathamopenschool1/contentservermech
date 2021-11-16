@@ -13,6 +13,8 @@
                     <button type="submit" id="sort_ids" class="btn btn-secondary float-right" disabled>Download</button>
                     <div class="loading" id="loaded" style="display:none;">
                     </div>
+                    <div class="loading1" id="loaded1">
+                    </div>
                 </div>
             </div>
             <div id="dvtree">
@@ -32,6 +34,24 @@
 
                 </div>
             </div>
+
+            <!-- confirmation modal -->
+            <div id="confirmModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary mr-auto yes" data-dismiss="modal">OK</button>
+                        <button class="btn btn-secondary no" data-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -47,11 +67,28 @@
     var subjectArray = [];
     var examIdArray = [];
 
+    function confirmbox() {
+        $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Download?</p>');
+        $('#confirmModal').modal('show');
+    }
+
+    function showloader() {
+        $('#loaded').show();
+        $('.loading').css("visibility", "visible");
+    }
+
+    function hideloader() {
+        $('#loaded').hide();
+        $('.loading').css("visibility", "hidden");
+    }
+
     window.onload = function(){
+        showloader();
         callLanguage();
     }
 
     function callLanguage() {
+        showloader();
         subjectId = ''
         subjectName = ''
         languageId = ''
@@ -65,7 +102,10 @@
             }
         })
         .then(response => response.json())
-        .then(jsondata => fetchLangData(jsondata))
+        .then(jsondata => {
+            fetchLangData(jsondata);
+            hideloader();
+        })
     }
     
     function fetchLangData(jsondata) {
@@ -104,6 +144,7 @@
 
 
     function fetchSubjectData(langId, langName) {
+        showloader();
         subjectId = ''
         subjectName = ''
         languageId = langId;
@@ -121,7 +162,10 @@
             })
         })
         .then(response => response.json())
-        .then(jsondata => loadSubjectData(jsondata))
+        .then(jsondata => {
+            loadSubjectData(jsondata);
+            hideloader();
+        })
     }
 
     function loadSubjectData(jsondata) {
@@ -154,7 +198,7 @@
     }
 
     function fectchExamData(languageid, subjectid, subjectname, flag) {
-        console.log("flag ", flag, typeof(flag))
+        showloader();
         subjectName = subjectname;
         let exam_url = "/assessment/exam"
         fetch(exam_url, {
@@ -169,7 +213,10 @@
             })
         })
         .then(response => response.json())
-        .then(jsondata => loadExamData(jsondata, flag, subjectid))
+        .then(jsondata => {
+            loadExamData(jsondata, flag, subjectid);
+            hideloader();
+        })
     }
 
     function loadExamData(jsondata, flag, subjectid) {
@@ -312,28 +359,34 @@
     }
 
     $('#sort_ids').click(function (){
-            let download_url = "/assessment/downloadassess"
-            fetch(download_url, {
-                method: 'POST',
-                headers: {
-                    "Content-Type" : "application/json",
-                    "X-CSRFToken": '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    'languageid': languageArray,
-                    'subjectid': subjectArray,
-                    'examid': examIdArray
-                })
+        showloader();
+        let download_url = "/assessment/downloadassess"
+        fetch(download_url, {
+            method: 'POST',
+            headers: {
+                "Content-Type" : "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'languageid': languageArray,
+                'subjectid': subjectArray,
+                'examid': examIdArray
             })
-            .then(response => response.json())
-            .then(jsondata => {
-                console.log(jsondata, 'jsondata');
-                // window.location.href = '/content/app_available/';
-                localStorage.clear();
-                // window.location.href = '/assessment/';
-            })
-            .catch(error => console.log("error is ", error));
-    })
+        })
+        .then(response => response.json())
+        .then(jsondata => {
+            // window.location.href = '/content/app_available/';
+            localStorage.clear();
+            hideloader();
+            // window.location.href = '/assessment/';
+        })
+        .catch(error => {
+            console.log("error is ", error);
+            localStorage.clear();
+            hideloader();
+        });
+
+})
 
 
      

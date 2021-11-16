@@ -9,13 +9,14 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 #serializers
-from .serializers import (LanguageSerializer, SubjectSerializer, ExamSerializer, PaperPatternSerializer)
+from .serializers import (LanguageSerializer, SubjectSerializer, ExamSerializer, PaperPatternSerializer, QuestionModelSerializer)
 
 #models
 from assessment.models.exam_models import Exam
 from assessment.models.subject_models import Subject
 from assessment.models.language_models import Language
 from assessment.models.pattern_models import PaperPattern
+from assessment.models.question_models import QuestionModel, LstQuestionChoiceModel
 
 from assessment_api import serializers
 
@@ -48,6 +49,14 @@ class PaperPatterApiView(viewsets.ModelViewSet):
     serializer_class = PaperPatternSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filter_fields = ('examid',)
+    pagination_class = PageNumberPagination
+
+
+class QuestionApiView(viewsets.ModelViewSet):
+    queryset = QuestionModel.objects.all()
+    serializer_class = QuestionModelSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_fields = ('languageid', 'subjectid', 'topicid')
     pagination_class = PageNumberPagination
 
 
