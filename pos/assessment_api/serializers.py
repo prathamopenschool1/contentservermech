@@ -5,6 +5,7 @@ from assessment.models.subject_models import Subject
 from assessment.models.language_models import Language
 from assessment.models.exam_models import Exam, LstSubjectExamModel
 from assessment.models.pattern_models import PaperPattern, LstExamCertificateTopicListModel, LstPatternDetailModel
+from  assessment.models.question_models import LstQuestionChoiceModel, QuestionModel
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -57,3 +58,17 @@ class PaperPatternSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperPattern
         fields = ['subjectid', 'subjectname', 'examid', 'examname', 'examduration', 'question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8', 'question9', 'question10', 'IsRandom', 'noofcertificateq', 'exammode', 'examtype', 'outofmarks', 'lstpatterndetail', 'lstexamcertificatetopiclist']
+
+
+
+class LstQuestionChoiceModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LstQuestionChoiceModel
+        fields = ['qid', 'qcid', 'matchingname', 'choicename', 'correct', 'matchingurl', 'choiceurl', 'AppVersionChoice', 'localChoiceUrl', 'localMatchUrl']
+
+
+class QuestionModelSerializer(serializers.ModelSerializer):
+    lstquestionchoice = LstQuestionChoiceModelSerializer(many=True, read_only=True)
+    class Meta:
+        model = QuestionModel
+        fields = ['qid', 'languageid' ,'subjectid' ,'topicid' ,'lessonid' ,'qtid' ,'qname' ,'answer' ,'photourl' ,'ansdesc' ,'qlevel' ,'hint' ,'addedby' ,'addedtime' ,'updatedby' ,'updatedtime' ,'IsParaQuestion' ,'RefParaID' ,'isdeleted' ,'AppVersion' ,'localPhotoUrl', 'lstquestionchoice']

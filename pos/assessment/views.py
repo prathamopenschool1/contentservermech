@@ -103,45 +103,36 @@ class DownloadView(LoginRequiredMixin, View):
         subjectIds = asessment_array_data['subjectid']
         examIds = asessment_array_data['examid']
         if self.psh.connect() == True:
+
+            #language api call and save in db
             result_lang = self.ash.language_call()
             if result_lang['status'] == 200:
-                # LanguageModelManager.save_language_data(self, result_lang['lang_result'])
+                LanguageModelManager.save_language_data(self, result_lang['lang_result'])
+
+                #subject api call and save in db
                 for lids in languageIds:
                     result_subj = self.ash.subject_call(lids)
                     if result_subj['status'] == 200:
                         print(type(result_subj['subj_result']))
-                        # SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
+                        SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
+
+                ##Exam api call and save in db
                 for nlids in languageIds:
                     for sids in subjectIds:
                         result_ui, result_exam = self.ash.exam_call(nlids, sids, examIds)
                         if result_exam['status'] == 200:
-                            print(type(result_exam['exam_result']), result_exam['exam_result'])
-                            # ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
-            print("exam ids >>>>> ", examIds, type(examIds))
-            i=1
+                            ExamModelManager.save_exam_data(self, result_exam['exam_result'], nlids, sids)
             lst_of_pattern = []
             for eids in examIds:
                 result_pattern = self.ash.pattern_call(eids)
-                # print("result >>> ", result_pattern['exam_pattern'], i)
                 lst_of_pattern.append(result_pattern['exam_pattern'])
-                # PaperPatternModelManager.save_pattern_data(self, result_pattern['exam_pattern'], eids)
-                # i=i+1
-            # print("lst pattern ", lst_of_pattern)
-            # if result_pattern['status'] == 200:
+                PaperPatternModelManager.save_pattern_data(self, result_pattern['exam_pattern'], eids)
+
+            #question api call
             quesPatternDetails = self.ash.question_details(languageIds, lst_of_pattern)
-            #     lang_to_save_result, subj_to_save_result, exam_result, langId = self.ash.fetch_accurate(languageIds, subjectIds, examIds)
-            #     print("langs n subjs ", lang_to_save_result, subj_to_save_result, langId)
-            print("quesPatternDetails ", type(quesPatternDetails), examIds)
-            # print(quesPatternDetails)
-            # QuestionModelManager.save_question_data(self, quesPatternDetails)
-                # print(exam_result)
-                # print("lang_to_save ", type(lang_to_save), languageIds)
-                # print("subj_to_save ", type(subj_to_save), subjectIds)
 
             context = {}
-            context['languageIds'] = languageIds
-            context['subjectIds'] = subjectIds
-            context['exexamIds'] = examIds
+            context['message'] = "successfully saved"
             # print(context)
         return JsonResponse(context, safe=False)
 
