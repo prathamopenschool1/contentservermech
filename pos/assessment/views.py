@@ -6,15 +6,24 @@ from modpush.pushhelper.connectcheck import PushHelper
 from .assesshelper import AssesmentHelper
 from .models.language_models import LanguageModelManager
 from .models.subject_models import SubjectModelManager
-from .models.exam_models import ExamModelManager, Exam
+from .models.exam_models import ExamModelManager, Exam, LstSubjectExamModel
 from .models.pattern_models import PaperPatternModelManager
 # from .models.question_models import QuestionModelManager
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class CommonView(LoginRequiredMixin, TemplateView):
+class CommonView(LoginRequiredMixin, View):
+    
     template_name = "assessment/assessmentpage.html"
+    def get(self, request, *args, **kwargs):
+        exam_query = LstSubjectExamModel.objects.all().values_list('examid', flat=True).distinct()
+        exam_query = json.dumps(list(exam_query))
+        print("tananan")
+        print(str(exam_query))
+        context = {}
+        context['examids_lst'] = exam_query
+        return render(self.request, self.template_name, context=context)
 
 
 class LanguageView(LoginRequiredMixin, View):

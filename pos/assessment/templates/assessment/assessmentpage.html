@@ -83,6 +83,11 @@
     var subjectArray = [];
     var examIdArray = [];
 
+    let examids_lst_from_main = "{{examids_lst}}";
+    // examids_lst_from_main = JSON.parse(examids_lst_from_main)
+    examids_lst_from_main = JSON.parse(examids_lst_from_main.replace(/&quot;/g,'"'));
+    console.log(examids_lst_from_main, typeof(examids_lst_from_main), "yoho!!@")
+
     function confirmbox() {
         $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Download?</p>');
         $('#confirmModal').modal('show');
@@ -142,7 +147,7 @@
     }
 
     function loadLanguageData(treeData) {
-        console.log("language data !!!!!!!");
+        // console.log("language data !!!!!!!");
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
@@ -186,7 +191,7 @@
 
     function loadSubjectData(jsondata) {
         let treeData = jsondata.subject_result['subj_result']
-        console.log("subject data !!!!!!!", treeData);
+        // console.log("subject data !!!!!!!", treeData);
         let str = '';
         str=str+'<ul>';
             for (let i = 0; i < treeData.length; i++) {
@@ -237,10 +242,16 @@
 
     function loadExamData(jsondata, flag, subjectid) {
         let treeData = jsondata.exam_result['exam_result'][0]['lstsubjectexam'];
+        // console.log(examids_lst_from_main, "main data", examids_lst_from_main.length, typeof(examids_lst_from_main))
+
+        // for (let j = 0; j < examids_lst_from_main.length; j++) {
+        //     console.log(examids_lst_from_main[j], typeof(examids_lst_from_main[j]), examids_lst_from_main[j].toString())
+        // }
+        
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
-                if(flag == 1){
+            if(flag == 1){
                     str=str+'<li>\
                         <input name="apiExamData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
                         checked="true" onchange="" onclick="">\
@@ -252,6 +263,7 @@
                         onchange="" onclick="">\
                         '+treeData[i]["examname"]+'</li>';
                 }
+            
         }
 
         str=str+'</ul>';
@@ -365,11 +377,11 @@
 
     function enableDloadBtn() {
         if (examIdArray.length > 0 && languageArray.length && subjectArray.length > 0){
-            console.log(examIdArray, languageArray, subjectArray, 'disable');
+            // console.log(examIdArray, languageArray, subjectArray, 'disable');
             document.getElementById('sort_ids').disabled = false;
         }
         else{
-            console.log(examIdArray, languageArray, subjectArray, 'enable');
+            // console.log(examIdArray, languageArray, subjectArray, 'enable');
             document.getElementById('sort_ids').disabled = true;
         }
     }
@@ -397,7 +409,7 @@
             // window.location.href = '/assessment/';
         })
         .catch(error => {
-            console.log("error is ", error);
+            // console.log("error is ", error);
             localStorage.clear();
             hideloader();
             $('#pushModal .modal-body').html('<p>OOps!! Something Went Wrong While Downloading</p>');
