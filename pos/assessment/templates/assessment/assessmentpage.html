@@ -251,19 +251,24 @@
         let str = '';
         str=str+'<ul>';
         for (let i = 0; i < treeData.length; i++) {
-            if(flag == 1){
-                    str=str+'<li>\
-                        <input name="apiExamData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
-                        checked="true" onchange="" onclick="">\
-                        <p style="color:black;">'+treeData[i]["examname"]+'</p></li>';
+            let isChecked = false;
+            str=str+'<li>';
+            for (let j = 0; j < examids_lst_from_main.length; j++) {
+                if (treeData[i]["examid"].toString() === examids_lst_from_main[j]) {
+                    isChecked = true;
                 }
-                else{
-                    str=str+'<li>\
-                        <input name="apiExamData" type="checkbox" class="box" id="'+treeData[i]["examid"].toString()+'"\
-                        onchange="" onclick="">\
-                        '+treeData[i]["examname"]+'</li>';
+            }
+            if (isChecked) {
+                    str+=`<input name="apiExamData" type="checkbox" disabled class="box" id="${treeData[i]["examid"].toString()}"\
+                            onchange="" onclick="">\
+                            ${treeData[i]["examname"]} <img src=${`"{% static 'images/check.svg' %}"`}>`
+                } else {
+                    str+=`<input name="apiExamData" type="checkbox" class="box" id="${treeData[i]["examid"].toString()}"\
+                            onchange="" onclick="">\
+                            ${treeData[i]["examname"]}`
                 }
-            
+            str+='</li>';
+
         }
 
         str=str+'</ul>';
