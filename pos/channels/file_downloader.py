@@ -64,12 +64,12 @@ class Downloader(object):
         self.createDir_if_not(self.store_files)
 
         self.store_files = os.path.join(self.store_files, AppName)
-        print('sf', self.store_files)
+        # print('sf', self.store_files)
         self.createDir_if_not(self.store_files)
 
         # images folder
         self.store_img = os.path.join(self.store_files, 'images')
-        print('simg', self.store_img)
+        # print('simg', self.store_img)
         self.createDir_if_not(self.store_img)
 
         # content (videos and zips)
@@ -344,53 +344,53 @@ class Downloader(object):
         path_to_put_asses = ""
         if extension_url.endswith('.png'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.PNG'):
             extension_url = extension_url.replace('.PNG', '.png')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.JPG'):
             extension_url = extension_url.replace('.JPG', '.jpg')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.jpg'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.jpeg'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.JPEG'):
             extension_url = extension_url.replace('.JPEG', '.jpeg')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         #videos
         elif extension_url.endswith('.MP4'):
             extension_url = extension_url.replace('.MP4', '.mp4')
             path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         elif extension_url.endswith('.mp4'):
             path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         elif extension_url.endswith('.3gp'):
             path_to_put_asses = os.path.join(self.v3gp_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         #audios
         elif extension_url.endswith('.mp3'):
             path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.MP3'):
             extension_url = extension_url.replace('.MP3', '.mp3')
             path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.3gpp'):
             path_to_put_asses = os.path.join(self.a3gpp_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.m4a'):
             path_to_put_asses = os.path.join(self.m4a_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.amr'):
             path_to_put_asses = os.path.join(self.amr_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
 
 
         try:
