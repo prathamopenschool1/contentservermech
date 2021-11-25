@@ -79,6 +79,9 @@
     let uniqueArray = [];
     let res = "{{AppId}}";
     let AppName = "{{ AppName }}"
+    let filed_query = "{{ filed_query }}";
+    filed_query = JSON.parse(filed_query.replace(/&quot;/g,'"'))
+    console.log(filed_query, "fileds")
     $.ajax({
         url: '/channel/return_json_value/'+res+'/',
         type: 'GET',
@@ -132,6 +135,7 @@ function createTree(){
 
 function populateTree(parentid)
 {
+    console.log("my clicked id is ", parentid)
     let str = '';
     str=str+'<ul>';
 
@@ -381,14 +385,17 @@ function populateTree(parentid)
                 }
                 else{
                     $('.loading').css("visibility", "hidden");
-                    window.location.href = '/channel/no_internet/';
+                    $('.loading').css("visibility", "hidden");
+                    $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                    $('#pushModal').modal('show');
+                    // window.location.href = '/channel/no_internet/';
                 }
             },
             error: function (error) {
                 console.log('error; ' + eval(error));
                 // $('.loading').css("visibility", "hidden");
                 // $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
-                // $('#pushModal').modal('show')
+                // $('#pushModal').modal('show');
             }
         });
     });
