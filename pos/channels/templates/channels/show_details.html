@@ -79,9 +79,9 @@
     let uniqueArray = [];
     let res = "{{AppId}}";
     let AppName = "{{ AppName }}"
-    // let filed_query = "{{ filed_query }}";
-    // filed_query = JSON.parse(filed_query.replace(/&quot;/g,'"'))
-    // console.log(filed_query, "fileds")
+    let filed_query = "{{ filed_query }}";
+    filed_query = JSON.parse(filed_query.replace(/&quot;/g,'"'))
+    console.log(filed_query, "fileds")
     $.ajax({
         url: '/channel/return_json_value/'+res+'/',
         type: 'GET',
@@ -381,16 +381,16 @@ function populateTree(parentid)
                     $('#loaded').hide();
                     $('.loading').css("visibility", "hidden");
                     $('#sort_ids').show();
-                    // $('#pushModal .modal-body').html('<p>Data Downloaded Successfully!</p>');
-                    // $('#pushModal').modal('show');
-                    window.location.href = '/content/app_available/';
-                    // $('#pushedId').click(function () {
-                    //     window.location.href = '/content/app_available/';
-                    // })
+                    $('#pushModal .modal-body').html('<p>Data Downloaded Successfully!</p>');
+                    $('#pushModal').modal('show');
+                    // window.location.href = '/content/app_available/';
+                    $('#pushedId').click(function () {
+                        window.location.href = '/content/app_available/';
+                    })
                 }
-                else{
+                else if(result != null && result == 'Failed'){
                     $('.loading').css("visibility", "hidden");
-                    $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                    $('#pushModal .modal-body').html('<p>Downloading Stopped! Internet Connection Not Found!</p>');
                     $('#pushModal').modal('show');
                     // window.location.href = '/channel/no_internet/';
                 }

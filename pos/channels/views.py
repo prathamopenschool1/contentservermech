@@ -91,17 +91,17 @@ class ShowDetailsOfChannelView(LoginRequiredMixin, View):
     def get(self, request, AppId, AppName, *args, **kwargs):
         try:
             context = {}
-            # print("my app id and name ", AppId, AppName)
+            print("my app id and name ", AppId, AppName)
             infoLogger.info("AppId,AppName in ShowDetailsOfChannelView - AppId: " + AppId + "AppName: " + AppName )
             context['AppId'] = AppId
             context['AppName'] = AppName
-            # filed_query = FileDataToBeStored.objects.all().values_list('NodeId', flat=True).distinct()
-            # filed_query = json.dumps(list(filed_query))
-            # print("filed_query is ", filed_query)
+            filed_query = FileDataToBeStored.objects.all().values_list('NodeId', flat=True).distinct()
+            filed_query = json.dumps(list(filed_query))
+            print("filed_query is ", filed_query)
             # appAvail_query = AppAvailableInDB.objects.all().values_list('NodeId', flat=True).distinct()
             # appAvail_query = json.dumps(list(appAvail_query))
             # print("app query  is ", appAvail_query, type(appAvail_query))
-            # context['filed_query'] = filed_query
+            context['filed_query'] = filed_query
             return render(self.request, self.template_name, context=context)
         except requests.exceptions.ConnectionError as  sdlcvConnectionError :
             errorLogger.error("error-ShowDetailsOfChannelView:" + str(sdlcvConnectionError))
@@ -169,7 +169,7 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 response_data = downloading.download_files_with_qs(detail_node_url, {"id": ids}, AppName)
 
                 if response_data is False:
-                    return HttpResponseRedirect('/channel/no_internet/')
+                    return HttpResponse('Failed')
                 else:
                     # print("localUrl is ", downloading.localUrl)
                     local_url = downloading.localUrl
@@ -230,7 +230,8 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                 errorLogger.error("downlaod error - Loop- ids in node_values :" + str(connecton_err2))
                 #commented redirect to no_internet to continue downloading after internet is up again and added continue below
                 #return HttpResponseRedirect('/channel/no_internet/')
-                continue
+                # continue
+                return HttpResponse("Failed")
 
         # return HttpResponse("success!!")
         endTime = datetime.now()
