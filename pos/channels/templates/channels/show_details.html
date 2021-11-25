@@ -79,9 +79,9 @@
     let uniqueArray = [];
     let res = "{{AppId}}";
     let AppName = "{{ AppName }}"
-    let filed_query = "{{ filed_query }}";
-    filed_query = JSON.parse(filed_query.replace(/&quot;/g,'"'))
-    console.log(filed_query, "fileds")
+    // let filed_query = "{{ filed_query }}";
+    // filed_query = JSON.parse(filed_query.replace(/&quot;/g,'"'))
+    // console.log(filed_query, "fileds")
     $.ajax({
         url: '/channel/return_json_value/'+res+'/',
         type: 'GET',
