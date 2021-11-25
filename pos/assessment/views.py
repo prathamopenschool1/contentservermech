@@ -19,7 +19,6 @@ class CommonView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         exam_query = LstSubjectExamModel.objects.all().values_list('examid', flat=True).distinct()
         exam_query = json.dumps(list(exam_query))
-        print(str(exam_query))
         context = {}
         context['examids_lst'] = exam_query
         return render(self.request, self.template_name, context=context)

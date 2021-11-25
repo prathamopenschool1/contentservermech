@@ -411,6 +411,8 @@
             // window.location.href = '/content/app_available/';
             localStorage.clear();
             hideloader();
+            $('#pushModal .modal-body').html('<p>Congrats! Data Saved Successfully!!</p>');
+            $('#pushModal').modal('show');
             // window.location.href = '/assessment/';
         })
         .catch(error => {
@@ -418,7 +420,7 @@
             localStorage.clear();
             hideloader();
             $('#pushModal .modal-body').html('<p>OOps!! Something Went Wrong While Downloading</p>');
-                            $('#pushModal').modal('show')
+            $('#pushModal').modal('show');
         });
 
 })
