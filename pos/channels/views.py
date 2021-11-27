@@ -95,13 +95,13 @@ class ShowDetailsOfChannelView(LoginRequiredMixin, View):
             infoLogger.info("AppId,AppName in ShowDetailsOfChannelView - AppId: " + AppId + "AppName: " + AppName )
             context['AppId'] = AppId
             context['AppName'] = AppName
-            filed_query = FileDataToBeStored.objects.all().values_list('NodeId', flat=True).distinct()
-            filed_query = json.dumps(list(filed_query))
-            print("filed_query is ", filed_query)
-            # appAvail_query = AppAvailableInDB.objects.all().values_list('NodeId', flat=True).distinct()
-            # appAvail_query = json.dumps(list(appAvail_query))
-            # print("app query  is ", appAvail_query, type(appAvail_query))
-            context['filed_query'] = filed_query
+            # filed_query = FileDataToBeStored.objects.all().values_list('NodeId', flat=True).distinct()
+            # filed_query = json.dumps(list(filed_query))
+            # print("filed_query is ", filed_query)
+            appAvail_query = AppAvailableInDB.objects.filter(NodeType="Resource").values_list('NodeId', flat=True).distinct()
+            appAvail_query = json.dumps(list(appAvail_query))
+            print("app query  is ", appAvail_query, type(appAvail_query))
+            context['appAvail_query'] = appAvail_query
             return render(self.request, self.template_name, context=context)
         except requests.exceptions.ConnectionError as  sdlcvConnectionError :
             errorLogger.error("error-ShowDetailsOfChannelView:" + str(sdlcvConnectionError))
