@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static '/css/channels.css' %}">
 {% block content %}
 <br>
+<link rel="stylesheet" href="{% static '/css/channels.css' %}">
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
+
+    <div class="loading" id="loaded">
+    </div>
     {% if channels_from_server %}
         <main role="main">
 
@@ -36,6 +40,34 @@
 
     </main>
     {% else %}
-        <p>no channels exists. Please Check the internet connection..!</p>   
+        <p>No channels exists. Please Check the internet connection..!</p>   
     {% endif %}
+
+    <script>
+
+      function showloader() {
+        $('#loaded').show();
+        $('.loading').css("visibility", "visible");
+    }
+
+    function hideloader() {
+        $('#loaded').hide();
+        $('.loading').css("visibility", "hidden");
+    }
+
+    window.onload = function(){
+        hideloader();
+    }
+
+    // document.onreadystatechange = function() {
+    //     console.log("object abcd")
+    //         if (document.readyState !== "complete") {
+    //             showloader();
+    //         } else {
+    //             hideloader();
+    //         }
+    //     };
+
+    </script>
+
 {% endblock  %}
