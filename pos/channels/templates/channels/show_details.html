@@ -80,8 +80,7 @@
     let res = "{{AppId}}";
     let AppName = "{{ AppName }}"
     let appAvail_query = "{{ appAvail_query }}";
-    appAvail_query = JSON.parse(appAvail_query.replace(/&quot;/g,'"'))
-    console.log(appAvail_query, "fileds")
+    appAvail_query = JSON.parse(appAvail_query.replace(/&quot;/g,'"'));
     $.ajax({
         url: '/channel/return_json_value/'+res+'/',
         type: 'GET',
@@ -335,7 +334,8 @@ function populateTree(parentid)
                     for(let j=0;j<treeData.length;j++){
                         if(treeData[j]["NodeId"].toString() === treeData[i]["ParentId"].toString())
                         {
-                            // console.log("parentid is --->", treeData[j]["ParentId"])
+                        // console.log("parentid is --->", treeData[j]["ParentId"])
+                            
                             treeData[j].checked = true;
                             parentTicked(treeData[j]["NodeId"]);
                             uniqueArray.push(treeData[j]['NodeId']);
