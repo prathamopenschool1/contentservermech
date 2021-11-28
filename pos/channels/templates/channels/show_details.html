@@ -141,22 +141,29 @@ function populateTree(parentid)
 
     for (let i = 0; i < treeData.length; i++) {
         let isDownloaded = false;
-        // for (let j = 0; j < appAvail_query.length; j++) {
-        //     if (treeData[i]["NodeId"].toString() === appAvail_query[j]) {
-        //         console.log(appAvail_query[j], typeof(appAvail_query[j]), treeData[i]["NodeId"].toString())
-        //         isChecked = true;
-        //     }
-        // }
+        for (let j = 0; j < appAvail_query.length; j++) {
+            if (treeData[i]["NodeId"].toString() === appAvail_query[j]) {
+                isDownloaded = true;
+            }
+        }
         if(treeData[i]["ParentId"] !== null)
         {
         if(treeData[i]["ParentId"].toString() === parentid.toString())
         {
             if(treeData[i].checked){
                 if (treeData[i]["NodeType"] === "Resource" || treeData[i]["NodeType"] === "Assessment") {
-                    str=str+'<li>\
-                    <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
-                    checked="true" onchange="indeterminateCall(this);" onclick="popup(this);">\
-                    <span style="color:black">'+treeData[i]["NodeTitle"]+'</span></li>';
+                    if (isDownloaded) {
+                        str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
+                        onchange="indeterminateCall(this);" onclick="popup(this);" disabled>\
+                        <span style="color:black">'+treeData[i]["NodeTitle"]+'</span><img src=\''+"{% static 'images/check.svg' %}"+'\'></li>';
+                    }
+                    else{
+                        str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
+                        checked="true" onchange="indeterminateCall(this);" onclick="popup(this);">\
+                        <span style="color:black">'+treeData[i]["NodeTitle"]+'</span></li>';
+                    }
                 } else {
                     str=str+'<li>\
                     <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
@@ -168,10 +175,18 @@ function populateTree(parentid)
             }
             else{
                 if (treeData[i]["NodeType"] === "Resource" || treeData[i]["NodeType"] === "Assessment") {
-                    str=str+'<li>\
-                    <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
-                    onchange="indeterminateCall(this);" onclick="popup(this);">\
-                    <span style="color:black">'+treeData[i]["NodeTitle"]+'</span></li>';
+                    if (isDownloaded) {
+                        str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
+                        onchange="indeterminateCall(this);" onclick="popup(this);" disabled>\
+                        <span style="color:black">'+treeData[i]["NodeTitle"]+'</span><img src=\''+"{% static 'images/check.svg' %}"+'\'></li>';
+                    }
+                    else{
+                        str=str+'<li>\
+                        <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
+                        onchange="indeterminateCall(this);" onclick="popup(this);">\
+                        <span style="color:black">'+treeData[i]["NodeTitle"]+'</span></li>';   
+                    }
                 }
                 else{
                     str=str+'<li>\
@@ -382,7 +397,6 @@ function populateTree(parentid)
     //   }
 
     $('#sort_ids').click(function(){
-        //console.log("status is " + status);
         $.ajax({
             url: "/channel/downloads/",
             type: 'POST',
@@ -400,7 +414,6 @@ function populateTree(parentid)
                 $('#sort_ids').hide();
             },
             success: function(result){
-                console.log(result);
                 if(result != null && result == 'success'){
                     $('#loaded').hide();
                     $('.loading').css("visibility", "hidden");
