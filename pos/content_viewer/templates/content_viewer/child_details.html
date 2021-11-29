@@ -2,6 +2,26 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
+
+    <style>
+        @media (max-width: 768px) {
+        .btn-responsive {
+            padding:2px 4px;
+            font-size:80%;
+            line-height: 1;
+            border-radius:3px;
+        }
+        }
+
+        @media (min-width: 769px) and (max-width: 992px) {
+        .btn-responsive {
+            padding:2px 4px;
+            font-size:80%;
+            line-height: 1.2;
+        }
+        }
+    </style>
+
 <main role="main">
     <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
@@ -51,7 +71,7 @@
                                 &nbsp;&nbsp;
                             <div class="btn-group">
                                 <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
-                                    <button class="btn btn-outline-primary my-2 my-sm-0" type="button">Watch</button>
+                                    <button class="btn btn-success btn-responsive" type="button">Watch</button>
                                 </a>
                             </div>
                             </div>
@@ -72,7 +92,7 @@
                                     &nbsp;&nbsp;
                                 <div class="btn-group">
                                     <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
-                                        <button class="btn btn-outline-primary" type="button">View</button>
+                                        <button class="btn btn-success btn-responsive" type="button">View</button>
                                     </a>
                                 </div>
                                 </div>
