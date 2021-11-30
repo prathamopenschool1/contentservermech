@@ -44,7 +44,7 @@ class ExamApiView(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
 
 
-class PaperPatterApiView(viewsets.ModelViewSet):
+class PaperPatternApiView(viewsets.ModelViewSet):
     queryset = PaperPattern.objects.all()
     serializer_class = PaperPatternSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
