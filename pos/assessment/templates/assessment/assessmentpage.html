@@ -86,7 +86,7 @@
     let examids_lst_from_main = "{{examids_lst}}";
     // examids_lst_from_main = JSON.parse(examids_lst_from_main)
     examids_lst_from_main = JSON.parse(examids_lst_from_main.replace(/&quot;/g,'"'));
-    console.log(examids_lst_from_main, typeof(examids_lst_from_main), "yoho!!@")
+    // console.log(examids_lst_from_main, typeof(examids_lst_from_main), "yoho!!@")
 
     function confirmbox() {
         $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Download?</p>');
@@ -196,7 +196,7 @@
         str=str+'<ul>';
             for (let i = 0; i < treeData.length; i++) {
                 if(!treeData[i].checked){
-                    console.log("908111");
+                    // console.log("908111");
                     str=str+'<li>\
                         <input name="apiSubjectData" type="checkbox" class="box" id="'+treeData[i]["subjectid"].toString()+'"\
                         onchange="" onclick="">\
