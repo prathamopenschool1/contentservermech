@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/', include('core_api.urls')),
     path('api/channel/', include('channels_api.urls')),
     path('api/assessment/', include('assessment_api.urls')),
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
