@@ -430,6 +430,9 @@ function populateTree(parentid)
                     $('#pushModal .modal-body').html('<p>Downloading Stopped! Internet Connection Not Found!</p>');
                     $('#pushModal').modal('show');
                     // window.location.href = '/channel/no_internet/';
+                    $('#pushedId').click(function () {
+                        location.reload();
+                    })
                 }
             },
             error: function (error) {
