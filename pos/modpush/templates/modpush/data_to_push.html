@@ -2,28 +2,46 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
+<style>
+    @media (max-width: 768px) {
+    .btn-responsive {
+        padding:2px 4px;
+        font-size:80%;
+        line-height: 1;
+        border-radius:3px;
+    }
+    }
+
+    @media (min-width: 769px) and (max-width: 992px) {
+    .btn-responsive {
+        padding:2px 4px;
+        font-size:80%;
+        line-height: 1.2;
+    }
+    }
+</style>
     <br>
     <br>
     <!-- {% url 'push:usage' %} -->
     <div class="row col-md-12">
         <p class="span6" style="float: none; margin:auto;">
-            <button type="submit" id="usage" class="btn btn-success float-right">Upload UsageData &#8593</button>
+            <button type="submit" id="usage" class="btn btn-success float-right btn-responsive">Upload UsageData &#8593</button>
         </p>
 
         <p class="span6" style="float: none; margin:auto;">
-            <button type="submit" id="dbpush" class="btn btn-success float-right">Upload DBPush Data &#8593</button>
+            <button type="submit" id="dbpush" class="btn btn-success float-right btn-responsive">Upload DBPush Data &#8593</button>
        </p>
 
         <p class="span6" style="float: none; margin:auto;">
-            <button type="submit" id="desktop" class="btn btn-success float-right">DeskTop Data</button>
+            <button type="submit" id="desktop" class="btn btn-success float-right btn-responsive">DeskTop Data</button>
         </p>
 
         <p class="span6" style="float: none; margin:auto;">
-            <button type="submit" id="backup" class="btn btn-success float-right">Backup Data</button>
+            <button type="submit" id="backup" class="btn btn-success float-right btn-responsive">Backup Data</button>
         </p>
 
         <p class="span6" style="float: none; margin:auto;">
-            <button type="submit" id="clear" class="btn btn-success float-right">Delete Data</button>
+            <button type="submit" id="clear" class="btn btn-success float-right btn-responsive">Delete Data</button>
        </p>
     </div>
 
