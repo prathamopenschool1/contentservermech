@@ -16,7 +16,7 @@ errorLogger = logging.getLogger("error_logger")
 
 class PushHelper(object):
 
-    homePath = '/home/pi' # str(Path.home())
+    homePath = '/home/pi' #str(Path.home())
     deskDir = os.path.join(homePath, 'DesktopBackup')
 
     #usage post api
@@ -72,7 +72,7 @@ class PushHelper(object):
 
         else:
             while True:
-                fetch_url = "http://192.168.4.1:8000/api/usagedata/?page={}&page_size=15".format(pageNo)
+                fetch_url = "http://192.168.4.1:8000/api/usagedata/?page={}&page_size=200".format(pageNo)
                 usage_response = requests.get(fetch_url)
                 data = json.loads(usage_response.content.decode('utf-8'))
 
@@ -143,7 +143,7 @@ class PushHelper(object):
 
         else:
             while True:
-                fetch_url = "http://192.168.4.1:8000/api/dbpushdata/?page={}&page_size=15".format(pageNo)
+                fetch_url = "http://192.168.4.1:8000/api/dbpushdata/?page={}&page_size=200".format(pageNo)
                 usage_response = requests.get(fetch_url)
                 data = json.loads(usage_response.content.decode('utf-8'))
 
@@ -194,7 +194,7 @@ class PushHelper(object):
         else:
             while True:
                 # get api
-                desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=15".format(pageNo)
+                desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=200".format(pageNo)
                 appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
 
                 # desktop data url
@@ -341,7 +341,7 @@ class PushHelper(object):
             else:
                 while True:
                     # get api
-                    desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=15".format(pageNo)
+                    desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=200".format(pageNo)
                     appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
 
                     # desktop data url
