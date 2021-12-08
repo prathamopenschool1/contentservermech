@@ -124,6 +124,37 @@ class PushHelper(object):
             return result_set
 
 
+    def dbPushToserver(self, data):
+        result_set = {}
+        try:
+            for i in range(len(data['results'])):                    
+                actualfileName = data['results'][i]["uploaded_file"]
+                actualfileName = actualfileName.replace("http://192.168.4.1:8000", os.path.join(self.homePath, "contentservermech/pos"))
+                lastndexofFwdSlsh = actualfileName.rfind('/')                    
+                filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
+                indexofDotzip = filenamestr.index(".zip")
+                filenamestr = filenamestr[0:indexofDotzip]
+                if os.path.isfile(actualfileName):
+                    datasws = {filenamestr: open(actualfileName, 'rb')}
+                    response_post = requests.post(self.db_post_url,files = datasws)           
+                    infoLogger.info("response_post sws "+ str(response_post.status_code))    
+                    if response_post.status_code == 200:
+                        os.remove(actualfileName)
+                        result_set["status"] = 202
+                else:
+                    infoLogger.info("Error, File "+ actualfileName +" not exists")
+                    result_set['status'] = 400
+            
+            # result_set['status'] = 200
+            return result_set
+
+        except Exception as e1:
+            errorLogger.error("Error push_db_data is: " + str(e1))
+            result_set["status"] = 404
+            result_set['msg'] = e1
+            return result_set
+
+
     # dbpush helper function
     def push_dbPushData(self):
 
@@ -151,15 +182,15 @@ class PushHelper(object):
                     result_set['status'] = 400
                     return result_set
                 elif data['count'] != 0 and data['next'] is None:
-                    result_set = self.usageFile(data)
+                    result_set = self.dbPushToserver(data)
                     return result_set
                 else:
-                    result_set = self.usageFile(data)
+                    result_set = self.dbPushToserver(data)
                     # return result_set
                     if data['count'] == 0 and data['next'] is None:
                         return result_set
                     else:
-                        result_set = self.usageFile(data)
+                        result_set = self.dbPushToserver(data)
 
                 pageNo =  pageNo + 1
 
