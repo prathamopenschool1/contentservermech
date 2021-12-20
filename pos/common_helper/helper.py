@@ -52,7 +52,7 @@ class CommonHelpers:
                         new_file.write(chunk)
 
             except Exception as d:
-                cls.errorLogger.error("Error Exception 1 while extarcting knowledge portal zip :--- " + str(d))
+                cls.errorLogger.error("Error Exception 1 while extracting knowledge portal zip :--- " + str(d))
 
             try:
                 file_name = "/var/www/html/index.zip"
