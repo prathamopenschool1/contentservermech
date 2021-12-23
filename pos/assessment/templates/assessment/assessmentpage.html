@@ -44,7 +44,7 @@
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                        <button type="button" class="btn btn-primary" id="pushedId" data-dismiss="modal">OK</button>
                     </div>
                     </div>
 
@@ -413,14 +413,21 @@
             hideloader();
             $('#pushModal .modal-body').html('<p>Data Saved Successfully!!</p>');
             $('#pushModal').modal('show');
+            $('#pushedId').click(function () {
+                localStorage.clear();
+                location.reload();
+            });
             // window.location.href = '/assessment/';
         })
         .catch(error => {
-            // console.log("error is ", error);
-            localStorage.clear();
+            console.log("error is ", error);
             hideloader();
             $('#pushModal .modal-body').html('<p>OOps!! Something Went Wrong While Downloading</p>');
             $('#pushModal').modal('show');
+            $('#pushedId').click(function () {
+                localStorage.clear();
+                location.reload();
+            })
         });
 
 })
