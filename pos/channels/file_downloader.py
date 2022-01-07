@@ -3,8 +3,8 @@ import json
 import requests
 import platform
 import logging
+import traceback
 from zipfile import ZipFile
-from io import BytesIO, StringIO
 from clint.textui import progress
 from urllib.request import urlopen
 from assessment.models.question_models import QuestionModel, LstQuestionChoiceModel
@@ -288,6 +288,7 @@ class Downloader(object):
                 photo_url = res['photourl']
                 if photo_url != '':
                     fetched_url_val = self.common_extensions(photo_url, photo=1)
+                    print(fetched_url_val, 'photo 1????>>>>>>>>>>>>')
                 qobj, qcreated = QuestionModel.objects.get_or_create(
                     languageid      = res['languageid'],
                     qid             = res['qid'],
@@ -335,6 +336,7 @@ class Downloader(object):
 
                 
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
+            print(traceback.print_exc())
             print("in download_files_with_asessment  ", dwnld_files_asess_error2)
 
 
@@ -344,58 +346,59 @@ class Downloader(object):
         path_to_put_asses = ""
         if extension_url.endswith('.png'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.PNG'):
             extension_url = extension_url.replace('.PNG', '.png')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.JPG'):
             extension_url = extension_url.replace('.JPG', '.jpg')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.jpg'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.jpeg'):
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         elif extension_url.endswith('.JPEG'):
             extension_url = extension_url.replace('.JPEG', '.jpeg')
             path_to_put_asses = os.path.join(self.store_img, os.path.basename(extension_url))
-            print("my image path >>> ", path_to_put_asses)
+            # print("my image path >>> ", path_to_put_asses)
         #videos
         elif extension_url.endswith('.MP4'):
             extension_url = extension_url.replace('.MP4', '.mp4')
             path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         elif extension_url.endswith('.mp4'):
             path_to_put_asses = os.path.join(self.mp4_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         elif extension_url.endswith('.3gp'):
             path_to_put_asses = os.path.join(self.v3gp_files, os.path.basename(extension_url))
-            print("my videos path >>> ", path_to_put_asses)
+            # print("my videos path >>> ", path_to_put_asses)
         #audios
         elif extension_url.endswith('.mp3'):
             path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.MP3'):
             extension_url = extension_url.replace('.MP3', '.mp3')
             path_to_put_asses = os.path.join(self.mp3_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.3gpp'):
             path_to_put_asses = os.path.join(self.a3gpp_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.m4a'):
             path_to_put_asses = os.path.join(self.m4a_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
         elif extension_url.endswith('.amr'):
             path_to_put_asses = os.path.join(self.amr_files, os.path.basename(extension_url))
-            print("my audios path >>> ", path_to_put_asses)
+            # print("my audios path >>> ", path_to_put_asses)
 
 
         try:
             self.localUrl = path_to_put_asses
             if photo == 1:
+                print(self.local_photo_url, 'photo url????>>>>>>>>>>>>>>>>>>>')
                 self.local_photo_url = self.localUrl
                 self.local_photo_url = self.local_photo_url.split('static')[1]
                 self.local_photo_url = 'http://192.168.4.1:8000/static'+self.local_photo_url

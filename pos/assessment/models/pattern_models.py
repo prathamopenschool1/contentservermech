@@ -29,6 +29,7 @@ class PaperPatternModelManager(models.Manager):
                 noofcertificateq = pattern_result['noofcertificateq'],
                 exammode         = pattern_result['exammode'],
                 examtype         = pattern_result['examtype'],
+                isDiagnosticTest = pattern_result['isDiagnosticTest'],
                 outofmarks       = pattern_result['outofmarks']
                 
             )
@@ -80,6 +81,7 @@ class PaperPatternModel(models.Model):
     noofcertificateq = models.IntegerField()
     exammode = models.CharField(max_length=50)
     examtype = models.CharField(max_length=50)
+    isDiagnosticTest = models.BooleanField(default=False)
     outofmarks = models.IntegerField()
 
     objects = PaperPatternModelManager()

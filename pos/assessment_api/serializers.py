@@ -57,7 +57,7 @@ class PaperPatternSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaperPattern
-        fields = ['subjectid', 'subjectname', 'examid', 'examname', 'examduration', 'question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8', 'question9', 'question10', 'IsRandom', 'noofcertificateq', 'exammode', 'examtype', 'outofmarks', 'lstpatterndetail', 'lstexamcertificatetopiclist']
+        fields = ['subjectid', 'subjectname', 'examid', 'examname', 'examduration', 'question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8', 'question9', 'question10', 'IsRandom', 'noofcertificateq', 'exammode', 'examtype', 'isDiagnosticTest', 'outofmarks', 'lstpatterndetail', 'lstexamcertificatetopiclist']
 
 
 
