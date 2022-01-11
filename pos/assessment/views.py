@@ -2,12 +2,13 @@ import json
 from django.views import View
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from assessment.models.question_models import QuestionModel, LstQuestionChoiceModel
 from modpush.pushhelper.connectcheck import PushHelper
 from .assesshelper import AssesmentHelper
 from .models.language_models import LanguageModelManager
 from .models.subject_models import SubjectModelManager
 from .models.exam_models import ExamModelManager, Exam, LstSubjectExamModel
-from .models.pattern_models import PaperPatternModelManager
+from .models.pattern_models import PaperPatternModelManager, LstPatternDetailModel, PaperPatternModel
 # from .models.question_models import QuestionModelManager
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,7 +18,9 @@ class CommonView(LoginRequiredMixin, View):
     
     template_name = "assessment/assessmentpage.html"
     def get(self, request, *args, **kwargs):
-        exam_query = LstSubjectExamModel.objects.all().values_list('examid', flat=True).distinct()
+        ques_query = QuestionModel.objects.all().values_list('topicid', flat=True).distinct()
+        ques_query1 = LstPatternDetailModel.objects.filter(topicid__in=ques_query).select_related('lstpatterndetail').values_list('lstpatterndetail__examid', flat=True).distinct()
+        exam_query = LstSubjectExamModel.objects.filter(examid__in=ques_query1).values_list('examid', flat=True).distinct()
         exam_query = json.dumps(list(exam_query))
         context = {}
         context['examids_lst'] = exam_query
@@ -135,12 +138,21 @@ class DownloadView(LoginRequiredMixin, View):
                 lst_of_pattern.append(result_pattern['exam_pattern'])
                 PaperPatternModelManager.save_pattern_data(self, result_pattern['exam_pattern'], eids)
 
+
+            # print("last pattern data>>>>>>>>>>>>>>>>> ", lst_of_pattern)
+
             #question api call
             quesPatternDetails = self.ash.question_details(languageIds, lst_of_pattern)
 
             context = {}
-            context['message'] = "successfully saved"
-            # print(context)
-        return JsonResponse(context, safe=False)
+            if quesPatternDetails != '-1':
+                context['message'] = "200"
+                # print(context)
+                return JsonResponse(context, safe=False)
+            else:
+                context['message'] = "505"
+                # print(context)
+                return JsonResponse(context, safe=False)
+
 
 

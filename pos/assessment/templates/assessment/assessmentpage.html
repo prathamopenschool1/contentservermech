@@ -411,8 +411,14 @@
             // window.location.href = '/content/app_available/';
             localStorage.clear();
             hideloader();
-            $('#pushModal .modal-body').html('<p>Data Saved Successfully!!</p>');
-            $('#pushModal').modal('show');
+            if (jsondata['message'] === "200") {
+                $('#pushModal .modal-body').html('<p>Data Saved Successfully!!</p>');
+                $('#pushModal').modal('show');
+            }
+            else if (jsondata['message'] === "505") {
+                $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
+                $('#pushModal').modal('show');
+            }
             $('#pushedId').click(function () {
                 localStorage.clear();
                 location.reload();
@@ -420,9 +426,9 @@
             // window.location.href = '/assessment/';
         })
         .catch(error => {
-            console.log("error is ", error);
+            // console.log("error is ", error);
             hideloader();
-            $('#pushModal .modal-body').html('<p>OOps!! Something Went Wrong While Downloading</p>');
+            $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
             $('#pushModal').modal('show');
             $('#pushedId').click(function () {
                 localStorage.clear();

@@ -225,7 +225,7 @@ class Downloader(object):
 
         except requests.exceptions.ConnectionError as dwnld_files_with_qs_error2:
             print("in download_files_with_qs  ", dwnld_files_with_qs_error2)
-            errorLogger("e_error in download_files_with_qs " + str(dwnld_files_with_qs_error2))
+            errorLogger.error("e_error in download_files_with_qs " + str(dwnld_files_with_qs_error2))
             return False
 
         # print("with qs local ", self.localUrl)
@@ -268,7 +268,7 @@ class Downloader(object):
             # return True
         except requests.exceptions.ConnectionError as dwnld_files_without_qs_error:
             print("in download_files_without_qs  ", dwnld_files_without_qs_error)
-            errorLogger("e_error in download_files_without_qs " + str(dwnld_files_without_qs_error))
+            errorLogger.error("e_error in download_files_without_qs " + str(dwnld_files_without_qs_error))
             return False
         
         # print("this is ", self.localUrl)
@@ -280,8 +280,7 @@ class Downloader(object):
         photo_url = ""
         match_url = ""
         choice_url = ""
-        download_result = {}
-        i=1
+
         try:
             self.createdir(AppName)
             for res in quest_result:
@@ -336,8 +335,9 @@ class Downloader(object):
 
                 
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
-            print(traceback.print_exc())
-            print("in download_files_with_asessment  ", dwnld_files_asess_error2)
+            # print("traceback error 1 here >>>> ", traceback.print_exc())
+            # print("in download_files_with_asessment  ", dwnld_files_asess_error2)
+            errorLogger.error("in download_files_with_asessment  " + str(dwnld_files_asess_error2))
 
 
     def common_extensions(self, extension_url, match=0, photo=0, choice=0):
@@ -397,38 +397,40 @@ class Downloader(object):
 
         try:
             self.localUrl = path_to_put_asses
-            if photo == 1:
-                print(self.local_photo_url, 'photo url????>>>>>>>>>>>>>>>>>>>')
+            if photo == 1 and self.localUrl != '':
                 self.local_photo_url = self.localUrl
                 self.local_photo_url = self.local_photo_url.split('static')[1]
                 self.local_photo_url = 'http://192.168.4.1:8000/static'+self.local_photo_url
-            if match == 1:
+            if match == 1 and self.localUrl != '':
                 self.local_match_url = self.localUrl
                 self.local_match_url = self.local_match_url.split('static')[1]
                 self.local_match_url = 'http://192.168.4.1:8000/static'+self.local_match_url
-            if choice == 1:
+            if choice == 1 and self.localUrl != '':
                 self.local_choice_url = self.localUrl
                 self.local_choice_url = self.local_choice_url.split('static')[1]
                 self.local_choice_url = 'http://192.168.4.1:8000/static'+self.local_choice_url
 
-            file_to_get = requests.get(extension_url, stream=True, timeout=30)
-            if file_to_get.status_code == 200:
-                with open(path_to_put_asses, "wb") as target:
-                    total_length = int(file_to_get.headers.get('content-length'))
-                    for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
-                        if chunk:
-                            try:
-                                target.write(chunk)
-                                target.flush()
-                            except requests.exceptions.ConnectionError as dataflush_err:
-                                print("Exception occurd while flushing data ", str(dataflush_err))
-                                errorLogger.error("Exception occurd while flushing data" + str(dataflush_err))
+            if self.localUrl != '':
+                file_to_get = requests.get(extension_url, stream=True, timeout=30)
+                # print('status code extension url>>>>> ', extension_url)
+                if file_to_get.status_code == 200:
+                    with open(path_to_put_asses, "wb") as target:
+                        total_length = int(file_to_get.headers.get('content-length'))
+                        for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+                            if chunk:
+                                try:
+                                    target.write(chunk)
+                                    target.flush()
+                                except requests.exceptions.ConnectionError as dataflush_err:
+                                    # print("Exception occurd while flushing data ", str(dataflush_err))
+                                    errorLogger.error("Exception occurd while flushing data" + str(dataflush_err))
 
-                    download_result['status'] = 200
-                    return download_result
+                        download_result['status'] = 200
+                        return download_result
         except requests.exceptions.ConnectionError as dwnld_files_asess_error2:
-            print("in download_files_with_asessment  ", dwnld_files_asess_error2)
-            errorLogger("e_error in download_files_with_asessment " + str(dwnld_files_asess_error2))
+            # print("traceback error 2 here >>>> ",traceback.print_exc())
+            # print("in download_files_with_asessment  ", dwnld_files_asess_error2)
+            errorLogger.error("e_error in download_files_with_asessment " + str(dwnld_files_asess_error2))
             download_result['status'] = 505 
             return download_result
         
