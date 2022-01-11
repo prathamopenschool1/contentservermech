@@ -106,7 +106,8 @@ class AssesmentHelper(object):
     def question_details(self, languageLst, examLst):
         try:
             result = {}
-            questions_lst = []
+            # questions_lst = []
+
             for lid in languageLst:
                 for sid in examLst:
                     for tid in sid['lstpatterndetail']:
@@ -120,7 +121,7 @@ class AssesmentHelper(object):
                     
             return result
         except Exception as e:
-            traceback.print_exc()
+            # traceback.print_exc()
             return '-1'                        
 
 
