@@ -57,7 +57,6 @@ class SubjectView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         posted_data = json.loads(request.body.decode("utf-8"))
         langId = posted_data['langId']
-        # print("type of langiage id >>>>>>>>>>>>>. ", langId, type(langId))
         langName = posted_data['langName']
         if self.psh.connect() == True:
             result = self.ash.subject_call(langId)
@@ -123,7 +122,6 @@ class DownloadView(LoginRequiredMixin, View):
                 for lids in languageIds:
                     result_subj = self.ash.subject_call(lids)
                     if result_subj['status'] == 200:
-                        print(type(result_subj['subj_result']))
                         SubjectModelManager.save_subject_data(self, result_subj['subj_result'], lids)
 
                 ##Exam api call and save in db
@@ -137,9 +135,6 @@ class DownloadView(LoginRequiredMixin, View):
                 result_pattern = self.ash.pattern_call(eids)
                 lst_of_pattern.append(result_pattern['exam_pattern'])
                 PaperPatternModelManager.save_pattern_data(self, result_pattern['exam_pattern'], eids)
-
-
-            # print("last pattern data>>>>>>>>>>>>>>>>> ", lst_of_pattern)
 
             #question api call
             quesPatternDetails = self.ash.question_details(languageIds, lst_of_pattern)
