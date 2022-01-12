@@ -187,10 +187,7 @@ def resource_view(request, NodeId):
         elif qs.FileType == "Content" and qs.fileName.endswith('.pdf'):
             if request.user_agent.is_mobile or request.user_agent.is_tablet:
                 pdf_file_path = os.path.join(general_path, 'storage/'+str(request.session.get('folder_app_name'))+'/content/docs')
-                # print("my dpf path ", pdf_file_path)
                 pdf_file_path = os.path.join(pdf_file_path, qs.fileName)
-                # print("my dpf path ", pdf_file_path)
-                # return render(request, "content_viewer/content_play.html", context=context)
                 return FileResponse(open(pdf_file_path, 'rb'), as_attachment=True, content_type='application/pdf')
             else:
                 context['pdf_play'] = queryset
