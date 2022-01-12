@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from itertools import chain
 from django.http import HttpResponse
+from django.http.response import FileResponse
 from content_viewer.extracter import extraction
 from content_viewer.converter import m4v_to_mp4, wav_to_mp3
 from django.shortcuts import render, get_object_or_404
@@ -184,8 +185,16 @@ def resource_view(request, NodeId):
             context['wrong_format'] = queryset
             return render(request, "content_viewer/content_play.html", context=context)
         elif qs.FileType == "Content" and qs.fileName.endswith('.pdf'):
-            context['pdf_play'] = queryset
-            return render(request, "content_viewer/content_play.html", context=context)
+            if request.user_agent.is_mobile or request.user_agent.is_tablet:
+                pdf_file_path = os.path.join(general_path, 'storage/'+str(request.session.get('folder_app_name'))+'/content/docs')
+                # print("my dpf path ", pdf_file_path)
+                pdf_file_path = os.path.join(pdf_file_path, qs.fileName)
+                # print("my dpf path ", pdf_file_path)
+                # return render(request, "content_viewer/content_play.html", context=context)
+                return FileResponse(open(pdf_file_path, 'rb'), as_attachment=True, content_type='application/pdf')
+            else:
+                context['pdf_play'] = queryset
+                return render(request, "content_viewer/content_play.html", context=context)
 
 
 def desktop_score_data(request):
