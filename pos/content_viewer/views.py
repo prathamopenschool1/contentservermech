@@ -1,23 +1,20 @@
-import os, time
-import platform
+import os
 import logging
+import platform
 from pathlib import Path
 from itertools import chain
+from django.shortcuts import render
+from core.models import DeskTopData
 from django.http import HttpResponse
+from django.views.generic import ListView
 from django.http.response import FileResponse
 from content_viewer.extracter import extraction
-from content_viewer.converter import m4v_to_mp4, wav_to_mp3
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, ListView, DetailView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sessions.models import Session
-from core.models import DeskTopData
+from content_viewer.converter import m4v_to_mp4, wav_to_mp3
 from channels.models import AppListFromServerData, AppAvailableInDB, FileDataToBeStored
 
 
 system_os = platform.system()
-
-from django.http import HttpResponse
 
 # This retrieves a Python logging instance (or creates it)
 infoLogger = logging.getLogger("info_logger")
