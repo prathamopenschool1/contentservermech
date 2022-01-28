@@ -377,6 +377,21 @@ def user_register(request):
         ]
 
         User.objects.bulk_create(users_list, ignore_conflicts=True)
+    elif User.objects.filter(CRLId__in=crlid_lst, username__in=username_lst).exists():
+        User.objects.all().delete()
+        users_list = [
+            User(
+                username = row['UserName'],
+                password = make_password(row['Password']),
+                email = row['Email'],
+                FirstName = row['FirstName'],
+                LastName = row['LastName'],
+                CRLId = row['CRLId']
+            )
+            for row in user_result
+        ]
+
+        User.objects.bulk_create(users_list, ignore_conflicts=True)
     
     return HttpResponse("success")
 
