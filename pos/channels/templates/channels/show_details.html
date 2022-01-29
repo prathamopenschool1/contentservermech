@@ -154,7 +154,7 @@ function populateTree(parentid)
                     if (isDownloaded) {
                         str=str+'<li>\
                         <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
-                        onchange="indeterminateCall(this);" onclick="popup(this);" disabled>\
+                        onchange="indeterminateCall(this);" onclick="popup(this);">\
                         <span style="color:black">'+treeData[i]["NodeTitle"]+'</span><img src=\''+"{% static 'images/check.svg' %}"+'\'></li>';
                     }
                     else{
@@ -177,7 +177,7 @@ function populateTree(parentid)
                     if (isDownloaded) {
                         str=str+'<li>\
                         <input type="checkbox" class="box" id="'+treeData[i]["NodeId"].toString()+'"\
-                        onchange="indeterminateCall(this);" onclick="popup(this);" disabled>\
+                        onchange="indeterminateCall(this);" onclick="popup(this);">\
                         <span style="color:black">'+treeData[i]["NodeTitle"]+'</span><img src=\''+"{% static 'images/check.svg' %}"+'\'></li>';
                     }
                     else{
