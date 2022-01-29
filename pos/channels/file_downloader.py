@@ -287,7 +287,6 @@ class Downloader(object):
                 photo_url = res['photourl']
                 if photo_url != '':
                     fetched_url_val = self.common_extensions(photo_url, photo=1)
-                    print(fetched_url_val, 'photo 1????>>>>>>>>>>>>')
                 qobj, qcreated = QuestionModel.objects.get_or_create(
                     languageid      = res['languageid'],
                     qid             = res['qid'],
