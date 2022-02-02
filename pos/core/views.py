@@ -270,9 +270,9 @@ def post_all_data(request):
             # print(villages, "something")
             for datas in village_table_data:
                 if datas.filter_name and datas.table_name and datas.key_id:
-                    print("deleting")
+                    # print("deleting")
                     datas.delete()
-                    print("deleted")
+                    # print("deleted")
                 else:
                     continue
 
