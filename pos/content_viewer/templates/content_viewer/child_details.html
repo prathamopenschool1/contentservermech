@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
-<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
 
     <style>
         @media (max-width: 768px) {
@@ -52,42 +51,6 @@
             {% endfor %}
           </ul>
       </nav>
-
-      <!-- before send modal -->
-    <div id="deleteModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger mr-auto yes" data-dismiss="modal">Delete</button>
-                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- success or error modal -->
-    <div id="msgModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
-                </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="loading" id="loaded" style="display:none;">
-        </div>
   
     <div class="album bg-light">
       <div class="container">
@@ -108,10 +71,7 @@
                                 &nbsp;&nbsp;
                             <div class="btn-group">
                                 <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
-                                    <button class="btn btn-success btn-responsive mr-2" type="button">Watch</button>
-                                </a>
-                                <a href="#">
-                                    <button class="btn btn-danger btn-responsive mr-2" type="button" id="{{object.NodeId}}" name="{{object.appavailableindb.NodeTitle}}" onclick="delMtd(this)" >Delete</button>
+                                    <button class="btn btn-success btn-responsive" type="button">Watch</button>
                                 </a>
                             </div>
                             </div>
@@ -154,58 +114,5 @@
       </div>
 
   </main>
-
-
-  <script>
-      function delMtd(ids) {
-        $('#deleteModal .modal-body').html('<p>Are You Sure You Want To Delete?</p>');
-        $('#deleteModal').modal('show');
-
-        let delNodeId = ids.id;
-        let delNodeTitle = ids.name;
-
-        console.log(delNodeId, delNodeTitle);
-
-        $('#deleteModal .yes').unbind().click(function (){
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'content_viewer:childDeleteView' %}",
-                dataType: "json",
-                headers:{
-                    "X-CSRFToken": '{{ csrf_token }}'
-                },
-                data:{
-                    'delNodeId':  delNodeId,
-                    'delNodeTitle':  delNodeTitle
-                },
-                crossDomain: true,
-                beforeSend: function(response){
-                    // setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
-                    $('.loading').css("visibility", "visible");
-                },
-                success: function(response){
-                    // response = JSON.parse(response)
-                    if (response['msg'] == 200){
-                        $('.loading').css("visibility", "hidden");
-                        $('#msgModal .modal-body').html('<p>Data Deleted Successfully</p>');
-                        $('#msgModal').modal('show')
-                    }
-                    else{
-                        $('.loading').css("visibility", "hidden");
-                        $('#msgModal .modal-body').html('<p>Some Problem Occured!</p>');
-                        $('#msgModal').modal('show')
-                    }
-                },
-                error: function (error) {
-                    console.log('error; ', eval(error));
-                    $('.loading').css("visibility", "hidden");
-                    $('#msgModal .modal-body').html('<p>Something Went Wrong!</p>');
-                    $('#msgModal').modal('show')
-                }
-            })
-        })
-
-      }
-  </script>
 
 {% endblock %}
