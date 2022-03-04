@@ -9,6 +9,5 @@ urlpatterns = [
     path('child_details/<str:NodeId>/', views.ChildrenAppView.as_view(), name='child_details'),
     path('resource/<str:NodeId>/', views.resource_view, name='resource'),
     path('score/', views.desktop_score_data, name='score'),
-    path('childDeleteView/', views.ChildNodeDeleteView.as_view(), name='childDeleteView'),
     
 ]
