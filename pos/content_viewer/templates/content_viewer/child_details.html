@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static '/css/breadcrumb.css'%}">
+<link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
 
     <style>
         @media (max-width: 768px) {
@@ -51,7 +52,26 @@
             {% endfor %}
           </ul>
       </nav>
-  
+
+    <div class="loading" id="loaded" style="display:none;">
+    </div>
+
+    <!-- Alert modal -->
+    <div id="alertModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" id="pushedId" data-dismiss="modal">OK</button>
+            </div>
+            </div>
+
+        </div>
+      </div>
+
     <div class="album bg-light">
       <div class="container">
         <div class="row">
@@ -72,6 +92,11 @@
                             <div class="btn-group">
                                 <a href="{% url 'content_viewer:resource' NodeId=object.NodeId %}">
                                     <button class="btn btn-success btn-responsive" type="button">Watch</button>
+                                </a>
+                            </div>
+                            <div class="btn-group">
+                                <a href="#">
+                                    <button class="btn btn-danger btn-responsive" type="button">Delete</button>
                                 </a>
                             </div>
                             </div>
@@ -95,6 +120,11 @@
                                         <button class="btn btn-success btn-responsive" type="button">View</button>
                                     </a>
                                 </div>
+                                <div class="btn-group">
+                                    <a href="#">
+                                        <button class="btn btn-danger btn-responsive" type="button">Delete</button>
+                                    </a>
+                                </div>
                                 </div>
                             </div>
                             </div>
@@ -103,16 +133,58 @@
                   {% endif %}
              <!-- If objet_list is empty  -->
             {% empty %}
-            <p>No Data here<br>
-              <a href="{% url 'channels:channel_list' %}">
-                  <button class="btn btn-outline-primary my-2 my-sm-0" type="button">Download</button>
-              </a>
-            </p>
+            <!-- <p>No Data here<br> -->
+                <br>
+                <br>
+                <div class="row col-md-12">
+                  <p class="span6" style="float: none; margin:auto;">
+                  <img src='{% static "/images/error_outline-24px.svg" %}'>Content is not Available Please Download
+                  </p>
+                </div>
+                {% if request.user.is_authenticated %}
+                <div class="row col-md-12">
+                  <p class="span6" style="float: none; margin:auto;">
+                  <a class="btn btn-outline-success my-2 my-sm-0" type="button" href="{% url 'channels:channel_list' %}" onclick="showloader();">
+                    <img src='{% static "/images/get_app-24px.svg" %}'>Download</a> 
+                  </p>
+                </div>
+                {% else %}
+
+                <div class="row col-md-12">
+                  <p class="span6" style="float: none; margin:auto;">
+                  <a class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="downloader()">
+                    <img src='{% static "/images/get_app-24px.svg" %}'>Download</a> 
+                  </p>
+                </div>
+
+                {% endif %}
           {% endfor %}
           </div>
         </div>
       </div>
 
   </main>
+
+  <script>
+    function downloader(){
+        console.log("this is ckiked");
+      $('#alertModal .modal-body').html('<p>You Need To Login To Download The Content!</p>');
+      $('#alertModal').modal('show');
+      $('#pushedId').click(function () {
+          window.location.href = '/register/user_login/';
+      })
+    }
+
+    function showloader() {
+        $('#loaded').show();
+        $('.loading').css("visibility", "visible");
+    }
+
+    function hideloader() {
+        $('#loaded').hide();
+        $('.loading').css("visibility", "hidden");
+    }
+
+</script>
 
 {% endblock %}
