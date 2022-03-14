@@ -236,11 +236,11 @@ class ChildNodeDeleteView(View):
     nd = NodeDeleter()
 
     def post(self, request, *args, **kwargs):
-        # print("posting >>>> ")
+        print("posting >>>> ")
         delNodeId = request.POST.get('delNodeId')
         delNodeTitle = request.POST.get('delNodeTitle')
 
-        # print(delNodeId, delNodeTitle, "nodeid and tiile")
+        print(delNodeId, delNodeTitle, "nodeid and tiile")
 
         appdata_obj = AppAvailableInDB.objects.filter(NodeId=delNodeId)
         print("new app id", appdata_obj)

@@ -72,6 +72,39 @@
         </div>
       </div>
 
+      <!-- confirmation modal -->
+    <div id="confirmModal" class="modal fade" role="dialog" data-target="#delConfirmModal">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger mr-auto yes" data-dismiss="modal">Delete</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- success or error modal -->
+    <div id="responseModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+            </div>
+
+        </div>
+    </div>
+
     <div class="album bg-light">
       <div class="container">
         <div class="row">
@@ -96,7 +129,7 @@
                             </div>
                             <div class="btn-group">
                                 <a href="#">
-                                    <button class="btn btn-danger btn-responsive" type="button">Delete</button>
+                                    <button id="{{object.NodeId}}" name="{{object.appavailableindb.NodeTitle}}" class="btn btn-danger btn-responsive" type="button" onclick="callDltMtd(this);" >Delete</button>
                                 </a>
                             </div>
                             </div>
@@ -184,6 +217,14 @@
         $('#loaded').hide();
         $('.loading').css("visibility", "hidden");
     }
+
+    function callDltMtd(e){
+        var conModal = new bootstrap.Modal(document.getElementById("confirmModal"))
+        conModal.show()
+        console.log(e.id, "is id of this element", e.name , 'is name of this element');
+        
+    }
+
 
 </script>
 
