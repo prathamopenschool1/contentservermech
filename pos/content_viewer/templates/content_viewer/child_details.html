@@ -226,6 +226,18 @@
         $('#confirmModal').modal('show');
 
         $('#confirmModal .yes').unbind().click(function (){
+            $.ajax({
+                type: 'POST',
+                url: '/push/usage',
+                dataType: "json",
+                headers:{
+                    "X-CSRFToken": '{{ csrf_token }}'
+                },
+                beforeSend: function(response){
+                    setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                    $('.loading').css("visibility", "visible");
+                },
+            })
             
         })
         
