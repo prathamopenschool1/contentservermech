@@ -78,7 +78,7 @@
 
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body"  id="confirmModal-body">
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-danger mr-auto yes" data-dismiss="modal">Delete</button>
@@ -219,9 +219,16 @@
     }
 
     function callDltMtd(e){
-        var conModal = new bootstrap.Modal(document.getElementById("confirmModal"))
-        conModal.show()
-        console.log(e.id, "is id of this element", e.name , 'is name of this element');
+        let delNodeId = e.id;
+        let delNodeTitle = e.name;
+        console.log("id and name is ", delNodeId, " and ", delNodeTitle);
+        $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Delete? ' + delNodeTitle +'</p>');
+        $('#confirmModal').modal('show');
+
+        $('#confirmModal .yes').unbind().click(function (){
+            
+        })
+        
         
     }
 
