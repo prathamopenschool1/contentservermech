@@ -127,11 +127,6 @@
                                     <button class="btn btn-success btn-responsive" type="button">Watch</button>
                                 </a>
                             </div>
-                            <div class="btn-group">
-                                <a href="#">
-                                    <button id="{{object.NodeId}}" name="{{object.appavailableindb.NodeTitle}}" class="btn btn-danger btn-responsive" type="button" onclick="callDltMtd(this);" >Delete</button>
-                                </a>
-                            </div>
                             </div>
                         </div>
                         </div>
@@ -151,11 +146,6 @@
                                 <div class="btn-group">
                                     <a href="{% url 'content_viewer:child_details' NodeId=object.NodeId %}">
                                         <button class="btn btn-success btn-responsive" type="button">View</button>
-                                    </a>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="#">
-                                        <button class="btn btn-danger btn-responsive" type="button">Delete</button>
                                     </a>
                                 </div>
                                 </div>
@@ -216,32 +206,6 @@
     function hideloader() {
         $('#loaded').hide();
         $('.loading').css("visibility", "hidden");
-    }
-
-    function callDltMtd(e){
-        let delNodeId = e.id;
-        let delNodeTitle = e.name;
-        console.log("id and name is ", delNodeId, " and ", delNodeTitle);
-        $('#confirmModal .modal-body').html('<p>Are You Sure You Want To Delete? ' + delNodeTitle +'</p>');
-        $('#confirmModal').modal('show');
-
-        $('#confirmModal .yes').unbind().click(function (){
-            $.ajax({
-                type: 'POST',
-                url: '/push/usage',
-                dataType: "json",
-                headers:{
-                    "X-CSRFToken": '{{ csrf_token }}'
-                },
-                beforeSend: function(response){
-                    setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
-                    $('.loading').css("visibility", "visible");
-                },
-            })
-            
-        })
-        
-        
     }
 
 
