@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.urls import path
 from . import views
 
@@ -13,4 +14,5 @@ urlpatterns = [
     path('downloads/', views.DownloadAndSaveView.as_view(), name='downloads'),
     path('json_data/<str:id>/', views.json_data_storage_view, name='json_data'),
     path('no_internet/', views.NoInternetView.as_view(), name='no_internet'),
+    # path('confirmor/', views.download_confirmor_mtd, name='confirmor'),
 ]

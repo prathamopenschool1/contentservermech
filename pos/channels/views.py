@@ -185,32 +185,34 @@ class DownloadAndSaveView(LoginRequiredMixin, View):
                             ParentId = detail['ParentId']
                             AppId = detail['AppId']
                             DateUpdated = detail['DateUpdated']
-                            if not AppAvailableInDB.objects.filter(NodeId=NodeId).exists():
-                                app_in_db = AppAvailableInDB.objects.create(applistfromserverdata=applist_server_data,
-                                                                            NodeId=NodeId, NodeType=NodeType, NodeTitle=NodeTitle,
-                                                                            JsonData=JsonData, ParentId=ParentId,  AppId=AppId,
-                                                                            DateUpdated=DateUpdated)
-                                app_in_db.save()
-                                start = time.time()
-                                for file in detail["LstFileList"]:
-                                    print("file data is ", file)
-                                    FileId = file['FileId']
-                                    NodeId = file['NodeId']
-                                    FileType = file['FileType']
-                                    FileUrl = file['FileUrl']
-                                    DateUpdated = file['DateUpdated']
-                                    fileName = os.path.basename(FileUrl)
-                                    localUrl = local_url
-                                    infoLogger.info("file data is " + str(file))
-                                    #infoLogger.info("file data is : FileId :" + FileId + " ,NodeId :" + NodeId + " ,FileType :" + FileType +" ,fileName, :" + fileName + " ,localUrl, :" + localUrl)
-                                    if not FileDataToBeStored.objects.filter(NodeId=NodeId, FileId=FileId).exists():
-                                        file_in_db = FileDataToBeStored.objects.create(appavailableindb=app_in_db,
-                                                                                        FileId=FileId, NodeId=NodeId,
-                                                                                        FileType=FileType, FileUrl=FileUrl,
-                                                                                        DateUpdated=DateUpdated, 
-                                                                                        fileName=fileName,
-                                                                                        localUrl=local_url)
-                                        file_in_db.save()
+                            if AppAvailableInDB.objects.filter(NodeId=NodeId).exists():
+                                AppAvailableInDB.objects.filter(NodeId=NodeId).delete()
+                            app_in_db = AppAvailableInDB.objects.create(applistfromserverdata=applist_server_data,
+                                                                        NodeId=NodeId, NodeType=NodeType, NodeTitle=NodeTitle,
+                                                                        JsonData=JsonData, ParentId=ParentId,  AppId=AppId,
+                                                                        DateUpdated=DateUpdated)
+                            app_in_db.save()
+                            start = time.time()
+                            for file in detail["LstFileList"]:
+                                print("file data is ", file)
+                                FileId = file['FileId']
+                                NodeId = file['NodeId']
+                                FileType = file['FileType']
+                                FileUrl = file['FileUrl']
+                                DateUpdated = file['DateUpdated']
+                                fileName = os.path.basename(FileUrl)
+                                localUrl = local_url
+                                infoLogger.info("file data is " + str(file))
+                                #infoLogger.info("file data is : FileId :" + FileId + " ,NodeId :" + NodeId + " ,FileType :" + FileType +" ,fileName, :" + fileName + " ,localUrl, :" + localUrl)
+                                if FileDataToBeStored.objects.filter(NodeId=NodeId, FileId=FileId).exists():
+                                    FileDataToBeStored.objects.filter(NodeId=NodeId, FileId=FileId).delete()
+                                file_in_db = FileDataToBeStored.objects.create(appavailableindb=app_in_db,
+                                                                                FileId=FileId, NodeId=NodeId,
+                                                                                FileType=FileType, FileUrl=FileUrl,
+                                                                                DateUpdated=DateUpdated, 
+                                                                                fileName=fileName,
+                                                                                localUrl=local_url)
+                                file_in_db.save()
                                     
                         except requests.exceptions.ConnectionError as connecton_err1:
                             endTimeInExceptionDbErr = datetime.now()
@@ -255,10 +257,11 @@ def json_data_storage_view(request, id):
             JsonData = result['JsonData']
             DateUpdated = result['DateUpdated']
 
-            if not JsonDataStorage.objects.filter(NodeId=NodeId, JsonType=JsonType).exists():
-                json_data_storage = JsonDataStorage.objects.create(JsonId=JsonId, NodeId=NodeId, JsonType=JsonType, JsonData=JsonData,
-                                                                    DateUpdated=DateUpdated)
-                json_data_storage.save()
+            if JsonDataStorage.objects.filter(NodeId=NodeId, JsonType=JsonType).exists():
+                JsonDataStorage.objects.filter(NodeId=NodeId, JsonType=JsonType).delete()
+            json_data_storage = JsonDataStorage.objects.create(JsonId=JsonId, NodeId=NodeId, JsonType=JsonType, JsonData=JsonData,
+                                                                DateUpdated=DateUpdated)
+            json_data_storage.save()
     
     except requests.exceptions.ConnectionError as con_err:
         errorLogger.error("json error :" + str(con_err))
@@ -269,5 +272,10 @@ def json_data_storage_view(request, id):
 
 class NoInternetView(TemplateView):
     template_name = 'channels/no_internet.html'
+
+
+# def download_confirmor_mtd(request):
+    
+#     return HttpResponse("download confirmed!!!")
 
 
