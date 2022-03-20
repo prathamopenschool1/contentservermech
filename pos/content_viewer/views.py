@@ -231,34 +231,34 @@ def desktop_score_data(request):
     return HttpResponse("success")
 
 
-class ChildNodeDeleteView(View):
+# class ChildNodeDeleteView(View):
 
-    nd = NodeDeleter()
+#     nd = NodeDeleter()
 
-    def post(self, request, *args, **kwargs):
-        # print("posting >>>> ")
-        delNodeId = request.POST.get('delNodeId')
-        delNodeTitle = request.POST.get('delNodeTitle')
+#     def post(self, request, *args, **kwargs):
+#         print("posting >>>> ")
+#         delNodeId = request.POST.get('delNodeId')
+#         delNodeTitle = request.POST.get('delNodeTitle')
 
-        # print(delNodeId, delNodeTitle, "nodeid and tiile")
+#         print(delNodeId, delNodeTitle, "nodeid and tiile")
 
-        appdata_obj = AppAvailableInDB.objects.filter(NodeId=delNodeId)
-        print("new app id", appdata_obj)
-        filedata_obj = FileDataToBeStored.objects.filter(NodeId=delNodeId)
-        print("file obj ", filedata_obj)
-        applistdata_obj = appdata_obj.select_related('applistfromserverdata').values_list('applistfromserverdata_id__AppName', flat=True)
-        appName = applistdata_obj[0]
-        print("selappobj ", applistdata_obj[0])
-        filename_obj = list(filedata_obj.values_list('fileName', flat=True))
-        print("filetype ", filename_obj[0], list(filename_obj))
+#         appdata_obj = AppAvailableInDB.objects.filter(NodeId=delNodeId)
+#         print("new app id", appdata_obj)
+#         filedata_obj = FileDataToBeStored.objects.filter(NodeId=delNodeId)
+#         print("file obj ", filedata_obj)
+#         applistdata_obj = appdata_obj.select_related('applistfromserverdata').values_list('applistfromserverdata_id__AppName', flat=True)
+#         appName = applistdata_obj[0]
+#         print("selappobj ", applistdata_obj[0])
+#         filename_obj = list(filedata_obj.values_list('fileName', flat=True))
+#         print("filetype ", filename_obj[0], list(filename_obj))
 
-        self.nd.child_node_dir(appName,filename_obj)
+#         self.nd.child_node_dir(appName,filename_obj)
         
 
-        context = {}
-        context['nodeId'] = delNodeId
-        context['nodeTitle'] = delNodeTitle
-        context['msg'] = 200
+#         context = {}
+#         context['nodeId'] = delNodeId
+#         context['nodeTitle'] = delNodeTitle
+#         context['msg'] = 200
 
-        return JsonResponse(context, safe=False)
+#         return JsonResponse(context, safe=False)
 

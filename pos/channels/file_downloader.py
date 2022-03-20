@@ -1,3 +1,4 @@
+from importlib.resources import path
 import os
 import json
 import requests
@@ -203,9 +204,10 @@ class Downloader(object):
                         if file_to_get.status_code != 200:
                             continue
                         else:
+                            # print("path to put is ", path_to_put)
                             with open(path_to_put, "wb") as target:
-                                total_length = int(
-                                    file_to_get.headers.get('content-length'))
+                                total_length = int(file_to_get.headers.get('content-length'))
+                                # print("total length is >>> ", total_length)
                                 for chunk in progress.bar(file_to_get.iter_content(chunk_size=1024),
                                                             expected_size=(total_length/1024) + 1):
                                     if chunk:
