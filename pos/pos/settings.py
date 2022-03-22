@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'core',
     'channels',
     'content_viewer',
-    'apkdownloaderapp',
+    # 'apkdownloaderapp',
 
     #custom api import
     'core_api',
