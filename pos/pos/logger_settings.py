@@ -6,12 +6,12 @@ import os
 from pathlib import Path
 
 
-# tmp_path = os.path.join(str(Path.home()), 'tmp')
+tmp_path = os.path.join(str(Path.home()), 'tmp')
 
 
 # In RPI case
-tmp_path = '/home/pi'
-tmp_path = os.path.join(tmp_path, 'tmp')
+# tmp_path = '/home/pi'
+# tmp_path = os.path.join(tmp_path, 'tmp')
 print("tmp_path ", tmp_path)
 
 if not os.path.exists(tmp_path):
