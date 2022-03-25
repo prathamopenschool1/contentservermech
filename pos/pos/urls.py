@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/', include('core_api.urls')),
     path('api/channel/', include('channels_api.urls')),
     path('api/assessment/', include('assessment_api.urls')),
-    # path('apks/', include('apkdownloaderapp.urls')),
+    path('apks/', include('apkdownloaderapp.urls')),
 ]
 
 if settings.DEBUG:
