@@ -1,0 +1,26 @@
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+h3{
+    font-size: 2rem;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 350;
+}
+
+.appName{
+    font-size: 1.3rem;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 200;
+    color: green;
+}
+
+.appName, .textsize{
+    font-size: 1.3rem;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 200;
+    color: green;
+}
