@@ -38,7 +38,7 @@ class PushHelper(object):
     #To Check internet is avialble or not
     def connect(self, host="https://www.google.com/"):
         try:
-            urlopen(host)
+            urlopen(host, timeout=10)
             return True
         except:
             return False
