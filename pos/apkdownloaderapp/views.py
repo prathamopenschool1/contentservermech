@@ -1,7 +1,12 @@
+import os
+import json
 import logging
+import requests
+from multiprocessing import context
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views.generic import View
+from django.views.generic.base import TemplateView
+from django.http import JsonResponse, HttpResponse
 from modpush.pushhelper.connectcheck import PushHelper
 
 
@@ -10,17 +15,45 @@ infoLogger = logging.getLogger("info_logger")
 errorLogger = logging.getLogger("error_logger")
 
 
-class ApkDownloadView(View):
-    psh = PushHelper()
+class ApkPageServeView(TemplateView):
+    # psh = PushHelper()
 
     template_name = "apkdownloaderapp/apk_downloader.html"
 
-    def get(self, request, *args, **kwargs):
-        infoLogger.info("In push_usageData")
-        infoLogger.info("internet connection status" +  str(self.psh.connect()))
+    # def get(self, request, *args, **kwargs):
+    #     infoLogger.info("In push_usageData")
+    #     infoLogger.info("internet connection status" +  str(self.psh.connect()))
 
-        if self.psh.connect() == True:
-            return render(self.request, self.template_name)
+    #     # return render(self.request, self.template_name)
+    #     if self.psh.connect() == True:
+    #         return render(self.request, self.template_name)
+    #     else:
+    #         return render(request, 'core/NoInternetFound.html')
+
+
+class ApkDownloadView(View):
+    psh = PushHelper()
+    
+    def post(self, request, *args, **kwargs):
+        host = request.POST.get('idValue')
+        infoLogger.info("In push_usageData")
+        infoLogger.info("internet connection status" +  str(self.psh.connect(host=host)))
+
+        if self.psh.connect(host=host) == True:
+            apk_name = os.path.basename(host)
+            print(apk_name, "apk name is <-")
+            apk_path = '/var/www/html/data/'
+            if os.path.exists(apk_path):
+                os.system('sudo chmod 777 -R /var/www/html/data/')
+                dwn_Apk = requests.get(host, stream=True)
+                with open(os.path.join(apk_path, apk_name), "wb") as apkWrite:
+                    apkWrite.write(dwn_Apk.content)
+                context = {'msg': 200}
+                context = json.dumps(context)
+                return JsonResponse(context, safe=False)
         else:
-            return render(request, 'core/NoInternetFound.html')
+            context = {'msg': 701}
+            context = json.dumps(context)
+            errorLogger.error("Internet is not Working!!")
+            return JsonResponse(context, safe=False)
 
