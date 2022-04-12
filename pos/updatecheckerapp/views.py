@@ -61,7 +61,6 @@ class ApplicationUpdateView(APIView):
             context = {
                 'msg': 500
             }
-            # context = json.dumps(context)
             return Response(context)
     
 

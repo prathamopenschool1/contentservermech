@@ -1,17 +1,17 @@
 {% load static %}
 <link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
 <style type="text/css">
-    @media (min-width: 768px) {
-  html {
-    font-size: 16px;
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
   }
-}
-.border-top { border-top: 1px solid #e5e5e5; }
-.border-bottom { border-bottom: 1px solid #e5e5e5; }
-
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5); }
-
-.navbar-nav > li > .dropdown-menu { background-color: rgba(0, 0, 0, 1); }
+  .border-top { border-top: 1px solid #e5e5e5; }
+  .border-bottom { border-bottom: 1px solid #e5e5e5; }
+  
+  .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .5); }
+  
+  .navbar-nav > li > .dropdown-menu { background-color: rgba(0, 0, 0, 1); }
 </style>
 
   <!-- Alert modal -->
@@ -47,7 +47,7 @@
 
 
   
-<div class="loading" id="loaded" style="display:none;">
+<div class="loading" id="loaded">
 </div>
 
 <nav class="navbar navbar-expand-md navbar-default fixed-top navbar-dark bg-dark border-bottom ">
@@ -157,31 +157,23 @@
                 headers:{
                     "X-CSRFToken": '{{ csrf_token }}'
                 },
-                // data:{
-                //   'totalAppsList[]': totalAppsList
-                // },
                 beforeSend: function(response){
-                    // setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
                     $('.loading').css("visibility", "visible");
                 },
                 success: function(response){
-                    // response = JSON.parse(response)
                     if (response['msg'] === 200){
                         $('.loading').css("visibility", "hidden");
-                        console.log("new update available!!");
                         $('#updateModal .modal-body').html('<p> Application is updated!!! </p>');
                         $('#updateModal').modal('show')
                     }
                     else if (response['msg'] === 500) {
-                      console.log("no new update available!");
                         $('.loading').css("visibility", "hidden");
                         $('#updateModal .modal-body').html('<p>Internet Issue</p>');
                         $('#updateModal').modal('show')
                     }
                 },
                 error: function (error) {
-                    console.log('error; ', eval(error),  "no new response error this side ");
-                    // $('.loading').css("visibility", "hidden");
+                    $('.loading').css("visibility", "hidden");
                     $('#updateModal .modal-body').html('<p>Something Went Wrong!</p>');
                     $('#updateModal').modal('show')
                 }
