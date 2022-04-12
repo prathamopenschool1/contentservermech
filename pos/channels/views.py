@@ -4,9 +4,7 @@ import time
 import requests
 import logging
 from pathlib import Path
-# from pprint import pprint
 from django.shortcuts import render
-# from django.views.generic.edit import CreateView
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
