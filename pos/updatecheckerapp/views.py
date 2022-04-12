@@ -55,10 +55,7 @@ class ApplicationUpdateView(APIView):
         if self.psh.connect() == True:
             context = {}
             context['msg'] = 200
-            # context = json.dumps(context)
-            import time
-            time.sleep(10)
-            os.system('')
+            os.system('git pull origin main')
             return Response(context)
         else:
             context = {
