@@ -52,12 +52,27 @@
 
               </div>
             </div>
+            <!-- Update modal for new content update -->
+            <div id="updateModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                  <div class="modal-body">
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-warning" id="updateId" data-dismiss="modal">OK</button>
+                  </div>
+                  </div>
+
+              </div>
+            </div>
   
             <div class="row">
                 <!-- Iterate over object_list -->
                 {% for object in apps_list %}
                 <div class="col-md-4 col-4">
-                  <div class="card mb-4 box-shadow">
+                  <div class="card mb-4 box-shadow mycards">
                     <a href="{% url 'content_viewer:parent_details' AppId=object.AppId %}">
                         <img class="card-img-top" src="{% get_static_prefix %}storage/{{object.AppName}}/images/{{object.fileName}}"
                           width="50%" height="120" alt="Pratham Open School">
@@ -129,6 +144,56 @@
       </main>
 
       <script>
+
+        let totalAppsList = "{{totalAppsList}}";
+
+          window.addEventListener('load', (event) => {
+            console.log("this page is loaded again dude!!")
+            totalAppsList = JSON.parse(totalAppsList.replace(/&#39;/g,'"'));
+            // console.log("totalAppsList >>>>>>>>. ", totalAppsList, typeof(totalAppsList), totalAppsList.length)
+            // let updateUrl = '/new/updatecheck/';
+            // if (totalAppsList.length > 0){
+            //   $.ajax({
+            //         type: 'GET',
+            //         url: updateUrl,
+            //         dataType: "json",
+            //         headers:{
+            //             "X-CSRFToken": '{{ csrf_token }}'
+            //         },
+            //         data:{
+            //           'totalAppsList[]': totalAppsList
+            //         },
+            //         // beforeSend: function(response){
+            //         //     setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+            //         //     $('.loading').css("visibility", "visible");
+            //         // },
+            //         success: function(response){
+            //             // response = JSON.parse(response)
+            //             console.log("my new json is ", response)
+            //             if (response['msg'] === 200){
+            //                 // $('.loading').css("visibility", "hidden");
+            //                 console.log("new update available!!");
+            //                 $('#updateModal .modal-body').html('<p>New Content Update is Available! </p>');
+            //                 $('#updateModal').modal('show')
+            //             }
+            //             else if (response['msg'] === 500) {
+            //               console.log("no new update available babu!!");
+            //                 // $('.loading').css("visibility", "hidden");
+            //                 $('#updateModal .modal-body').html('<p>Internet Issue</p>');
+            //                 $('#updateModal').modal('show')
+            //             }
+            //         },
+            //         error: function (error) {
+            //             console.log('error; ', eval(error),  "no new response error this side ");
+            //             // $('.loading').css("visibility", "hidden");
+            //             $('#updateModal .modal-body').html('<p>Something Went Wrong!</p>');
+            //             $('#updateModal').modal('show')
+            //         }
+            //   });
+            // }
+            
+          })
+
           function downloader(){
             $('#alertModal .modal-body').html('<p>You Need To Login To Download The Content!</p>');
             $('#alertModal').modal('show');

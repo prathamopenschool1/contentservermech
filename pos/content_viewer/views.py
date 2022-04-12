@@ -35,6 +35,8 @@ class AppAvailableListView(ListView):
         context = super(AppAvailableListView, self).get_context_data(*args, **kwargs)
         queryset = self.get_queryset()
         context["apps_list"] = queryset
+        new_app_lst = queryset.values_list('AppId', flat=True)
+        context['totalAppsList'] = list(new_app_lst)
         infoLogger.info("In get_context_data!!")
         return context
 

@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/channel/', include('channels_api.urls')),
     path('api/assessment/', include('assessment_api.urls')),
     path('apks/', include('apkdownloaderapp.urls')),
+    path('new/', include('updatecheckerapp.urls')),
 ]
 
 if settings.DEBUG:

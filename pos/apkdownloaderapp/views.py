@@ -2,7 +2,6 @@ import os
 import json
 import logging
 import requests
-from multiprocessing import context
 from django.shortcuts import render
 from django.views.generic import View
 from django.views.generic.base import TemplateView
@@ -41,7 +40,6 @@ class ApkDownloadView(View):
 
         if self.psh.connect(host=host) == True:
             apk_name = os.path.basename(host)
-            print(apk_name, "apk name is <-")
             apk_path = '/var/www/html/data/'
             if os.path.exists(apk_path):
                 os.system('sudo chmod 777 -R /var/www/html/data/')
@@ -49,6 +47,10 @@ class ApkDownloadView(View):
                 with open(os.path.join(apk_path, apk_name), "wb") as apkWrite:
                     apkWrite.write(dwn_Apk.content)
                 context = {'msg': 200}
+                context = json.dumps(context)
+                return JsonResponse(context, safe=False)
+            else:
+                context = {'msg': 303}
                 context = json.dumps(context)
                 return JsonResponse(context, safe=False)
         else:

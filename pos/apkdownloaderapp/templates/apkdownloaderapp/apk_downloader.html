@@ -5,134 +5,144 @@
 <link rel="stylesheet" href="{% static '/css/wgfonts/fonts.css' %}">
 <link rel="stylesheet" href="{% static '/css/loadergif.css'%}">
 
-    <!-- success or error modal -->
-    <div id="pushModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+<!-- success or error modal -->
+<div id="pushModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
 
-            <!-- Modal content-->
-            <div class="modal-content">
+        <!-- Modal content-->
+        <div class="modal-content">
             <div class="modal-body">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="pushedId" data-dismiss="modal">OK</button>
             </div>
-            </div>
-
         </div>
+
     </div>
+</div>
 
-    <div class="loading" id="loaded" style="display:none;">
-    </div>
+<div class="loading" id="loaded" style="display:none;">
+</div>
 
-    <!-- <div class="loading"></div> -->
+<!-- <div class="loading"></div> -->
 
-    <div class="container">
-        <br/>
-        <div class="jumbotron text-center">
-            <h3>Download Apps</h3>
-            <hr>
-            <div class="row appName">
-                <div class="col-lg-1 col-md-1">
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <p class="textsize">APK For Pradigi For Life White Tab :</p>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
-                    <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PraDigiLife.apk"  class="text-primary" onclick="checkInternet(this);">PraDigi For Life</a></p>
-                </div>
-                <div class="col-lg-1 col-md-1">
-                </div>
+<div class="container">
+    <br />
+    <div class="jumbotron text-center">
+        <h3>Download Apps</h3>
+        <hr>
+        <div class="row appName">
+            <div class="col-lg-1 col-md-1">
             </div>
-            <hr>
-            <div class="row appName">
-                <div class="col-lg-1 col-md-1">
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <p class="textsize">APK For Pradigi For School :</p>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
-                    <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PDS.apk" class="text-primary" onclick="checkInternet(this);">Pradigi For School</a></p>
-                </div>
-                <div class="col-lg-1 col-md-1">
-                </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <p class="textsize">APK For Pradigi For Life White Tab :</p>
             </div>
-            <hr>
-            <div class="row appName">
-                <div class="col-lg-1 col-md-1">
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <p class="textsize">APK For Pradigi For Life Blue Tab :</p>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
-                    <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PraDigiLifeBlue.apk" class="text-primary" onclick="checkInternet(this);">PraDigi For Life(Blue Tab)</a></p>
-                </div>
-                <div class="col-lg-1 col-md-1">
-                </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
+                <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PraDigiLife.apk"
+                        class="text-primary" onclick="checkInternet(this);">PraDigi For Life</a></p>
             </div>
-            <hr>
-            <div class="row appName">
-                <div class="col-lg-1 col-md-1">
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <p class="textsize">APK For Pradigi For Assessment :</p>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
-                    <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/Assessment.apk" class="text-primary" onclick="checkInternet(this);">Assessment</a></p>
-                </div>
-                <div class="col-lg-1 col-md-1">
-                </div>
+            <div class="col-lg-1 col-md-1">
             </div>
-            <hr>
         </div>
+        <hr>
+        <div class="row appName">
+            <div class="col-lg-1 col-md-1">
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <p class="textsize">APK For Pradigi For School :</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
+                <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PDS.apk"
+                        class="text-primary" onclick="checkInternet(this);">Pradigi For School</a></p>
+            </div>
+            <div class="col-lg-1 col-md-1">
+            </div>
+        </div>
+        <hr>
+        <div class="row appName">
+            <div class="col-lg-1 col-md-1">
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <p class="textsize">APK For Pradigi For Life Blue Tab :</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
+                <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/PraDigiLifeBlue.apk"
+                        class="text-primary" onclick="checkInternet(this);">PraDigi For Life(Blue Tab)</a></p>
+            </div>
+            <div class="col-lg-1 col-md-1">
+            </div>
+        </div>
+        <hr>
+        <div class="row appName">
+            <div class="col-lg-1 col-md-1">
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <p class="textsize">APK For Pradigi For Assessment :</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 appTitle">
+                <p class="textsize"><a href="#" value="http://pef1.prathamskills.org/pradigi/Assessment.apk"
+                        class="text-primary" onclick="checkInternet(this);">Assessment</a></p>
+            </div>
+            <div class="col-lg-1 col-md-1">
+            </div>
+        </div>
+        <hr>
     </div>
+</div>
 
-    <script>
+<script>
 
-        function checkInternet(hrefs){
-            let idValue = hrefs.getAttribute("value");
-            $.ajax({
-                url: '/apks/checkInternetCon/',
-                type: 'POST',
-                crossDomain: true,
-                datatype: "json",
-                headers:{
-                        "X-CSRFToken": '{{ csrf_token }}'
-                },
-                data:{
-                    'idValue': idValue,
-                },
-                beforeSend: function(response){
-                    $('#pushModal .modal-body').html('<p>Please Wait, Apk is Downloading</p>');
-                    $('#pushModal').modal('show');
-                    $('#loaded').show();
-                    $('.loading').css("visibility", "visible");
-                },
-                success: function(response){
-                    response = JSON.parse(response)
-                    if (response['msg'] == 200){
-                        $('.loading').css("visibility", "hidden");
-                        $('#pushModal .modal-body').html('<p>Apk Downloaded</p>');
-                        $('#pushModal').modal('show')
-                        $('#pushedId').click(function () {
-                            location.reload();
-                        })
-                    }
-                    else{
-                        $('.loading').css("visibility", "hidden");
-                        $('#pushModal .modal-body').html('<p>Internet Connection Not Found!</p>');
-                        $('#pushModal').modal('show');
-                    }
-                },
-                error: function (error) {
-                    console.log('error; ', eval(error));
+    function checkInternet(hrefs) {
+        let idValue = hrefs.getAttribute("value");
+        $.ajax({
+            url: '/apks/checkInternetCon/',
+            type: 'POST',
+            crossDomain: true,
+            datatype: "json",
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            data: {
+                'idValue': idValue,
+            },
+            beforeSend: function (response) {
+                $('#pushModal .modal-body').html('<p>Please Wait, Apk is Downloading</p>');
+                $('#pushModal').modal('show');
+                $('#loaded').show();
+                $('.loading').css("visibility", "visible");
+            },
+            success: function (response) {
+                response = JSON.parse(response)
+                console.log("my response ", response)
+                if (response['msg'] == 200) {
                     $('.loading').css("visibility", "hidden");
-                    $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                    $('#pushModal .modal-body').html('<p>Apk Downloaded</p>');
+                    $('#pushModal').modal('show')
+                    $('#pushedId').click(function () {
+                        location.reload();
+                    })
+                }
+                else if(response['msg'] == 303) {
+                    $('.loading').css("visibility", "hidden");
+                    $('#pushModal .modal-body').html('<p>Folder Path For Downloading Apk Does not Exist. Please Create Path first</p>');
                     $('#pushModal').modal('show');
                 }
-            })
-        }
+                else {
+                    $('.loading').css("visibility", "hidden");
+                    $('#pushModal .modal-body').html('<p>Internet Connection Not Found!</p>');
+                    $('#pushModal').modal('show');
+                }
+            },
+            error: function (error) {
+                console.log('error; ', eval(error));
+                $('.loading').css("visibility", "hidden");
+                $('#pushModal .modal-body').html('<p>Something Went Wrong!</p>');
+                $('#pushModal').modal('show');
+            }
+        })
+    }
 
-    </script>
+</script>
 
-            
+
 {% endblock %}
