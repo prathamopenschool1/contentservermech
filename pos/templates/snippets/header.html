@@ -13,6 +13,42 @@
 .navbar-nav > li > .dropdown-menu { background-color: rgba(0, 0, 0, 1); }
 </style>
 
+  <!-- Alert modal -->
+  <div id="alertModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-warning" id="pushedId" data-dismiss="modal">OK</button>
+        </div>
+        </div>
+
+    </div>
+  </div>
+  <!-- Update modal for new content update -->
+  <div id="updateModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-warning" id="updateId" data-dismiss="modal">OK</button>
+        </div>
+        </div>
+
+    </div>
+  </div>
+
+
+  
+<div class="loading" id="loaded" style="display:none;">
+</div>
+
 <nav class="navbar navbar-expand-md navbar-default fixed-top navbar-dark bg-dark border-bottom ">
       <a class="navbar-brand" href="#">
           <img src="{% static '/images/logop1.png' %}" alt="">
@@ -31,6 +67,11 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'core:devicesconnected' %}">
                 <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Devices Linked</button>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"> 
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="button" id="updater" onclick="updaters()" >Feature Update</button>
             </a>
           </li>
           <li class="dropdown">
@@ -103,4 +144,47 @@
       {% endif %}
     </nav>
     <!-- <hr> -->
+
+    <script>
+      function updaters() {
+        console.log("feture update clicked !");
+        let updateUrl = '/new/appupdate/';
+        $.ajax({
+                type: 'POST',
+                url: updateUrl,
+                dataType: "json",
+                headers:{
+                    "X-CSRFToken": '{{ csrf_token }}'
+                },
+                // data:{
+                //   'totalAppsList[]': totalAppsList
+                // },
+                beforeSend: function(response){
+                    // setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+                    $('.loading').css("visibility", "visible");
+                },
+                success: function(response){
+                    // response = JSON.parse(response)
+                    if (response['msg'] === 200){
+                        $('.loading').css("visibility", "hidden");
+                        console.log("new update available!!");
+                        $('#updateModal .modal-body').html('<p> Application is updated!!! </p>');
+                        $('#updateModal').modal('show')
+                    }
+                    else if (response['msg'] === 500) {
+                      console.log("no new update available!");
+                        $('.loading').css("visibility", "hidden");
+                        $('#updateModal .modal-body').html('<p>Internet Issue</p>');
+                        $('#updateModal').modal('show')
+                    }
+                },
+                error: function (error) {
+                    console.log('error; ', eval(error),  "no new response error this side ");
+                    // $('.loading').css("visibility", "hidden");
+                    $('#updateModal .modal-body').html('<p>Something Went Wrong!</p>');
+                    $('#updateModal').modal('show')
+                }
+              });
+      }
+    </script>
    

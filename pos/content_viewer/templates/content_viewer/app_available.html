@@ -149,47 +149,49 @@
 
           window.addEventListener('load', (event) => {
             console.log("this page is loaded again dude!!")
-            let counts = document.getElementsByClassName("mycards").length;
-            console.log(counts, "thsi ");
             totalAppsList = JSON.parse(totalAppsList.replace(/&#39;/g,'"'));
-            let updateUrl = '/new/updatecheck/';
-            $.ajax({
-                    type: 'GET',
-                    url: updateUrl,
-                    dataType: "json",
-                    headers:{
-                        "X-CSRFToken": '{{ csrf_token }}'
-                    },
-                    data:{
-                      'totalAppsList[]': totalAppsList
-                    },
-                    // beforeSend: function(response){
-                    //     setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
-                    //     $('.loading').css("visibility", "visible");
-                    // },
-                    success: function(response){
-                        // response = JSON.parse(response)
-                        console.log("my new json is ", response)
-                        if (response['msg'] === 200){
-                            // $('.loading').css("visibility", "hidden");
-                            console.log("new update available!!");
-                            $('#updateModal .modal-body').html('<p>New Content Update is Available! </p>');
-                            $('#updateModal').modal('show')
-                        }
-                        else if (response['msg'] === 500) {
-                          console.log("no new update available babu!!");
-                            // $('.loading').css("visibility", "hidden");
-                            $('#updateModal .modal-body').html('<p>Internet Issue</p>');
-                            $('#updateModal').modal('show')
-                        }
-                    },
-                    error: function (error) {
-                        console.log('error; ', eval(error),  "no new response error this side ");
-                        // $('.loading').css("visibility", "hidden");
-                        $('#updateModal .modal-body').html('<p>Something Went Wrong!</p>');
-                        $('#updateModal').modal('show')
-                    }
-                });
+            // console.log("totalAppsList >>>>>>>>. ", totalAppsList, typeof(totalAppsList), totalAppsList.length)
+            // let updateUrl = '/new/updatecheck/';
+            // if (totalAppsList.length > 0){
+            //   $.ajax({
+            //         type: 'GET',
+            //         url: updateUrl,
+            //         dataType: "json",
+            //         headers:{
+            //             "X-CSRFToken": '{{ csrf_token }}'
+            //         },
+            //         data:{
+            //           'totalAppsList[]': totalAppsList
+            //         },
+            //         // beforeSend: function(response){
+            //         //     setTimeout(function() {$('#popupModal').modal('hide');}, 2000);
+            //         //     $('.loading').css("visibility", "visible");
+            //         // },
+            //         success: function(response){
+            //             // response = JSON.parse(response)
+            //             console.log("my new json is ", response)
+            //             if (response['msg'] === 200){
+            //                 // $('.loading').css("visibility", "hidden");
+            //                 console.log("new update available!!");
+            //                 $('#updateModal .modal-body').html('<p>New Content Update is Available! </p>');
+            //                 $('#updateModal').modal('show')
+            //             }
+            //             else if (response['msg'] === 500) {
+            //               console.log("no new update available babu!!");
+            //                 // $('.loading').css("visibility", "hidden");
+            //                 $('#updateModal .modal-body').html('<p>Internet Issue</p>');
+            //                 $('#updateModal').modal('show')
+            //             }
+            //         },
+            //         error: function (error) {
+            //             console.log('error; ', eval(error),  "no new response error this side ");
+            //             // $('.loading').css("visibility", "hidden");
+            //             $('#updateModal .modal-body').html('<p>Something Went Wrong!</p>');
+            //             $('#updateModal').modal('show')
+            //         }
+            //   });
+            // }
+            
           })
 
           function downloader(){

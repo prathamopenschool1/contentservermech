@@ -17,9 +17,9 @@ headers = {
 
 
 
-def get_data_from_api():
-    
-    pass
+def get_data_from_api(api_id=None):
+    print("api ids list >>>>> ", api_id)
+    # pass
 
 
 def get_data_from_models():

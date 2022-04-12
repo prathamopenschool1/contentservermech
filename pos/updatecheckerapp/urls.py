@@ -7,4 +7,5 @@ app_name = 'content_update'
 
 urlpatterns = [
     path('updatecheck/', views.UpdateCheckView.as_view(), name='updatecheck'),
+    path('appupdate/', views.ApplicationUpdateView.as_view(), name='appupdate'),
 ]
