@@ -421,7 +421,7 @@ function populateTree(parentid)
                     $('#pushModal .modal-body').html('<p>Data Downloaded Successfully!</p>');
                     $('#pushModal').modal('show');
                     // window.location.href = '/content/app_available/';
-                    $('#pushedId').click(function () {
+                    $('#pushModal').click(function () {
                         window.location.href = '/content/app_available/';
                     })
                 }
@@ -430,7 +430,7 @@ function populateTree(parentid)
                     $('#pushModal .modal-body').html('<p>Downloading Stopped! Internet Connection Not Found!</p>');
                     $('#pushModal').modal('show');
                     // window.location.href = '/channel/no_internet/';
-                    $('#pushedId').click(function () {
+                    $('#pushModal').click(function () {
                         location.reload();
                     })
                 }
