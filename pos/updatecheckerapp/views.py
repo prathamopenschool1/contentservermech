@@ -33,10 +33,10 @@ class UpdateCheckView(LoginRequiredMixin, APIView):
         if self.psh.connect() == True:
             get_data_from_api(totalAppsList)
             context['msg'] = 200
-            return Response(context)
         else:
             context['msg'] = 500
-            return Response(context)
+
+        return Response(context)
 
     # def post(self, request):
     #     context = {}
@@ -52,16 +52,15 @@ class ApplicationUpdateView(APIView):
         infoLogger.info("In app check view")
         infoLogger.info("internet connection status is " +  str(self.psh.connect()))
 
+        context = {}
+
         if self.psh.connect() == True:
-            context = {}
             context['msg'] = 200
             os.system('git pull origin main')
-            return Response(context)
         else:
-            context = {
-                'msg': 500
-            }
-            return Response(context)
+            context['msg'] = 500
+
+        return Response(context)
     
 
 
