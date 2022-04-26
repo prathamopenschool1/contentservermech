@@ -15,19 +15,7 @@ errorLogger = logging.getLogger("error_logger")
 
 
 class ApkPageServeView(TemplateView):
-    # psh = PushHelper()
-
     template_name = "apkdownloaderapp/apk_downloader.html"
-
-    # def get(self, request, *args, **kwargs):
-    #     infoLogger.info("In push_usageData")
-    #     infoLogger.info("internet connection status" +  str(self.psh.connect()))
-
-    #     # return render(self.request, self.template_name)
-    #     if self.psh.connect() == True:
-    #         return render(self.request, self.template_name)
-    #     else:
-    #         return render(request, 'core/NoInternetFound.html')
 
 
 class ApkDownloadView(View):
@@ -36,26 +24,24 @@ class ApkDownloadView(View):
     def post(self, request, *args, **kwargs):
         host = request.POST.get('idValue')
         infoLogger.info("In push_usageData")
-        infoLogger.info("internet connection status" +  str(self.psh.connect(host=host)))
+        infoLogger.info(f"internet connection status{str(self.psh.connect(host=host))}")
 
         if self.psh.connect(host=host) == True:
             apk_name = os.path.basename(host)
             apk_path = '/var/www/html/data/'
             if os.path.exists(apk_path):
-                os.system('sudo chmod 777 -R /var/www/html/data/')
+                os.system('sudo chmod 777 -R /var/www/html/index/data/')
                 dwn_Apk = requests.get(host, stream=True)
                 with open(os.path.join(apk_path, apk_name), "wb") as apkWrite:
                     apkWrite.write(dwn_Apk.content)
                 context = {'msg': 200}
-                context = json.dumps(context)
-                return JsonResponse(context, safe=False)
             else:
                 context = {'msg': 303}
-                context = json.dumps(context)
-                return JsonResponse(context, safe=False)
+            context = json.dumps(context)
         else:
             context = {'msg': 701}
             context = json.dumps(context)
             errorLogger.error("Internet is not Working!!")
-            return JsonResponse(context, safe=False)
+
+        return JsonResponse(context, safe=False)
 

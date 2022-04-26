@@ -1,4 +1,5 @@
 import os
+import shutil
 import string
 import secrets
 import requests
@@ -25,8 +26,7 @@ class CommonHelpers:
     
     @classmethod
     def get_secret_string(cls, length):
-        secret_string = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length))
-        return secret_string
+        return ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
     # TO extract knowledge portal zip
     @classmethod
@@ -38,28 +38,61 @@ class CommonHelpers:
         if os.path.exists(check_path):
             try:
                 zip_file_url = "http://rpi.prathamskills.org/apps/index.zip"
-                path_to_put = "/var/www/html/index.zip"
+                # path_to_put = "/var/www/html/"
+                path_to_put = os.path.join(check_path, 'html')
 
-                os.system('sudo chmod 777 -R /var/www/')
+                # os.system('sudo chmod 777 -R /var/www/')
+                os.system(f'sudo chmod 777 -R {check_path}')
 
-                if os.path.exists(path_to_put):
-                    os.system('sudo rm -rf /var/www/html/index.zip')
+                index_file = os.path.join(path_to_put, 'index.zip')
+
+                if os.path.exists(index_file):
+                    os.system(f'sudo rm -rf {index_file}')
 
                 file_to_get = requests.get(zip_file_url)
 
-                with open(path_to_put, "wb") as new_file:
+                with open(index_file, "wb") as new_file:
                     for chunk in file_to_get.iter_content(chunk_size=1024):
                         new_file.write(chunk)
 
+                cls.infoLogger.info("file downloaded successfully>>>")
+
             except Exception as d:
-                cls.errorLogger.error("Error Exception 1 while extracting knowledge portal zip :--- " + str(d))
+                cls.errorLogger.error(f"Error Exception 1 while extracting knowledge portal zip :--- {str(d)}")
 
             try:
-                file_name = "/var/www/html/index.zip"
-                with ZipFile(file_name, 'r') as zip:
-                    zip.extractall('/var/www/html/')
+                # file_name = "/var/www/html/index.zip"
+                with ZipFile(index_file, 'r') as zip:
+                    zip.extractall(path_to_put)
+                
+                src_dirs = os.path.join(path_to_put, 'index')
+                dest_dirs = path_to_put
+
+                cls._copy_all(src_dirs, dest_dirs)
                 cls.infoLogger.info("Extracting knowledge portal Done >>")
             except Exception as e:
-                print(e)
-                cls.errorLogger.error("Error Exception 2 while extarcting knowledge portal zip :--- " + str(e))
+                cls.errorLogger.error(f"Error Exception 2 while extarcting knowledge portal zip :--- {str(e)}")
+
+    @classmethod
+    def _copy_all(cls, src_dirs, dest_dirs):
+
+        try:
+            for file_name in os.listdir(src_dirs):
+                source = os.path.join(src_dirs, file_name)
+                destination = os.path.join(dest_dirs, file_name)
+
+                if os.path.isfile(source):
+                    shutil.copy(source, destination)
+                elif os.path.isdir(source):
+                    shutil.copytree(source, destination)
+
+            cls.infoLogger.info("Copied successfully")
+
+        except Exception as e:
+            cls.errorLogger.error(f"Error Exception 2 while copying files  :--- {str(e)}")
+
+
+
+
+
 
