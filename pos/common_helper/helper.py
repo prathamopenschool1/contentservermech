@@ -6,9 +6,6 @@ import requests
 import logging
 from pathlib import Path
 from zipfile import ZipFile
-from subprocess import PIPE, Popen
-
-
 
 class CommonHelpers:
 
