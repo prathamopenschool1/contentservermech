@@ -2,6 +2,7 @@ import os
 import shutil
 import string
 import secrets
+from numpy import source
 import requests
 import logging
 from pathlib import Path
@@ -34,15 +35,22 @@ class CommonHelpers:
         #upgrade_dns()
 
         check_path = '/var/www/'
+        os.system(f'sudo chmod 777 -R {check_path}')
+
+        check_html_folder = os.path.join(check_path, 'html')
+        check_index_folder = os.path.join(check_html_folder, 'index')
+
+        # if not os.path.exists(check_html_folder):
+        #     os.makedirs(check_html_folder)
+        if os.path.exists(check_html_folder):
+            cls._remove_files_dirs(check_html_folder=check_html_folder, check_index_folder=check_index_folder)
+
 
         if os.path.exists(check_path):
             try:
                 zip_file_url = "http://rpi.prathamskills.org/apps/index.zip"
                 # path_to_put = "/var/www/html/"
                 path_to_put = os.path.join(check_path, 'html')
-
-                # os.system('sudo chmod 777 -R /var/www/')
-                os.system(f'sudo chmod 777 -R {check_path}')
 
                 index_file = os.path.join(path_to_put, 'index.zip')
 
@@ -90,6 +98,22 @@ class CommonHelpers:
 
         except Exception as e:
             cls.errorLogger.error(f"Error Exception 2 while copying files  :--- {str(e)}")
+
+
+    @classmethod
+    def _remove_files_dirs(cls, check_html_folder=None, check_index_folder=None):
+        if check_html_folder is not None and os.path.exists(check_html_folder):
+            html_check_dirs = os.listdir(check_html_folder)
+            if len(html_check_dirs) > 0:
+                for file_name in html_check_dirs:
+                    source = os.path.join(check_html_folder, file_name)
+                    if os.path.isfile(source):
+                        os.remove(source)
+                    elif os.path.isdir(source):
+                        shutil.rmtree(source)
+        
+        if check_index_folder is not None and os.path.exists(check_index_folder):
+            shutil.rmtree(check_index_folder)
 
 
 
