@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import requests
+from clint.textui import progress
 from django.shortcuts import render
 from django.views.generic import View
 from django.views.generic.base import TemplateView
@@ -26,22 +27,38 @@ class ApkDownloadView(View):
         infoLogger.info("In push_usageData")
         infoLogger.info(f"internet connection status{str(self.psh.connect(host=host))}")
 
-        if self.psh.connect(host=host) == True:
-            apk_name = os.path.basename(host)
-            apk_path = '/var/www/html/data/'
-            if os.path.exists(apk_path):
-                os.system('sudo chmod 777 -R /var/www/html/index/data/')
-                dwn_Apk = requests.get(host, stream=True)
-                with open(os.path.join(apk_path, apk_name), "wb") as apkWrite:
-                    apkWrite.write(dwn_Apk.content)
-                context = {'msg': 200}
+        try:
+            if self.psh.connect(host=host) == True:
+                apk_name = os.path.basename(host)
+                apk_path = '/var/www/html/data/'
+                if os.path.exists(apk_path):
+                    os.system(f'sudo chmod 777 -R {apk_path}')
+                    dwn_Apk = requests.get(host, stream=True, timeout=10)
+                    with open(os.path.join(apk_path, apk_name), "wb") as apkWrite:
+                        # apkWrite.write(dwn_Apk.content)
+                        total_length = int(dwn_Apk.headers.get('content-length'))
+                        for chunk in progress.bar(dwn_Apk.iter_content(chunk_size=1024),
+                                                    expected_size=(total_length/1024) + 1):
+                            if chunk:
+                                try:
+                                    apkWrite.write(chunk)
+                                    apkWrite.flush()
+                                except requests.exceptions.ConnectionError as dataflush_err:
+                                    print(f"Exception occurd while flushing data  {str(dataflush_err)}")
+                                    errorLogger.error(f"Exception occurd while flushing data: {str(dataflush_err)}")
+                    context = {'msg': 200}
+                else:
+                    context = {'msg': 303}
+                context = json.dumps(context)
             else:
-                context = {'msg': 303}
-            context = json.dumps(context)
-        else:
-            context = {'msg': 701}
-            context = json.dumps(context)
-            errorLogger.error("Internet is not Working!!")
+                context = {'msg': 701}
+                context = json.dumps(context)
+                errorLogger.error("Internet is not Working!!")
 
-        return JsonResponse(context, safe=False)
+            return JsonResponse(context, safe=False)
+
+        except requests.exceptions.ConnectionError as e:
+            print("apk writing error is >>>>>>>> ", e)
+            return 701
+
 
