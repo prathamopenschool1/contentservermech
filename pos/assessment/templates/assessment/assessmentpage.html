@@ -416,17 +416,18 @@
                 $('#pushModal').modal('show');
             }
             else if (jsondata['message'] === "505") {
+                console.log("505 internet issue!!")
                 $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
                 $('#pushModal').modal('show');
             }
             $('#pushedId').click(function () {
                 localStorage.clear();
-                location.reload();
+                location.reload(true);
             });
             // window.location.href = '/assessment/';
         })
         .catch(error => {
-            // console.log("error is ", error);
+            console.log("error is direct catch ", error);
             hideloader();
             $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
             $('#pushModal').modal('show');
