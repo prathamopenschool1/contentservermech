@@ -420,7 +420,7 @@
                 $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
                 $('#pushModal').modal('show');
             }
-            $('#pushedId').click(function () {
+            $('#pushModal').click(function () {
                 localStorage.clear();
                 location.reload(true);
             });
@@ -431,7 +431,7 @@
             hideloader();
             $('#pushModal .modal-body').html('<p>Something Went Wrong!!</p>');
             $('#pushModal').modal('show');
-            $('#pushedId').click(function () {
+            $('#pushModal').click(function () {
                 localStorage.clear();
                 location.reload();
             })
