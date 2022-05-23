@@ -16,7 +16,7 @@ errorLogger = logging.getLogger("error_logger")
 
 class PushHelper(object):
 
-    homePath = '/home/pi' #str(Path.home())
+    homePath = '/home/pi' #'/home/pi' str(Path.home())
     deskDir = os.path.join(homePath, 'DesktopBackup')
 
     #usage post api
@@ -40,18 +40,18 @@ class PushHelper(object):
         try:
             urlopen(host, timeout=10)
             return True
-        except:
+        except Exception:
             return False
 
     # usagedata
-    def push_usageData(self):
+    def push_usageData(self, ip_address='192.168.4.1'):
         
         pageNo = 1
         serial_line = ''
         status_quo = {}
         result_set = {}
 
-        usagedata_url = "http://192.168.4.1:8000/api/usagedata/"
+        usagedata_url = f"http://{ip_address}:8000/api/usagedata/"
         response = requests.get(usagedata_url)
         lstscore = json.loads(response.content.decode('utf-8'))
 
@@ -72,7 +72,7 @@ class PushHelper(object):
 
         else:
             while True:
-                fetch_url = "http://192.168.4.1:8000/api/usagedata/?page={}&page_size=200".format(pageNo)
+                fetch_url = f"http://{ip_address}:8000/api/usagedata/?page={pageNo}&page_size=200"
                 usage_response = requests.get(fetch_url)
                 data = json.loads(usage_response.content.decode('utf-8'))
 
@@ -80,25 +80,25 @@ class PushHelper(object):
                     result_set['status'] = 400
                     return result_set
                 elif data['count'] != 0 and data['next'] is None:
-                    result_set = self.usageFile(data)
+                    result_set = self.usageFile(data, ip_address=ip_address)
                     return result_set
                 else:
-                    result_set = self.usageFile(data)
+                    result_set = self.usageFile(data, ip_address=ip_address)
                     # return result_set
                     if data['count'] == 0 and data['next'] is None:
                         return result_set
                     else:
-                        result_set = self.usageFile(data)
+                        result_set = self.usageFile(data, ip_address=ip_address)
 
                 pageNo =  pageNo + 1
     
 
-    def usageFile(self, data):
+    def usageFile(self, data, ip_address='192.168.4.1'):
         result_set = {}
         try:
             for i in range(len(data['results'])):                    
                 actualfileName = data['results'][i]["uploaded_file"]
-                actualfileName = actualfileName.replace("http://192.168.4.1:8000", os.path.join(self.homePath, "contentservermech/pos"))
+                actualfileName = actualfileName.replace(f"http://{ip_address}:8000", os.path.join(self.homePath, "contentservermech/pos"))
                 lastndexofFwdSlsh = actualfileName.rfind('/')                    
                 filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                 indexofDotzip = filenamestr.index(".zip")
@@ -124,12 +124,12 @@ class PushHelper(object):
             return result_set
 
 
-    def dbPushToserver(self, data):
+    def dbPushToserver(self, data, ip_address='192.168.4.1'):
         result_set = {}
         try:
             for i in range(len(data['results'])):                    
                 actualfileName = data['results'][i]["uploaded_file"]
-                actualfileName = actualfileName.replace("http://192.168.4.1:8000", os.path.join(self.homePath, "contentservermech/pos"))
+                actualfileName = actualfileName.replace(f"http://{ip_address}:8000", os.path.join(self.homePath, "contentservermech/pos"))
                 lastndexofFwdSlsh = actualfileName.rfind('/')                    
                 filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
                 indexofDotzip = filenamestr.index(".zip")
@@ -156,13 +156,13 @@ class PushHelper(object):
 
 
     # dbpush helper function
-    def push_dbPushData(self):
+    def push_dbPushData(self, ip_address='192.168.4.1'):
 
         pageNo = 1
         status_quo = {}
         result_set = {}
 
-        dbpush_url = "http://192.168.4.1:8000/api/dbpushdata/"
+        dbpush_url = f"http://{ip_address}:8000/api/dbpushdata/"
         response = requests.get(dbpush_url)
         dbpushdata = json.loads(response.content.decode('utf-8'))
 
@@ -174,7 +174,7 @@ class PushHelper(object):
 
         else:
             while True:
-                fetch_url = "http://192.168.4.1:8000/api/dbpushdata/?page={}&page_size=200".format(pageNo)
+                fetch_url = f"http://{ip_address}:8000/api/dbpushdata/?page={pageNo}&page_size=200"
                 usage_response = requests.get(fetch_url)
                 data = json.loads(usage_response.content.decode('utf-8'))
 
@@ -182,28 +182,28 @@ class PushHelper(object):
                     result_set['status'] = 400
                     return result_set
                 elif data['count'] != 0 and data['next'] is None:
-                    result_set = self.dbPushToserver(data)
+                    result_set = self.dbPushToserver(data, ip_address=ip_address)
                     return result_set
                 else:
-                    result_set = self.dbPushToserver(data)
+                    result_set = self.dbPushToserver(data, ip_address=ip_address)
                     # return result_set
                     if data['count'] == 0 and data['next'] is None:
                         return result_set
                     else:
-                        result_set = self.dbPushToserver(data)
+                        result_set = self.dbPushToserver(data, ip_address=ip_address)
 
                 pageNo =  pageNo + 1
 
 
     #descktop data function
-    def desktop_data_to_server(self):
+    def desktop_data_to_server(self, ip_address='192.168.4.1'):
         desktop_resultlist = []
         pageNo = 1
         status_quo = {}
         result_set = {}
 
-        desktop_url = 'http://192.168.4.1:8000/api/desktopdata/'
-        appList_url = 'http://192.168.4.1:8000/api/channel/AppList/'
+        desktop_url = f'http://{ip_address}:8000/api/desktopdata/'
+        appList_url = f'http://{ip_address}:8000/api/channel/AppList/'
 
         dresponse = requests.get(desktop_url)
         aresponse = requests.get(appList_url)
@@ -225,8 +225,8 @@ class PushHelper(object):
         else:
             while True:
                 # get api
-                desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=200".format(pageNo)
-                appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+                desktop_url = f"http://{ip_address}:8000/api/desktopdata/?page={pageNo}&page_size=200"
+                appList_url = f"http://{ip_address}:8000/api/channel/AppList/"
 
                 # desktop data url
                 desktop_response = requests.get(desktop_url, headers=self.headers)
@@ -328,7 +328,7 @@ class PushHelper(object):
 
 
 
-    def backup(self):
+    def backup(self, ip_address='192.168.4.1'):
         chp = CommonHelpers()
         randstr = chp.get_secret_string(6)
         pageNo = 1
@@ -349,8 +349,8 @@ class PushHelper(object):
                 shutil.copytree(srcDbPushDir, destDbPushDir, symlinks = True)
 
 
-            desktop_url = 'http://192.168.4.1:8000/api/desktopdata/'
-            appList_url = 'http://192.168.4.1:8000/api/channel/AppList/'
+            desktop_url = f'http://{ip_address}:8000/api/desktopdata/'
+            appList_url = f'http://{ip_address}:8000/api/channel/AppList/'
 
             dresponse = requests.get(desktop_url)
             aresponse = requests.get(appList_url)
@@ -372,8 +372,8 @@ class PushHelper(object):
             else:
                 while True:
                     # get api
-                    desktop_url = "http://192.168.4.1:8000/api/desktopdata/?page={}&page_size=200".format(pageNo)
-                    appList_url = "http://192.168.4.1:8000/api/channel/AppList/"
+                    desktop_url = f"http://{ip_address}:8000/api/desktopdata/?page={pageNo}&page_size=200"
+                    appList_url = f"http://{ip_address}:8000/api/channel/AppList/"
 
                     # desktop data url
                     desktop_response = requests.get(desktop_url, headers=self.headers)
