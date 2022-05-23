@@ -57,6 +57,7 @@ class PushHelper(object):
 
         # pi id data to be collected
         os.system('cat /proc/cpuinfo > serial_data.txt')
+        # os.system('sysctl -a | grep machdep.cpu > serial_data.txt')
         serial_file = open('serial_data.txt', "r+")
         for line in serial_file:
             if line.startswith('Serial'):
@@ -106,7 +107,7 @@ class PushHelper(object):
                 if os.path.isfile(actualfileName):
                     datasws = {filenamestr: open(actualfileName, 'rb')}
                     response_post = requests.post(self.post_url,files = datasws)           
-                    infoLogger.info("response_post sws "+ str(response_post.status_code))    
+                    infoLogger.info(f"response_post sws {str(response_post.status_code)}")    
                     if response_post.status_code == 200:
                         os.remove(actualfileName)
                         result_set["status"] = 202
@@ -118,7 +119,7 @@ class PushHelper(object):
             return result_set
 
         except Exception as e1:
-            errorLogger.error("Error push_usageData is: " + str(e1))
+            errorLogger.error(f"Error push_usageData is: {str(e1)}")
             result_set["status"] = 404
             result_set['msg'] = e1
             return result_set
@@ -301,7 +302,7 @@ class PushHelper(object):
         if not os.path.exists(usageDir):
             os.makedirs(usageDir)
 
-        print("usageDir is from create_dir ", homeDir, usageDir)
+        # print("usageDir is from create_dir ", homeDir, usageDir)
         return usageDir
 
     # for DB Push Data
@@ -312,7 +313,7 @@ class PushHelper(object):
         if not os.path.exists(dbpushDir):
             os.makedirs(dbpushDir)
 
-        print("dbpushDir is from create_dir ", homeDir, dbpushDir)                    
+        # print("dbpushDir is from create_dir ", homeDir, dbpushDir)                   
         return dbpushDir
 
 
@@ -323,7 +324,7 @@ class PushHelper(object):
         if not os.path.exists(desktopDir):
             os.makedirs(desktopDir)
 
-        print("deskDir is from create_dir ", homeDir, desktopDir)
+        # print("deskDir is from create_dir ", homeDir, desktopDir)
         return desktopDir
 
 
@@ -425,14 +426,14 @@ class PushHelper(object):
                     result_set['status'] = 202
                     return result_set
             except Exception as bkp_error_next:
-                print("bkp error in desktop_data_to_post else part is ", bkp_error_next)
-                errorLogger.error("bkp error in desktop_data_to_post else part is: " + str(bkp_error_next))
+                # print("bkp error in desktop_data_to_post else part is ", bkp_error_next)
+                errorLogger.error(f"bkp error in desktop_data_to_post else part is: {str(bkp_error_next)}")
                 result_set['status'] = 402
                 result_set['msg'] = bkp_error_next
                 return result_set
 
         except Exception as e1:
-            errorLogger.error("Error in desktop_data_to_server : " + str(e1))
+            errorLogger.error(f"Error in desktop_data_to_server : {str(e1)}")
             result_set["status"] = 404
             result_set['msg'] = e1
             return result_set
@@ -445,7 +446,7 @@ class PushHelper(object):
             for f in os.listdir(dir):
                 os.remove(os.path.join(dir,f))
         except FileNotFoundError as fnf:
-            print(fnf, "455")
+            # print(fnf, "455")
             result_set['status'] = 403
             return result_set
 
@@ -459,7 +460,7 @@ class PushHelper(object):
             for f in os.listdir(dir):
                 os.remove(os.path.join(dir,f))
         except FileNotFoundError as fnf:
-            print(fnf, "485")
+            # print(fnf, "485")
             result_set['status'] = 403
             return result_set
 
