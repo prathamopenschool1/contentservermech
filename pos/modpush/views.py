@@ -20,8 +20,6 @@ class PushDataView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         ip = self.request.META.get('REMOTE_ADDR')
-        print("--------------------------")
-        print("client ip is ", ip)
         return render(request, 'modpush/data_to_push.html')
 
 
