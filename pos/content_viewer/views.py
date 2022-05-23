@@ -212,13 +212,13 @@ def desktop_score_data(request):
 
             # pi id data to be collected
             os.system('cat /proc/cpuinfo > serial_data.txt')
+            # os.system('sysctl -a | grep machdep.cpu > serial_data.txt')
             serial_file = open('serial_data.txt', "r+")
+            serial_id = ""
             for line in serial_file:
                 if line.startswith('Serial'):
                     serial_id = line.split(':')[1]
                     break
-                else:
-                    serial_id = ""
 
             if request.session.has_key('session_id'):
                 session_id = request.session.get('session_id')
