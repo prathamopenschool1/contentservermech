@@ -1,7 +1,6 @@
 import os
 import json
 import logging
-from django.db.models import query
 from django.shortcuts import render
 from django.views.generic import View
 from .pushhelper.connectcheck import PushHelper
@@ -42,22 +41,6 @@ class PushUsageDataView(View):
             context = {'msg': 'success'}
         context = json.dumps(context)
         return JsonResponse(context, safe=False)
-
-
-        # if self.psh.connect() == True:
-        #     result_data = self.psh.push_usageData()
-        #     if result_data['status'] == 403:
-        #         context = {'msg': 'No Data'}
-        #         context = json.dumps(context)
-        #         return JsonResponse(context, safe=False)
-        #     else:
-        #         clear_usage_data()
-        #         context = {'msg': 'success'}
-        #         context = json.dumps(context)
-        #         return JsonResponse(context, safe=False)
-
-        # else:
-        #     return render(request, 'core/NoInternetFound.html')
 
 
 #new method to clear UsageData model data just after pushing usage data zip from push_usageData
@@ -116,26 +99,6 @@ class DeskTopDataToServerView(View):
             context = {'msg': 'success'}
             context = json.dumps(context)
             return JsonResponse(context, safe=False)
-
-        
-        # if self.psh.connect() == True:
-        #     result_data = self.psh.desktop_data_to_server()
-        #     if result_data['status'] == 404 or result_data['status'] == 403:
-        #         context = {'msg': 'No Data'}
-        #         context = json.dumps(context)
-        #         return JsonResponse(context, safe=False)
-        #     elif result_data['status'] == 203:
-        #         clear_desktop_data()
-        #         desktop_data = json.dumps(result_data)
-        #         return render(request, 'modpush/showPushedDTData.html', context={"desktop_data": desktop_data})
-        #     else:
-        #         clear_desktop_data()
-        #         context = {'msg': 'success'}
-        #         context = json.dumps(context)
-        #         return JsonResponse(context, safe=False)
-
-        # else:
-        #     return render(request, 'core/NoInternetFound.html')
 
 
 #new method to clear desktop model data just after pushing desktop data to pos server
