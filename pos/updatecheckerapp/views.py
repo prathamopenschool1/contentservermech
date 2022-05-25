@@ -28,7 +28,7 @@ class UpdateCheckView(LoginRequiredMixin, APIView):
         print("total app list >>>>>> ", totalAppsList, type(totalAppsList))
 
         infoLogger.info("In update check view")
-        infoLogger.info("internet connection status is " +  str(self.psh.connect()))
+        infoLogger.info(f"internet connection status is ,{ str(self.psh.connect())}")
 
         if self.psh.connect() == True:
             get_data_from_api(totalAppsList)
@@ -50,7 +50,7 @@ class ApplicationUpdateView(APIView):
     def post(self, request, *args, **kwargs):
 
         infoLogger.info("In app check view")
-        infoLogger.info("internet connection status is " +  str(self.psh.connect()))
+        infoLogger.info(f"internet connection status is , {str(self.psh.connect())}")
 
         context = {}
 
