@@ -4,6 +4,7 @@ import shutil
 import logging
 import requests
 import traceback
+import platform
 import datetime
 from pathlib import Path
 from urllib.request import urlopen
@@ -15,6 +16,8 @@ errorLogger = logging.getLogger("error_logger")
 
 
 class PushHelper(object):
+
+    system_platform = platform.system()
 
     homePath = '/home/pi' #'/home/pi' str(Path.home())
     deskDir = os.path.join(homePath, 'DesktopBackup')
@@ -48,28 +51,27 @@ class PushHelper(object):
         
         pageNo = 1
         serial_line = ''
-        status_quo = {}
         result_set = {}
 
         usagedata_url = f"http://{ip_address}:8000/api/usagedata/"
         response = requests.get(usagedata_url)
         lstscore = json.loads(response.content.decode('utf-8'))
 
-        # pi id data to be collected
-        os.system('cat /proc/cpuinfo > serial_data.txt')
-        # os.system('sysctl -a | grep machdep.cpu > serial_data.txt')
-        serial_file = open('serial_data.txt', "r+")
-        for line in serial_file:
-            if line.startswith('Serial'):
-                serial_line = line
+        if self.system_platform == 'Linux':
+            # pi id data to be collected
+            os.system('cat /proc/cpuinfo > serial_data.txt')
+            serial_file = open('serial_data.txt', "r+")
+            for line in serial_file:
+                if line.startswith('Serial'):
+                    serial_line = line
 
-        lstscore['serial_id'] = serial_line
+            lstscore['serial_id'] = serial_line
+        elif self.system_platform == 'Darwin':
+            os.system('sysctl -a | grep machdep.cpu > serial_data.txt')
 
         if lstscore['count'] == 0:
             infoLogger.info("no data")
-            status_quo['status'] = 403
-            status_quo['msg'] = 'Data Not Found'
-            return status_quo
+            return {'status': 403, 'msg': 'Data Not Found'}
 
         else:
             while True:
@@ -97,25 +99,21 @@ class PushHelper(object):
     def usageFile(self, data, ip_address='192.168.4.1'):
         result_set = {}
         try:
-            for i in range(len(data['results'])):                    
+            for i in range(len(data['results'])):       
                 actualfileName = data['results'][i]["uploaded_file"]
                 actualfileName = actualfileName.replace(f"http://{ip_address}:8000", os.path.join(self.homePath, "contentservermech/pos"))
-                lastndexofFwdSlsh = actualfileName.rfind('/')                    
-                filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
-                indexofDotzip = filenamestr.index(".zip")
-                filenamestr = filenamestr[0:indexofDotzip]
+                filenamestr = os.path.basename(actualfileName)
                 if os.path.isfile(actualfileName):
                     datasws = {filenamestr: open(actualfileName, 'rb')}
                     response_post = requests.post(self.post_url,files = datasws)           
-                    infoLogger.info(f"response_post sws {str(response_post.status_code)}")    
+                    infoLogger.info(f"response_post sws {str(response_post.status_code)}")
                     if response_post.status_code == 200:
                         os.remove(actualfileName)
                         result_set["status"] = 202
-                else:
-                    infoLogger.info("Error, File "+ actualfileName +" not exists")
-                    result_set['status'] = 400
+                
+                infoLogger.info(f"Error, File {actualfileName} not exists")
+                result_set['status'] = 400
             
-            # result_set['status'] = 200
             return result_set
 
         except Exception as e1:
@@ -131,26 +129,22 @@ class PushHelper(object):
             for i in range(len(data['results'])):                    
                 actualfileName = data['results'][i]["uploaded_file"]
                 actualfileName = actualfileName.replace(f"http://{ip_address}:8000", os.path.join(self.homePath, "contentservermech/pos"))
-                lastndexofFwdSlsh = actualfileName.rfind('/')                    
-                filenamestr = actualfileName[lastndexofFwdSlsh + 1:len(actualfileName)]
-                indexofDotzip = filenamestr.index(".zip")
-                filenamestr = filenamestr[0:indexofDotzip]
+                filenamestr = os.path.basename(actualfileName)
                 if os.path.isfile(actualfileName):
                     datasws = {filenamestr: open(actualfileName, 'rb')}
                     response_post = requests.post(self.db_post_url,files = datasws)           
-                    infoLogger.info("response_post sws "+ str(response_post.status_code))    
+                    infoLogger.info(f"response_post sws {str(response_post.status_code)}")
                     if response_post.status_code == 200:
                         os.remove(actualfileName)
                         result_set["status"] = 202
-                else:
-                    infoLogger.info("Error, File "+ actualfileName +" not exists")
-                    result_set['status'] = 400
+
+                infoLogger.info(f"Error, File {actualfileName} not exists")
+                result_set['status'] = 400
             
-            # result_set['status'] = 200
             return result_set
 
         except Exception as e1:
-            errorLogger.error("Error push_db_data is: " + str(e1))
+            errorLogger.error(f"Error push_usageData is: {str(e1)}")
             result_set["status"] = 404
             result_set['msg'] = e1
             return result_set
@@ -160,7 +154,6 @@ class PushHelper(object):
     def push_dbPushData(self, ip_address='192.168.4.1'):
 
         pageNo = 1
-        status_quo = {}
         result_set = {}
 
         dbpush_url = f"http://{ip_address}:8000/api/dbpushdata/"
@@ -169,9 +162,7 @@ class PushHelper(object):
 
         if dbpushdata['count'] == 0:
             infoLogger.info("no data")
-            status_quo['status'] = 403
-            status_quo['msg'] = 'Data Not Found'
-            return status_quo
+            return {'status': 403, 'msg': 'Data Not Found'}
 
         else:
             while True:
@@ -266,7 +257,6 @@ class PushHelper(object):
 
                 pageNo =  pageNo + 1
 
-
     def desktopFile(self, desktop_result, appList_result, desktop_resultlist):
         result_set = {}
         try:
@@ -287,9 +277,7 @@ class PushHelper(object):
             return result_set
 
         except Exception as e1:
-            # return False
-            errorLogger.error("Error in desktop_data_to_server : " + str(e1))
-            # return render(request, 'push/data_to_push.html')
+            errorLogger.error(f"Error in desktop_data_to_server : {str(e1)}")
             result_set["status"] = 404
             result_set['msg'] = e1
             return result_set
